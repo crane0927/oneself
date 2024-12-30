@@ -1,0 +1,15 @@
+oneself:
+  swagger:
+    enable: true
+    title: oneself-demo
+    description: oneself-demo API 文档
+    version: 1.0.0
+    base-package: com.oneself
+    service-url: http://127.0.0.1:9011/oneself-demo
+
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/oneself-demo?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai&useSSL=false
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: liuhuan
+    password: Z6eQaNaitK5vSX

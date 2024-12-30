@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: oneself-gateway
+  profiles:
+    active: dev # 设置为开发环境
+#  config:
+#    use-legacy-processing: true # Spring Boot 2.4.0 开始，bootstrap.yml 被废弃，显式启用 bootstrap.yml
+
+server:
+  port: 9001
+  servlet:
+    context-path: /oneself-gateway
+    session:
+      timeout: 600
