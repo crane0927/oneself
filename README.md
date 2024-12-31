@@ -106,12 +106,12 @@ oneself:
 oneself:
   file:
     ftp:
-      host: "ftp.example.com"
+      host: "ftp.oneself.com"
       port: 21
       user: "ftpUser"
       password: "ftpPassword"
     sftp:
-      host: "sftp.example.com"
+      host: "sftp.oneself.com"
       port: 22
       user: "ftpUser"
       password: "ftpPassword"
