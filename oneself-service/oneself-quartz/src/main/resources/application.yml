@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: oneself-quartz
+  profiles:
+    active: dev # 设置为开发环境
+#  config:
+#    use-legacy-processing: true # Spring Boot 2.4.0 开始，bootstrap.yml 被废弃，显式启用 bootstrap.yml
+
+server:
+  port: 9012
+  servlet:
+    context-path: /oneself-quartz
+    session:
+      timeout: 600
