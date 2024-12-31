@@ -63,10 +63,26 @@ main
             
 ```
 ---
+# 标准启动类
+```java
+@SpringBootApplication
+public class DemoApplication {
 
+    public static void main(String[] args) {
+        ConfigurableApplicationContext application = SpringApplication.run(DemoApplication.class, args);
+        // 使用工具类 打印启动信息
+        ApplicationStartupUtils.printStartupInfo(application.getEnvironment());
+    }
+}
+
+```
+---
 # 环境
 - JDK 1.8
 - Spring Boot 2.7.18
+- Spring Cloud 2021.0.9
+- Spring Cloud Alibaba 2021.0.6.2
+- Nacos 2.4.1
 - MySQL 8.0.39
 - Maven 3.9.9
 ---
@@ -116,3 +132,41 @@ oneself:
       user: "ftpUser"
       password: "ftpPassword"
 ```
+---
+## 配置 Nacos
+1. 引入 nacos 配置依赖
+```xml
+
+<dependency>
+    <groupId>com.alibaba.cloud</groupId>
+    <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+</dependency>
+
+```
+2. 引入 nacos 注册中心依赖
+```xml
+
+<dependency>
+    <groupId>com.alibaba.cloud</groupId>
+    <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+</dependency>
+```
+3. 在 `application.yml` 中添加以下配置：
+```yaml
+spring:
+  cloud:
+    nacos:
+      server-addr: 127.0.0.1:8848 # Nacos 地址
+      config:
+        import-check:
+          enabled: false # 校验 Nacos 配置中心的配置文件是否存在
+        file-extension: yaml # 在 Nacos 的文件后缀名
+        group: DEFAULT_GROUP # 配置组名，可以自定义
+        refresh-enabled: true # 启用自动刷新配置
+        namespace: dev # 配置命名空间，使用命名空间唯一 ID
+      discovery:
+        cluster-name: dev # 设置 Nacos 的集群属性
+        namespace: dev # 配置命名空间，使用命名空间唯一 ID
+```
+4. 启动类中添加注解 `@EnableDiscoveryClient`
+
