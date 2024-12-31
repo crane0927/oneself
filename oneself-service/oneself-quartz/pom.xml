@@ -186,7 +186,7 @@
                     <archive>
                         <!-- 指定程序的入口 main 函数 -->
                         <manifest>
-                            <mainClass>com.example.oneself.QuartzApplication</mainClass>
+                            <mainClass>com.oneself.QuartzApplication</mainClass>
                             <addClasspath>true</addClasspath> <!-- 添加 classpath -->
                             <classpathPrefix>lib/</classpathPrefix>
                         </manifest>
