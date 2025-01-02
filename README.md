@@ -316,3 +316,28 @@ spring:
 ```
 4. 启动类中添加注解 `@EnableDiscoveryClient`
 
+---
+## 配置 Elasticsearch
+1. 引入依赖 oneself-common
+```xml
+<dependency>
+    <groupId>com.oneself</groupId>
+    <artifactId>oneself-common</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+</dependency>
+```
+2. 在 `application.yml` 中添加以下配置：
+```yaml
+oneself:
+  elasticsearch:
+    enabled: true # 开启 Elasticsearch
+    nodes: # 节点列表 单机模式支持一个地址，集群模式支持多个地址
+      - "localhost:9200"
+      - "127.0.0.1:9200"
+    username: "elastic" # 用户名（如果启用了安全认证）
+    password: "elastic" # 密码（如果启用了安全认证）
+    connect-timeout: 5000 # 连接超时时间（毫秒）
+    socket-timeout: 60000 # 读超时时间（毫秒）
+    max-connections: 100 # 最大连接数
+    max-connections-per-route: 10 # 每个路由的最大连接数
+```
