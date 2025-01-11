@@ -1,11 +1,18 @@
 package com.oneself.controller;
 
 import com.oneself.model.dto.*;
+import com.oneself.model.vo.QuartzTaskVO;
 import com.oneself.model.vo.ResponseVO;
+import com.oneself.service.QuartzJobService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
+import org.quartz.JobDataMap;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author liuhuan
@@ -21,22 +28,66 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping({"/job"})
 public class QuartzJobController {
 
+    private final QuartzJobService quartzJobService;
+
+    @Autowired
+    public QuartzJobController(QuartzJobService quartzJobService) {
+        this.quartzJobService = quartzJobService;
+    }
+
+    @ApiOperation(value = "任务信息列表")
+    @GetMapping("/get/page/list")
+    public ResponseVO<List<QuartzTaskVO>> getPageList() {
+        return ResponseVO.success(quartzJobService.getPageList());
+
+    }
+
     @ApiOperation(value = "创建定时任务")
     @PostMapping("/create/cron/job")
     public ResponseVO<Boolean> createCronJob(@RequestBody CronJobDTO dto) {
-        return ResponseVO.success(true);
+        Boolean b = quartzJobService.addCronJob(dto.getJobName(),
+                dto.getCronExpression(),
+                dto.getJobClassName(),
+                ObjectUtils.isNotEmpty(dto.getDataMap()) ? new JobDataMap(dto.getDataMap()) : new JobDataMap(),
+                dto.getJobGroupName(),
+                dto.getTriggerGroupName(),
+                dto.getTriggerPrefix());
+        if (!b) {
+            return ResponseVO.failure("创建失败");
+        }
+        return ResponseVO.success(Boolean.TRUE, "创建成功");
     }
 
     @ApiOperation(value = "创建执行一次的任务")
     @PostMapping("/create/one/job")
     public ResponseVO<Boolean> createOneJob(@RequestBody OneJobDTO dto) {
-        return ResponseVO.success(true);
+        Boolean b = quartzJobService.addOneTimeJob(dto.getJobName(),
+                dto.getExecutionTime(),
+                dto.getJobClassName(),
+                ObjectUtils.isNotEmpty(dto.getDataMap()) ? new JobDataMap(dto.getDataMap()) : new JobDataMap(),
+                dto.getJobGroupName(),
+                dto.getTriggerGroupName(),
+                dto.getTriggerPrefix());
+        if (!b) {
+            return ResponseVO.failure("创建失败");
+        }
+        return ResponseVO.success(Boolean.TRUE, "创建成功");
     }
 
     @ApiOperation(value = "更新定时任务")
     @PutMapping("/update/cron/job/{id}")
     public ResponseVO<Boolean> updateCronJob(@PathVariable Long id, @RequestBody CronJobDTO dto) {
-        return ResponseVO.success(true);
+        Boolean b = quartzJobService.updateCronJob(dto.getJobName(),
+                dto.getCronExpression(),
+                dto.getJobClassName(),
+                ObjectUtils.isNotEmpty(dto.getDataMap()) ? new JobDataMap(dto.getDataMap()) : new JobDataMap(),
+                dto.getJobGroupName(),
+                dto.getTriggerGroupName(),
+                dto.getTriggerPrefix());
+        if (!b) {
+            return ResponseVO.failure("更新失败");
+        }
+        return ResponseVO.success(Boolean.TRUE, "更新成功");
     }
 
     @ApiOperation(value = "更新执行一次的任务")

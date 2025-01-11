@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author liuhuan
@@ -30,6 +30,6 @@ public class CronJobDTO implements Serializable {
     @ApiModelProperty(value = "cron 表达式", required = true, example = "*/5 * * * * ?")
     private String cronExpression;
     @ApiModelProperty(value = "任务参数")
-    private List<DataMapDTO> dataMapList;
+    private Map<String, Object> dataMap;
 
 }

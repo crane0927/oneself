@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.oneself.mapper.JobDetailsMapper">
+    <select id="getQuartzTasks" resultType="com.oneself.model.vo.QuartzTaskVO">
+        SELECT jd.JOB_NAME AS jobName,
+               jd.JOB_GROUP AS jobGroup,
+               jd.DESCRIPTION AS description,
+               jd.JOB_CLASS_NAME AS jobClassName,
+               t.TRIGGER_NAME AS triggerName,
+               t.TRIGGER_GROUP AS triggerGroup,
+               t.TRIGGER_STATE AS triggerState,
+               ct.CRON_EXPRESSION AS cronExpression,
+               st.REPEAT_COUNT AS repeatCount,
+               st.REPEAT_INTERVAL AS repeatInterval
+        FROM qrtz_job_details jd
+                 LEFT JOIN
+             qrtz_triggers t
+             ON
+                 jd.JOB_NAME = t.JOB_NAME AND jd.JOB_GROUP = t.JOB_GROUP
+                 LEFT JOIN
+             qrtz_cron_triggers ct
+             ON
+                 t.TRIGGER_NAME = ct.TRIGGER_NAME AND t.TRIGGER_GROUP = ct.TRIGGER_GROUP
+                 LEFT JOIN
+             qrtz_simple_triggers st
+             ON
+                 t.TRIGGER_NAME = st.TRIGGER_NAME AND t.TRIGGER_GROUP = st.TRIGGER_GROUP;
+    </select>
+</mapper>

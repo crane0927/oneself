@@ -7,6 +7,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author liuhuan
@@ -33,6 +34,6 @@ public class OneJobDTO implements Serializable {
     @ApiModelProperty(value = "任务计划时间", required = true, example = "2024-12-30 15:30")
     private LocalDateTime executionTime;
     @ApiModelProperty(value = "任务参数")
-    private List<DataMapDTO> dataMapList;
+    private Map<String, Object> dataMap;
 }
 
