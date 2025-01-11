@@ -29,6 +29,7 @@
         <mybatis-plus-boot-starter.version>3.5.3.1</mybatis-plus-boot-starter.version>
         <elasticsearch-java.version>7.17.7</elasticsearch-java.version>
         <jakarta.json-api.version>2.1.2</jakarta.json-api.version>
+        <org.bouncycastle.version>1.70</org.bouncycastle.version>
         <lombok.version>1.18.30</lombok.version>
         <commons-lang3.version>3.13.0</commons-lang3.version>
         <commons-collections4.version>4.4</commons-collections4.version>
