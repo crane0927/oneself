@@ -1,14 +1,15 @@
 package com.oneself.controller;
 
-import com.oneself.model.dto.NextTriggerTimeDTO;
 import com.oneself.model.vo.ResponseVO;
 import com.oneself.utils.DateFormatUtils;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.CronExpression;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -31,9 +32,10 @@ public class QuartzArgumentController {
 
     @Operation(summary = "获取 CRON 表达式后续执行时间")
     @GetMapping("/nextTriggerTime")
-    public ResponseVO<List<String>> nextTriggerTime(NextTriggerTimeDTO dto) {
-        Integer num = dto.getNum();
-        String scheduleConf = dto.getScheduleConf();
+    public ResponseVO<List<String>> nextTriggerTime(@Parameter(description = "CRON表达式", required = true, example = "0 0 9/1 * * ? *")
+                                                    @RequestParam String scheduleConf,
+                                                    @Parameter(description = "后续执行时间数量", required = true, example = "1")
+                                                    @RequestParam Integer num) {
         if (num == null || num <= 0 || num > 100) {
             return ResponseVO.failure("参数错误，执行次数范围应在 1 到 100 之间");
         }
