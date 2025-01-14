@@ -3,8 +3,8 @@ package com.oneself.controller;
 import com.oneself.model.dto.NextTriggerTimeDTO;
 import com.oneself.model.vo.ResponseVO;
 import com.oneself.utils.DateFormatUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.CronExpression;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,13 +23,13 @@ import java.util.List;
  * description Quartz 参数
  * version 1.0
  */
-@Api(tags = "Quartz 参数")
+@Tag(name = "Quartz 参数")
 @Slf4j
 @RestController
 @RequestMapping({"/argument"})
 public class QuartzArgumentController {
 
-    @ApiOperation(value = "获取 CRON 表达式后续执行时间")
+    @Operation(summary = "获取 CRON 表达式后续执行时间")
     @GetMapping("/nextTriggerTime")
     public ResponseVO<List<String>> nextTriggerTime(NextTriggerTimeDTO dto) {
         Integer num = dto.getNum();

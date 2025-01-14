@@ -76,7 +76,7 @@ public class DemoApplication {
 }
 ```
 ---
-# 服务打包配置
+# ~~服务打包配置 JDK 1.8~~
 ```xml
 
 <build>
@@ -223,11 +223,161 @@ public class DemoApplication {
 
 ```
 ---
-# 环境
-- JDK 1.8
-- Spring Boot 2.7.18
-- Spring Cloud 2021.0.9
-- Spring Cloud Alibaba 2021.0.6.2
+# 服务打包配置 JDK 21
+```xml
+<build>
+        <!-- 项目默认目标，设置为编译目标 -->
+        <defaultGoal>compile</defaultGoal>
+
+        <!-- 项目打包后的名称 -->
+        <finalName>${project.artifactId}</finalName>
+
+        <!-- 定义资源配置 -->
+        <resources>
+            <!-- 第一部分：将 src/main/resources 中的文件复制到编译输出目录 -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <targetPath>${project.build.outputDirectory}</targetPath>
+                <filtering>false</filtering>
+            </resource>
+            <!-- 第二部分：将 src/main/resources 中的文件复制到测试编译输出目录 -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <targetPath>${project.build.testOutputDirectory}</targetPath>
+                <filtering>false</filtering>
+            </resource>
+            <!-- 第三部分：将指定的配置文件单独复制到 config 目录，不打包进 jar -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <targetPath>${project.build.directory}/${project.artifactId}/config</targetPath>
+                <includes>
+                    <include>application.yml</include>
+                    <include>application-*.yml</include>
+                    <include>log4j2.xml</include>
+                </includes>
+            </resource>
+            <!-- 第四部分：将运行脚本复制到指定目录 -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <targetPath>${project.build.directory}/${project.artifactId}</targetPath>
+                <includes>
+                    <include>run.sh</include>
+                </includes>
+            </resource>
+        </resources>
+
+        <plugins>
+            <!-- 使用 maven-antrun-plugin 插件执行自定义的 Ant 任务 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <!-- 在 package 阶段执行 -->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- maven-clean-plugin：清理构建目录下的内容 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+            </plugin>
+
+            <!-- maven-compiler-plugin：编译插件，用于设置 JDK 版本和编码格式 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>21</source> <!-- 源代码的 JDK 版本 -->
+                    <target>21</target> <!-- 生成的 class 文件的 JDK 版本 -->
+                    <encoding>UTF8</encoding> <!-- 编码格式 -->
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
+            <!-- maven-dependency-plugin：将依赖的 jar 包复制到指定目录 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase> <!-- 在 prepare-package 阶段执行 -->
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>
+                                ${project.build.directory}/${project.artifactId}/lib
+                            </outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- maven-jar-plugin：自定义 jar 包的打包过程 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <!-- jar 包的输出目录 -->
+                    <outputDirectory>${project.build.directory}/${project.artifactId}</outputDirectory>
+                    <!-- 排除一些不需要打包的文件 -->
+                    <excludes>
+                        <include>application.yml</include>
+                        <include>application-*.yml</include>
+                        <include>log4j2.xml</include>
+                        <include>run.sh</include>
+                    </excludes>
+                    <archive>
+                        <!-- 指定程序的入口 main 函数 -->
+                        <manifest>
+                            <mainClass>com.example.oneself.GatewayApplication</mainClass>
+                            <addClasspath>true</addClasspath> <!-- 添加 classpath -->
+                            <classpathPrefix>lib/</classpathPrefix>
+                        </manifest>
+                        <!-- 将资源文件目录添加到 classpath 中 -->
+                        <manifestEntries>
+                            <Class-Path>config/</Class-Path>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <!-- maven-surefire-plugin：跳过单元测试 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+```
+---
+
+# 环境（JDK 1.8 升级至 JDK 21）
+- JDK 1.8 -> JDK 21
+- Spring Boot 2.7.18 -> Spring Boot 3.2.12
+- Spring Cloud 2021.0.9 -> Spring Cloud 2023.0.5
+- Spring Cloud Alibaba 2021.0.6.2 -> Spring Cloud Alibaba 2023.0.3.2
+- Eleasticsearch 7.17.7 -> Eleasticsearch 8.17.0
+- knife4j-openapi2-spring-boot-starter 4.5.0 -> openapi3-jakarta-spring-boot-starter.version 4.4.0
+- mybatis-plus-boot-starter 3.5.3.1 -> mybatis-plus-spring-boot3-starter 3.5.5
 - Nacos 2.4.1
 - MySQL 8.0.39
 - Maven 3.9.9

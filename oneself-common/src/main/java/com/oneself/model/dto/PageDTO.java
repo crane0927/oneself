@@ -1,6 +1,6 @@
 package com.oneself.model.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -17,18 +17,18 @@ import java.io.Serializable;
 public class PageDTO<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @ApiModelProperty(value = "查询条件")
+    @Schema(description = "查询条件")
     private T condition;
-    @ApiModelProperty(value = "分页信息")
+    @Schema(description = "分页信息")
     private Pagination pagination;
 
     @Data
     public static class Pagination {
-        @ApiModelProperty(value = "页码", example = "1")
+        @Schema(description = "页码", example = "1")
         private Long pageNum = 1L;
-        @ApiModelProperty(value = "页面大小", example = "50")
+        @Schema(description = "页面大小", example = "50")
         private Long pageSize = 50L;
-        @ApiModelProperty(value = "排序字段", example = "createTime")
+        @Schema(description = "排序字段", example = "createTime")
         private String sort;
     }
 }

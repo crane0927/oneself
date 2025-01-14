@@ -14,7 +14,7 @@
     <description>oneself-gateway</description>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>21</java.version>
     </properties>
     <dependencies>
         <dependency>
@@ -76,7 +76,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.8</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <!-- 在 package 阶段执行 -->
@@ -99,8 +99,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.8</source> <!-- 源代码的 JDK 版本 -->
-                    <target>1.8</target> <!-- 生成的 class 文件的 JDK 版本 -->
+                    <source>21</source> <!-- 源代码的 JDK 版本 -->
+                    <target>21</target> <!-- 生成的 class 文件的 JDK 版本 -->
                     <encoding>UTF8</encoding> <!-- 编码格式 -->
                     <annotationProcessorPaths>
                         <path>

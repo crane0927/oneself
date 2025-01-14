@@ -1,6 +1,6 @@
 package com.oneself.model.vo;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.http.HttpStatus;
@@ -23,15 +23,15 @@ public class PageVO<T> extends ResponseVO<PageVO.DataVO<T>> {
 
     @Data
     public static class DataVO<T> {
-        @ApiModelProperty(value = "分页数据")
+        @Schema(description = "分页数据")
         private List<T> records;
-        @ApiModelProperty(value = "总数", example = "100")
+        @Schema(description = "总数", example = "100")
         private Long rowCount;
-        @ApiModelProperty(value = "总页数", example = "10")
+        @Schema(description = "总页数", example = "10")
         private Long totalPage;
-        @ApiModelProperty(value = "页面大小", example = "10")
+        @Schema(description = "页面大小", example = "10")
         private Long pageSize;
-        @ApiModelProperty(value = "", example = "false")
+        @Schema(description = "", example = "false")
         private boolean showRealm;
     }
 

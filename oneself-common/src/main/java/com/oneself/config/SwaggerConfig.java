@@ -1,16 +1,12 @@
 package com.oneself.config;
 
 import com.oneself.properties.SwaggerProperties;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.Contact;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 
 /**
  * @author liuhuan
@@ -21,39 +17,36 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
  * version 1.0
  */
 @Configuration
-@EnableSwagger2WebMvc
 public class SwaggerConfig {
 
     private final SwaggerProperties swaggerProperties;
 
-    @Autowired
     public SwaggerConfig(SwaggerProperties swaggerProperties) {
         this.swaggerProperties = swaggerProperties;
     }
 
-    @Bean(value = "dockerBean")
-    public Docket dockerBean() {
-        // 使用 SwaggerProperties 中的配置来动态配置 Docket
-        Docket docket = new Docket(DocumentationType.SWAGGER_2)
-                .enable(swaggerProperties.getEnable())
-                .apiInfo(new ApiInfoBuilder()
-                        // 使用 SwaggerProperties 中的配置字段
-                        .title(swaggerProperties.getTitle() != null ? swaggerProperties.getTitle() : "API Documentation")
-                        .description(swaggerProperties.getDescription())
-                        .termsOfServiceUrl(swaggerProperties.getServiceUrl() != null ? swaggerProperties.getServiceUrl() : "https://doc.xiaominfo.com/")
-                        .contact(new Contact(
-                                swaggerProperties.getContactName(),
-                                swaggerProperties.getContactUrl(),
-                                swaggerProperties.getContactEmail()))
-                        .license(swaggerProperties.getLicense())
-                        .version(swaggerProperties.getVersion() != null ? swaggerProperties.getVersion() : "1.0")
-                        .build())
-                .groupName("oneself")
-                .select()
-                .apis(RequestHandlerSelectors.basePackage(swaggerProperties.getBasePackage() != null ? swaggerProperties.getBasePackage() : "com.oneself"))
-                .paths(PathSelectors.any())
+    @Bean
+    public GroupedOpenApi groupedOpenApi() {
+        return GroupedOpenApi.builder()
+                .group("oneself") // 分组名称
+                .packagesToScan(swaggerProperties.getBasePackage() != null ? swaggerProperties.getBasePackage() : "com.oneself")
+                .addOpenApiCustomizer(openApi -> openApi.info(apiInfo()))
+                .pathsToMatch("/**")
                 .build();
+    }
 
-        return docket;
+    private Info apiInfo() {
+        return new Info()
+                .title(swaggerProperties.getTitle() != null ? swaggerProperties.getTitle() : "API Documentation")
+                .description(swaggerProperties.getDescription() != null ? swaggerProperties.getDescription() : "API Documentation for Oneself")
+                .version(swaggerProperties.getVersion() != null ? swaggerProperties.getVersion() : "1.0")
+                .contact(new Contact()
+                        .name(swaggerProperties.getContactName())
+                        .url(swaggerProperties.getContactUrl())
+                        .email(swaggerProperties.getContactEmail()))
+                .termsOfService(swaggerProperties.getServiceUrl() != null ? swaggerProperties.getServiceUrl() : "https://doc.xiaominfo.com/")
+                .license(new License()
+                        .name(swaggerProperties.getLicense())
+                        .url("https://www.apache.org/licenses/LICENSE-2.0"));
     }
 }

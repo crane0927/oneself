@@ -1,6 +1,6 @@
 package com.oneself.model.vo;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
@@ -19,13 +19,13 @@ public class ResponseVO<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "状态码", example = "500")
+    @Schema(description = "状态码", example = "500")
     private Integer msgCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
-    @ApiModelProperty(value = "状态码说明", example = "请求失败")
+    @Schema(description = "状态码说明", example = "请求失败")
     private String message = "请求失败";
-    @ApiModelProperty(value = "请求路径", example = "/snc-audit")
+    @Schema(description = "请求路径", example = "/snc-audit")
     private String path = null;
-    @ApiModelProperty(value = "返回数据", example = "false")
+    @Schema(description = "返回数据", example = "false")
     private T data;
 
     ResponseVO() {

@@ -5,8 +5,8 @@ import com.oneself.model.dto.EncryptedDataDTO;
 import com.oneself.model.vo.ResponseVO;
 import com.oneself.utils.RSAUtils;
 import com.oneself.utils.SM4Utils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +21,7 @@ import java.util.Base64;
  * description RSA 信息接口
  * version 1.0
  */
-@Api(tags = "RSA 信息接口")
+@Tag(name = "RSA 信息接口")
 @Slf4j
 @RequireLogin
 @RestController
@@ -34,14 +34,14 @@ public class RSAController {
         this.keyPair = RSAUtils.generateRSAKeyPair();
     }
 
-    @ApiOperation(value = "获取 RSA 公钥")
+    @Operation(summary = "获取 RSA 公钥")
     @GetMapping("/get/public/key")
     public ResponseVO<String> getPublicKey() {
         String publicKey = Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded());
         return ResponseVO.success(publicKey);
     }
 
-    @ApiOperation(value = "解密数据")
+    @Operation(summary = "解密数据")
     @PostMapping("/decrypt/data")
     public ResponseVO<String> decryptData(@RequestBody EncryptedDataDTO dto) throws Exception {
         String decryptedSymmetricKey = RSAUtils.decryptWithPrivateKey(

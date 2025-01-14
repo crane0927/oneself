@@ -1,11 +1,11 @@
 oneself:
   swagger:
     enable: true
-    title: oneself-demo
-    description: oneself-demo API 文档
-    version: 1.0.0
-    base-package: com.oneself
-    service-url: http://127.0.0.1:9011/oneself-demo
+#    title: oneself-demo
+#    description: oneself-demo API 文档
+#    version: 1.0.0
+#    base-package: com.oneself
+#    service-url: http://127.0.0.1:9011/oneself-demo
   elasticsearch:
     enabled: true
     nodes:

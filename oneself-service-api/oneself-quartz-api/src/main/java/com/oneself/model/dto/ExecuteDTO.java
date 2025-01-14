@@ -1,8 +1,9 @@
 package com.oneself.model.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -16,19 +17,20 @@ import java.util.List;
  */
 @Data
 public class ExecuteDTO implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "任务名称", required = true)
+    @Schema(description = "任务名称", requiredMode = Schema.RequiredMode.REQUIRED)
     private String JobName;
-    @ApiModelProperty(value = "任务类全限定名称", required = true)
+    @Schema(description = "任务类全限定名称", requiredMode = Schema.RequiredMode.REQUIRED)
     private String jobClassName;
-    @ApiModelProperty(value = "任务参数")
+    @Schema(description = "任务参数")
     private List<DataMapDTO> dataMapList;
-    @ApiModelProperty(value = "任务组名称", required = true)
+    @Schema(description = "任务组名称", requiredMode = Schema.RequiredMode.REQUIRED)
     private String JobGroupName;
-    @ApiModelProperty(value = "触发器组名称", required = true)
+    @Schema(description = "触发器组名称", requiredMode = Schema.RequiredMode.REQUIRED)
     private String triggerGroupName;
-    @ApiModelProperty(value = "触发器前缀", required = true)
+    @Schema(description = "触发器前缀", requiredMode = Schema.RequiredMode.REQUIRED)
     private String triggerPrefix;
 
 }

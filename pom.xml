@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.18</version>
+        <version>3.2.12</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.oneself</groupId>
@@ -23,17 +23,19 @@
     </modules>
 
     <properties>
-        <java.version>1.8</java.version>
-        <spring-cloud.version>2021.0.9</spring-cloud.version>
-        <spring-cloud-alibaba.version>2021.0.6.2</spring-cloud-alibaba.version>
-        <mybatis-plus-boot-starter.version>3.5.3.1</mybatis-plus-boot-starter.version>
-        <elasticsearch-java.version>7.17.7</elasticsearch-java.version>
+        <java.version>21</java.version>
+        <spring-cloud.version>2023.0.5</spring-cloud.version>
+        <spring-cloud-alibaba.version>2023.0.3.2</spring-cloud-alibaba.version>
+<!--        <mybatis-plus-boot-starter.version>3.5.5</mybatis-plus-boot-starter.version>-->
+        <mybatis-plus-spring-boot3-starter.version>3.5.5</mybatis-plus-spring-boot3-starter.version>
+        <elasticsearch-java.version>8.17.0</elasticsearch-java.version>
         <jakarta.json-api.version>2.1.2</jakarta.json-api.version>
         <org.bouncycastle.version>1.70</org.bouncycastle.version>
         <lombok.version>1.18.30</lombok.version>
         <commons-lang3.version>3.13.0</commons-lang3.version>
         <commons-collections4.version>4.4</commons-collections4.version>
-        <knife4j-openapi2-spring-boot-starter.version>4.5.0</knife4j-openapi2-spring-boot-starter.version>
+<!--        <knife4j-openapi2-spring-boot-starter.version>4.5.0</knife4j-openapi2-spring-boot-starter.version>-->
+        <knife4j-openapi3-jakarta-spring-boot-starter.version>4.4.0</knife4j-openapi3-jakarta-spring-boot-starter.version>
         <jackson-datatype-jsr310.version>2.13.5</jackson-datatype-jsr310.version>
         <commons-io.version>2.14.0</commons-io.version>
         <commons-net.version>3.9.0</commons-net.version>
@@ -74,8 +76,8 @@
 
             <dependency>
                 <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-boot-starter</artifactId>
-                <version>${mybatis-plus-boot-starter.version}</version>
+                <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+                <version>${mybatis-plus-spring-boot3-starter.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>ch.qos.logback</groupId>
@@ -161,11 +163,18 @@
         </dependency>
 
         <!-- Swagger/Knife4j -->
+<!--        <dependency>-->
+<!--            <groupId>com.github.xiaoymin</groupId>-->
+<!--            <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>-->
+<!--            <version>${knife4j-openapi2-spring-boot-starter.version}</version>-->
+<!--        </dependency>-->
+
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
-            <version>${knife4j-openapi2-spring-boot-starter.version}</version>
+            <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+            <version>${knife4j-openapi3-jakarta-spring-boot-starter.version}</version>
         </dependency>
+
 
         <!-- JSON Processing -->
         <dependency>

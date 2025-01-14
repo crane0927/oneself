@@ -7,8 +7,8 @@ import com.oneself.model.dto.DemoDTO;
 import com.oneself.model.vo.DemoVO;
 import com.oneself.model.vo.ResponseVO;
 import com.oneself.utils.ElasticsearchUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
  * description Demo
  * version 1.0
  */
-@Api(tags = "接口样例")
+@Tag(name = "接口样例")
 @Slf4j
 @RequireLogin
 @RestController
@@ -35,7 +35,7 @@ public class DemoController {
         this.elasticsearchUtils = elasticsearchUtils;
     }
 
-    @ApiOperation(value = "你好 xxx")
+    @Operation(summary = "你好 xxx")
     @PostMapping({"/say/hello"})
     public ResponseVO<DemoVO> sayHello(@RequestBody DemoDTO dto) {
         log.info("hello {}", dto.getName());
@@ -43,7 +43,7 @@ public class DemoController {
         return ResponseVO.success(demoVO);
     }
 
-    @ApiOperation(value = "Elasticsearch 集群名称获取")
+    @Operation(summary = "Elasticsearch 集群名称获取")
     @GetMapping({"/get/elasticsearch/cluster/info"})
     public ResponseVO<DemoVO> getElasticsearchClusterInfo() {
         ElasticsearchClient client = elasticsearchUtils.getClient();

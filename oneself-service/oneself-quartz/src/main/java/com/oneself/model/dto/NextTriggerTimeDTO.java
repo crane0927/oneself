@@ -1,8 +1,9 @@
 package com.oneself.model.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -15,9 +16,10 @@ import java.io.Serializable;
  */
 @Data
 public class NextTriggerTimeDTO implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
-    @ApiModelProperty(value = "CRON 表达式", required = true,example = "0 0 9/1 * * ? *")
+    @Schema(description = "CRON 表达式", requiredMode = Schema.RequiredMode.REQUIRED, example = "0 0 9/1 * * ? *")
     private String scheduleConf;
-    @ApiModelProperty(value = "后续执行时间数量", required = true,example = "1")
+    @Schema(description = "后续执行时间数量", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     private Integer num;
 }

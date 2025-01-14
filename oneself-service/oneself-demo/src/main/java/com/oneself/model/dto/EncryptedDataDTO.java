@@ -1,8 +1,9 @@
 package com.oneself.model.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -15,9 +16,10 @@ import java.io.Serializable;
  */
 @Data
 public class EncryptedDataDTO implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
-    @ApiModelProperty(value = "加密后的密钥", required = true)
+    @Schema(description = "加密后的密钥", requiredMode = Schema.RequiredMode.REQUIRED)
     private String encryptedSymmetricKey;
-    @ApiModelProperty(value = "加密后的数据", required = true)
+    @Schema(description = "加密后的数据", requiredMode = Schema.RequiredMode.REQUIRED)
     private byte[] encryptedData;
 }
