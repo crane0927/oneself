@@ -371,13 +371,13 @@ public class DemoApplication {
 ---
 
 # 环境（JDK 1.8 升级至 JDK 21）
-- JDK 1.8 -> JDK 21
-- Spring Boot 2.7.18 -> Spring Boot 3.2.12
-- Spring Cloud 2021.0.9 -> Spring Cloud 2023.0.5
-- Spring Cloud Alibaba 2021.0.6.2 -> Spring Cloud Alibaba 2023.0.3.2
-- Eleasticsearch 7.17.7 -> Eleasticsearch 8.17.0
-- knife4j-openapi2-spring-boot-starter 4.5.0 -> openapi3-jakarta-spring-boot-starter.version 4.4.0
-- mybatis-plus-boot-starter 3.5.3.1 -> mybatis-plus-spring-boot3-starter 3.5.5
+- ~~JDK 1.8~~ -> JDK 21
+- ~~Spring Boot 2.7.18~~ -> Spring Boot 3.2.12
+- ~~Spring Cloud 2021.0.9~~ -> Spring Cloud 2023.0.5
+- ~~Spring Cloud Alibaba 2021.0.6.2~~ -> Spring Cloud Alibaba 2023.0.3.2
+- ~~Eleasticsearch 7.17.7~~ -> Eleasticsearch 8.17.0
+- ~~knife4j-openapi2-spring-boot-starter 4.5.0~~ -> openapi3-jakarta-spring-boot-starter.version 4.4.0
+- ~~mybatis-plus-boot-starter 3.5.3.1~~ -> mybatis-plus-spring-boot3-starter 3.5.5
 - Nacos 2.4.1
 - MySQL 8.0.39
 - Maven 3.9.9
@@ -392,7 +392,7 @@ public class DemoApplication {
     <version>0.0.1-SNAPSHOT</version>
 </dependency>
 ```
-2. 在 `application.yml` 中添加以下配置：
+2. ~~在 `application.yml` 中添加以下配置（JDK 1.8）：~~
 ```yaml
 oneself:
   swagger:
