@@ -66,14 +66,14 @@ public class LogRequestDetailsAspect {
         }
 
         // 深拷贝并屏蔽返回值中的敏感数据
-        Object maskedResult = SensitiveDataUtils.copyAndMaskSensitiveData(result);
-        String response = objectMapper.writeValueAsString(maskedResult);
+//        Object maskedResult = SensitiveDataUtils.copyAndMaskSensitiveData(result);
+//        String response = objectMapper.writeValueAsString(maskedResult);
 
         // 获取总耗时
         long totalTime = System.currentTimeMillis() - startTime;
 
 
-        log.info("Response: {}", response);
+//        log.info("Response: {}", response);
         log.info("Total Time: {}ms", totalTime);
         log.info("=======================");
 
