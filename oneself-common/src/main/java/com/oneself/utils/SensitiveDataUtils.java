@@ -2,6 +2,7 @@ package com.oneself.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oneself.annotation.Sensitive;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 
@@ -13,6 +14,7 @@ import java.lang.reflect.Field;
  * description 敏感数据处理工具类
  * version 1.0
  */
+@Slf4j
 public class SensitiveDataUtils {
 
     private static final ObjectMapper objectMapper = JacksonUtils.getObjectMapper();
@@ -35,6 +37,7 @@ public class SensitiveDataUtils {
             maskSensitiveData(copy);
             return copy;
         } catch (Exception e) {
+            log.error("Error during data copy and masking: {},{}", e, e.getMessage());
             throw new RuntimeException("Error during data copy and masking", e);
         }
     }
@@ -66,7 +69,7 @@ public class SensitiveDataUtils {
             // 如果是普通对象，反射检查每个字段
             Field[] fields = obj.getClass().getDeclaredFields();
             for (Field field : fields) {
-                field.setAccessible(true);
+                field.setAccessible(true);  // 尝试设置可访问
                 if (field.isAnnotationPresent(Sensitive.class)) {
                     field.set(obj, "***"); // 屏蔽敏感字段
                 } else {
@@ -75,6 +78,7 @@ public class SensitiveDataUtils {
                 }
             }
         } catch (IllegalAccessException e) {
+            log.error("Error masking sensitive data: {},{}", e, e.getMessage());
             throw new RuntimeException("Error masking sensitive data", e);
         }
     }
