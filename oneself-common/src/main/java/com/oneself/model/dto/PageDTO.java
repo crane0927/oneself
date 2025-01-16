@@ -3,6 +3,7 @@ package com.oneself.model.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -16,6 +17,7 @@ import java.io.Serializable;
 @Data
 public class PageDTO<T> implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     @Schema(description = "查询条件")
     private T condition;
