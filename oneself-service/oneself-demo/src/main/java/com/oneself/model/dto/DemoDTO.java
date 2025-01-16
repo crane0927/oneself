@@ -1,5 +1,6 @@
 package com.oneself.model.dto;
 
+import com.oneself.annotation.Sensitive;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -18,6 +19,8 @@ import java.io.Serializable;
 public class DemoDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
+
+    @Sensitive
     @Schema(description = "姓名", requiredMode = Schema.RequiredMode.REQUIRED)
     private String name;
 }

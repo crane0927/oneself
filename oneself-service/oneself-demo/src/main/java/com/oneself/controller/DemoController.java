@@ -2,6 +2,7 @@ package com.oneself.controller;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.InfoResponse;
+import com.oneself.annotation.LogRequestDetails;
 import com.oneself.annotation.RequireLogin;
 import com.oneself.model.dto.DemoDTO;
 import com.oneself.model.vo.DemoVO;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "接口样例")
 @Slf4j
 @RequireLogin
+@LogRequestDetails
 @RestController
 @RequestMapping({"/demo"})
 public class DemoController {
