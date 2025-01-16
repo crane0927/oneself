@@ -40,7 +40,6 @@ public class DemoController {
     @Operation(summary = "你好 xxx")
     @PostMapping({"/say/hello"})
     public ResponseVO<DemoVO> sayHello(@RequestBody DemoDTO dto) {
-        log.info("hello {}", dto.getName());
         DemoVO demoVO = new DemoVO("hello " + dto.getName());
         return ResponseVO.success(demoVO);
     }
