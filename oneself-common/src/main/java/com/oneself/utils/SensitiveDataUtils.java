@@ -69,6 +69,7 @@ public class SensitiveDataUtils {
             // 如果是普通对象，反射检查每个字段
             Field[] fields = obj.getClass().getDeclaredFields();
             for (Field field : fields) {
+                // TODO 对于范型处理有问题 java.lang.reflect.InaccessibleObjectException
                 field.setAccessible(true);  // 尝试设置可访问
                 if (field.isAnnotationPresent(Sensitive.class)) {
                     field.set(obj, "***"); // 屏蔽敏感字段

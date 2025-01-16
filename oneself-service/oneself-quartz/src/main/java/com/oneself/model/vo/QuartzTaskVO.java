@@ -1,6 +1,7 @@
 package com.oneself.model.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serial;
@@ -14,7 +15,9 @@ import java.io.Serializable;
  * description
  * version 1.0
  */
+@Schema(description = "Quartz 任务信息")
 @Data
+@Builder
 public class QuartzTaskVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

@@ -1,5 +1,6 @@
 package com.oneself.controller;
 
+import com.oneself.annotation.LogRequestDetails;
 import com.oneself.model.dto.*;
 import com.oneself.model.vo.QuartzTaskVO;
 import com.oneself.model.vo.ResponseVO;
@@ -24,6 +25,7 @@ import java.util.List;
  */
 @Tag(name = "Quartz 任务")
 @Slf4j
+@LogRequestDetails
 @RestController
 @RequestMapping({"/job"})
 public class QuartzJobController {
@@ -55,7 +57,7 @@ public class QuartzJobController {
         if (!b) {
             return ResponseVO.failure("创建失败");
         }
-        return ResponseVO.success(Boolean.TRUE, "创建成功");
+        return ResponseVO.success(Boolean.TRUE);
     }
 
     @Operation(summary = "创建执行一次的任务")
@@ -71,7 +73,7 @@ public class QuartzJobController {
         if (!b) {
             return ResponseVO.failure("创建失败");
         }
-        return ResponseVO.success(Boolean.TRUE, "创建成功");
+        return ResponseVO.success(Boolean.TRUE);
     }
 
     @Operation(summary = "更新定时任务")
@@ -87,31 +89,31 @@ public class QuartzJobController {
         if (!b) {
             return ResponseVO.failure("更新失败");
         }
-        return ResponseVO.success(Boolean.TRUE, "更新成功");
+        return ResponseVO.success(Boolean.TRUE);
     }
 
     @Operation(summary = "更新执行一次的任务")
     @PutMapping("/update/one/job/{id}")
     public ResponseVO<Boolean> updateOneJob(@PathVariable Long id, @RequestBody OneJobDTO dto) {
-        return ResponseVO.success(true);
+        return ResponseVO.success(Boolean.TRUE);
     }
 
     @Operation(summary = "删除定时任务")
     @DeleteMapping("/delete/{id}")
     public ResponseVO<Boolean> delete(@PathVariable Long id, @RequestBody DeleteJobDTO dto) {
-        return ResponseVO.success(true);
+        return ResponseVO.success(Boolean.TRUE);
     }
 
     @Operation(summary = "暂停任务")
     @PostMapping("/pause/{id}")
     public ResponseVO<Boolean> pause(@PathVariable Long id, @RequestBody PauseJobDTO dto) {
-        return ResponseVO.success(true);
+        return ResponseVO.success(Boolean.TRUE);
     }
 
     @Operation(summary = "恢复任务")
     @PostMapping("/resume/{id}")
     public ResponseVO<Boolean> resume(@PathVariable Long id, @RequestBody ResumeJobDTO dto) {
-        return ResponseVO.success(true);
+        return ResponseVO.success(Boolean.TRUE);
     }
 
     @Operation(summary = "立即执行任务")

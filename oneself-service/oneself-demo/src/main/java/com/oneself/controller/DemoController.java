@@ -40,7 +40,7 @@ public class DemoController {
     @Operation(summary = "你好 xxx")
     @PostMapping({"/say/hello"})
     public ResponseVO<DemoVO> sayHello(@RequestBody DemoDTO dto) {
-        DemoVO demoVO = new DemoVO("hello " + dto.getName());
+        DemoVO demoVO = DemoVO.builder().info("hello " + dto.getName()).build();
         return ResponseVO.success(demoVO);
     }
 
@@ -51,7 +51,7 @@ public class DemoController {
         try {
             InfoResponse info = client.info();
             log.info("Elasticsearch 集群名称: {}", info.clusterName());
-            DemoVO demoVO = new DemoVO(info.clusterName());
+            DemoVO demoVO = DemoVO.builder().info(info.clusterName()).build();
             return ResponseVO.success(demoVO);
         } catch (Exception e) {
             log.error("Elasticsearch 集群名称获取异常: {}", e.getMessage());
