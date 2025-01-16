@@ -11,10 +11,10 @@ import java.text.SimpleDateFormat;
  * version 1.0
  */
 public class DateFormatUtils {
-    private static final String YYYY_MM_DD = "yyyy-MM-dd";
-    private static final String YYYY_MM_DD_HH = "yyyy-MM-dd HH";
-    private static final String YYYY_MM_DD_HH_MM = "yyyy-MM-dd HH:mm";
-    private static final String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
+    public static final String YYYY_MM_DD = "yyyy-MM-dd";
+    public static final String YYYY_MM_DD_HH = "yyyy-MM-dd HH";
+    public static final String YYYY_MM_DD_HH_MM = "yyyy-MM-dd HH:mm";
+    public static final String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
 
     public static final SimpleDateFormat SDF_YYYY_MM_DD = new SimpleDateFormat(YYYY_MM_DD);
     public static final SimpleDateFormat SDF_YYYY_MM_DD_HH = new SimpleDateFormat(YYYY_MM_DD_HH);
