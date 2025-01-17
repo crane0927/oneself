@@ -554,4 +554,3 @@ knife4j:
   production: true # 是否开启生产环境保护策略，生产环境中会隐藏 Swagger 界面
 ```
 2. AOP 拦截器 @LogRequestDetails 在 SensitiveDataUtils 进行敏感信息处理范型数据时报错 java.lang.reflect.InaccessibleObjectException
-3. oneself-quartz 模块功能未完成

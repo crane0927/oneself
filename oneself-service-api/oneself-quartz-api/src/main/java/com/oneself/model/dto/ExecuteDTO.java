@@ -5,7 +5,7 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author liuhuan
@@ -25,7 +25,7 @@ public class ExecuteDTO implements Serializable {
     @Schema(description = "任务类全限定名称", requiredMode = Schema.RequiredMode.REQUIRED)
     private String jobClassName;
     @Schema(description = "任务参数")
-    private List<DataMapDTO> dataMapList;
+    private Map<String, Object> dataMap;
     @Schema(description = "任务组名称", requiredMode = Schema.RequiredMode.REQUIRED)
     private String JobGroupName;
     @Schema(description = "触发器组名称", requiredMode = Schema.RequiredMode.REQUIRED)

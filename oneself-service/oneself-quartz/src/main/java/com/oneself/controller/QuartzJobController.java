@@ -77,8 +77,8 @@ public class QuartzJobController {
     }
 
     @Operation(summary = "更新定时任务")
-    @PutMapping("/update/cron/job/{id}")
-    public ResponseVO<Boolean> updateCronJob(@PathVariable Long id, @RequestBody CronJobDTO dto) {
+    @PutMapping("/update/cron/job")
+    public ResponseVO<Boolean> updateCronJob(@RequestBody CronJobDTO dto) {
         Boolean b = quartzJobService.updateCronJob(dto.getJobName(),
                 dto.getCronExpression(),
                 dto.getJobClassName(),
@@ -93,32 +93,66 @@ public class QuartzJobController {
     }
 
     @Operation(summary = "更新执行一次的任务")
-    @PutMapping("/update/one/job/{id}")
-    public ResponseVO<Boolean> updateOneJob(@PathVariable Long id, @RequestBody OneJobDTO dto) {
+    @PutMapping("/update/one/job")
+    public ResponseVO<Boolean> updateOneJob(@RequestBody OneJobDTO dto) {
+        Boolean b = quartzJobService.updateOneTimeJob(dto.getJobName(),
+                dto.getExecutionTime(),
+                dto.getJobGroupName(),
+                dto.getTriggerGroupName(),
+                dto.getTriggerPrefix());
+        if (!b) {
+            return ResponseVO.failure("更新失败");
+        }
         return ResponseVO.success(Boolean.TRUE);
     }
 
     @Operation(summary = "删除定时任务")
-    @DeleteMapping("/delete/{id}")
-    public ResponseVO<Boolean> delete(@PathVariable Long id, @RequestBody DeleteJobDTO dto) {
+    @DeleteMapping("/delete")
+    public ResponseVO<Boolean> delete(@RequestBody DeleteJobDTO dto) {
+        Boolean b = quartzJobService.deleteJob(dto.getJobName(),
+                dto.getJobGroupName(),
+                dto.getTriggerGroupName(),
+                dto.getTriggerPrefix());
+        if (!b) {
+            return ResponseVO.failure("删除失败");
+        }
         return ResponseVO.success(Boolean.TRUE);
     }
 
     @Operation(summary = "暂停任务")
-    @PostMapping("/pause/{id}")
-    public ResponseVO<Boolean> pause(@PathVariable Long id, @RequestBody PauseJobDTO dto) {
+    @PostMapping("/pause")
+    public ResponseVO<Boolean> pause(@RequestBody PauseJobDTO dto) {
+        Boolean b = quartzJobService.pauseJob(dto.getJobName(),
+                dto.getJobGroupName());
+        if (!b) {
+            return ResponseVO.failure("暂停失败");
+        }
         return ResponseVO.success(Boolean.TRUE);
     }
 
     @Operation(summary = "恢复任务")
-    @PostMapping("/resume/{id}")
-    public ResponseVO<Boolean> resume(@PathVariable Long id, @RequestBody ResumeJobDTO dto) {
+    @PostMapping("/resume")
+    public ResponseVO<Boolean> resume(@RequestBody ResumeJobDTO dto) {
+        Boolean b = quartzJobService.resumeJob(dto.getJobName(),
+                dto.getJobGroupName());
+        if (!b) {
+            return ResponseVO.failure("恢复失败");
+        }
         return ResponseVO.success(Boolean.TRUE);
     }
 
     @Operation(summary = "立即执行任务")
-    @PostMapping("/execute/{id}/immediately")
-    public ResponseVO<Boolean> executeImmediately(@PathVariable Long id, @RequestBody ExecuteDTO dto) {
+    @PostMapping("/execute/immediately")
+    public ResponseVO<Boolean> executeImmediately(@RequestBody ExecuteDTO dto) {
+        Boolean b = quartzJobService.executeImmediately(dto.getJobName(),
+                dto.getJobClassName(),
+                ObjectUtils.isNotEmpty(dto.getDataMap()) ? new JobDataMap(dto.getDataMap()) : new JobDataMap(),
+                dto.getJobGroupName(),
+                dto.getTriggerGroupName(),
+                dto.getTriggerPrefix());
+        if (!b) {
+            return ResponseVO.failure("立即执行失败");
+        }
         return ResponseVO.success(true);
     }
 }

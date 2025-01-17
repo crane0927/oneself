@@ -28,26 +28,26 @@ public interface QuartzJobClient {
     ResponseVO<Boolean> createOneJob(@RequestBody OneJobDTO dto);
 
     @Operation(summary = "更新定时任务")
-    @PutMapping("/update/cron/job/{id}")
-    ResponseVO<Boolean> updateCronJob(@PathVariable("id") Long id, @RequestBody CronJobDTO dto);
+    @PutMapping("/update/cron/job")
+    ResponseVO<Boolean> updateCronJob(@RequestBody CronJobDTO dto);
 
     @Operation(summary = "更新执行一次的任务")
-    @PutMapping("/update/one/job/{id}")
-    ResponseVO<Boolean> updateOneJob(@PathVariable("id") Long id, @RequestBody OneJobDTO dto);
+    @PutMapping("/update/one/job")
+    ResponseVO<Boolean> updateOneJob(@RequestBody OneJobDTO dto);
 
     @Operation(summary = "删除定时任务")
-    @DeleteMapping("/delete/{id}")
-    ResponseVO<Boolean> delete(@PathVariable("id") Long id, @RequestBody DeleteJobDTO dto);
+    @DeleteMapping("/delete")
+    ResponseVO<Boolean> delete(@RequestBody DeleteJobDTO dto);
 
     @Operation(summary = "暂停任务")
-    @PostMapping("/pause/{id}")
-    ResponseVO<Boolean> pause(@PathVariable("id") Long id, @RequestBody PauseJobDTO dto);
+    @PostMapping("/pause")
+    ResponseVO<Boolean> pause(@RequestBody PauseJobDTO dto);
 
     @Operation(summary = "恢复任务")
-    @PostMapping("/resume/{id}")
-    ResponseVO<Boolean> resume(@PathVariable("id") Long id, @RequestBody ResumeJobDTO dto);
+    @PostMapping("/resume")
+    ResponseVO<Boolean> resume(@RequestBody ResumeJobDTO dto);
 
     @Operation(summary = "立即执行任务")
-    @PostMapping("/execute/{id}/immediately")
-    ResponseVO<Boolean> executeImmediately(@PathVariable("id") Long id, @RequestBody ExecuteDTO dto);
+    @PostMapping("/execute/immediately")
+    ResponseVO<Boolean> executeImmediately(@RequestBody ExecuteDTO dto);
 }
