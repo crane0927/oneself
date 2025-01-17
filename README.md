@@ -546,6 +546,12 @@ oneself:
     max-connections-per-route: 10 # 每个路由的最大连接数
 ```
 ---
-## TODO
-1. AOP 拦截器 @LogRequestDetails 在 SensitiveDataUtils 进行敏感信息处理范型数据时报错 java.lang.reflect.InaccessibleObjectException
-2. oneself-quartz 模块功能未完成
+## 问题记录
+1. JDK 21 中使用 knife4j-openapi3 如何配置 Swagger 在生产环境中关闭
+```yaml
+knife4j:
+  enable: true # 开启增强配置，启用 Knife4j 功能
+  production: true # 是否开启生产环境保护策略，生产环境中会隐藏 Swagger 界面
+```
+2. AOP 拦截器 @LogRequestDetails 在 SensitiveDataUtils 进行敏感信息处理范型数据时报错 java.lang.reflect.InaccessibleObjectException
+3. oneself-quartz 模块功能未完成
