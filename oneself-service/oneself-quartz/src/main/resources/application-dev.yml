@@ -56,3 +56,19 @@ mybatis-plus:
 oneself:
   swagger:
     enable: true
+    base-package: com.oneself
+    title: oneself-quartz
+    description: oneself-quartz description
+    group-name: oneself-quartz
+
+knife4j:
+  enable: true
+  setting:
+    enable-version: true
+    enable-footer-custom: true
+    footer-custom-content: GitHub-[oneself](https://github.com/crane0927)
+  production: false
+  basic:
+    enable: true
+    username: dev
+    password: dev123
