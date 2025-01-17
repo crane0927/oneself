@@ -1,7 +1,7 @@
 package com.oneself.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.oneself.model.entity.JobDetails;
+import com.oneself.model.pojo.JobDetails;
 import com.oneself.model.vo.QuartzTaskVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;

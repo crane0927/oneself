@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.oneself</groupId>
+        <artifactId>oneself-service</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>oneself-user</artifactId>
+
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.oneself</groupId>
+            <artifactId>oneself-service-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <!-- 项目默认目标，设置为编译目标 -->
+        <defaultGoal>compile</defaultGoal>
+
+        <!-- 项目打包后的名称 -->
+        <finalName>${project.artifactId}</finalName>
+
+        <!-- 定义资源配置 -->
+        <resources>
+            <!-- 第一部分：将 src/main/resources 中的文件复制到编译输出目录 -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <targetPath>${project.build.outputDirectory}</targetPath>
+                <filtering>false</filtering>
+            </resource>
+            <!-- 第二部分：将 src/main/resources 中的文件复制到测试编译输出目录 -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <targetPath>${project.build.testOutputDirectory}</targetPath>
+                <filtering>false</filtering>
+            </resource>
+            <!-- 第三部分：将指定的配置文件单独复制到 config 目录，不打包进 jar -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <targetPath>${project.build.directory}/${project.artifactId}/config</targetPath>
+                <includes>
+                    <include>application.yml</include>
+                    <include>application-*.yml</include>
+                    <include>log4j2.xml</include>
+                </includes>
+            </resource>
+            <!-- 第四部分：将运行脚本复制到指定目录 -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <targetPath>${project.build.directory}/${project.artifactId}</targetPath>
+                <includes>
+                    <include>run.sh</include>
+                </includes>
+            </resource>
+        </resources>
+
+        <plugins>
+            <!-- 使用 maven-antrun-plugin 插件执行自定义的 Ant 任务 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <!-- 在 package 阶段执行 -->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- maven-clean-plugin：清理构建目录下的内容 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+            </plugin>
+
+            <!-- maven-compiler-plugin：编译插件，用于设置 JDK 版本和编码格式 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>21</source> <!-- 源代码的 JDK 版本 -->
+                    <target>21</target> <!-- 生成的 class 文件的 JDK 版本 -->
+                    <encoding>UTF8</encoding> <!-- 编码格式 -->
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
+            <!-- maven-dependency-plugin：将依赖的 jar 包复制到指定目录 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase> <!-- 在 prepare-package 阶段执行 -->
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>
+                                ${project.build.directory}/${project.artifactId}/lib
+                            </outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- maven-jar-plugin：自定义 jar 包的打包过程 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <!-- jar 包的输出目录 -->
+                    <outputDirectory>${project.build.directory}/${project.artifactId}</outputDirectory>
+                    <!-- 排除一些不需要打包的文件 -->
+                    <excludes>
+                        <include>application.yml</include>
+                        <include>application-*.yml</include>
+                        <include>log4j2.xml</include>
+                        <include>run.sh</include>
+                    </excludes>
+                    <archive>
+                        <!-- 指定程序的入口 main 函数 -->
+                        <manifest>
+                            <mainClass>com.example.oneself.GatewayApplication</mainClass>
+                            <addClasspath>true</addClasspath> <!-- 添加 classpath -->
+                            <classpathPrefix>lib/</classpathPrefix>
+                        </manifest>
+                        <!-- 将资源文件目录添加到 classpath 中 -->
+                        <manifestEntries>
+                            <Class-Path>config/</Class-Path>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <!-- maven-surefire-plugin：跳过单元测试 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+
+</project>

@@ -1,4 +1,4 @@
-package com.oneself.model.entity;
+package com.oneself.model.pojo;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -12,13 +12,13 @@ import java.time.LocalDateTime;
 /**
  * @author liuhuan
  * date 2024/12/9
- * packageName com.oneself.common.model.entity
- * className BaseEntity
+ * packageName com.oneself.common.model.pojo
+ * className BasePojo
  * description 实体类基本参数
  * version 1.0
  */
 @Data
-public class BaseEntity implements Serializable {
+public class BasePojo implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     @TableLogic

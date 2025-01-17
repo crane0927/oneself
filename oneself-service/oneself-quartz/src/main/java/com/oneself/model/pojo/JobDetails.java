@@ -1,4 +1,4 @@
-package com.oneself.model.entity;
+package com.oneself.model.pojo;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -10,7 +10,7 @@ import java.io.Serializable;
 /**
  * @author liuhuan
  * date 2025/1/4
- * packageName com.oneself.model.entity
+ * packageName com.oneself.model.pojo
  * className JobDetails
  * description 任务详细信息表
  * version 1.0

@@ -17,6 +17,7 @@
     <modules>
         <module>oneself-demo-api</module>
         <module>oneself-quartz-api</module>
+        <module>oneself-user-api</module>
     </modules>
 
     <properties>
