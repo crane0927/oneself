@@ -407,6 +407,20 @@ oneself:
 ```
 3. 在 `application.yml` 中添加以下配置（JDK 21）：
 ```yaml
+oneself:
+  swagger: # swagger 主页配置
+    enable: true # 开启 Swagger 主页配置，默认 false
+    base-package: com.oneself # 扫描的包名，默认扫描 com.oneself 包下的所有接口
+    title: oneself-demo # 接口文档标题，默认 oneself
+    description: oneself-demo description # 接口文档描述，默认 oneself description
+    license: http://www.apache.org/licenses/LICENSE-2.0 # 默认的 license
+    serviceUrl: http://localhost:8080 #服务条款，默认为空
+    contact-name: crane # 联系人名称，默认 crane
+    contact-email: crane0927@163.com # 联系人邮箱，默认 crane0927@163.com
+    contact-url: https://github.com/crane0927 # 联系人 URL，默认 https://github.com/crane0927
+    version: 1.0 # 接口文档版本，默认 1.0
+    group-name: oneself-demo # 接口文档分组名称，默认 oneself
+    
 knife4j:
   enable: true # 开启增强配置，启用 Knife4j 功能
   documents: # 自定义文档集合，该属性是数组
@@ -454,7 +468,7 @@ knife4j:
 </dependency>
 ```
 2. 在 `application.yml` 中添加以下配置：
-```yml
+```yaml
 oneself:
   file:
     ftp:
