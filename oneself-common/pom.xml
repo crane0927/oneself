@@ -63,9 +63,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <encoding>UTF-8</encoding>
+                    <source>21</source> <!-- 源代码的 JDK 版本 -->
+                    <target>21</target> <!-- 生成的 class 文件的 JDK 版本 -->
+                    <encoding>UTF8</encoding> <!-- 编码格式 -->
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
