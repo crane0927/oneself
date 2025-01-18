@@ -25,7 +25,7 @@ public class ResponseVO<T> implements Serializable {
     private Integer msgCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
     @Schema(description = "状态码说明", example = "请求失败")
     private String message = "请求失败";
-    @Schema(description = "请求路径", example = "/snc-audit")
+    @Schema(description = "请求路径", example = "/oneself")
     private String path = null;
     @Schema(description = "返回数据", example = "false")
     private T data;
