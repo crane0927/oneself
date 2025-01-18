@@ -10,15 +10,15 @@ import org.springframework.context.ConfigurableApplicationContext;
  * @author liuhuan
  * date 2025/1/17
  * packageName com.oneself
- * className UserApplication
+ * className SystemApplication
  * description
  * version 1.0
  */
 @EnableDiscoveryClient
 @SpringBootApplication
-public class UserApplication {
+public class SystemApplication {
     public static void main(String[] args) {
-        ConfigurableApplicationContext application = SpringApplication.run(UserApplication.class, args);
+        ConfigurableApplicationContext application = SpringApplication.run(SystemApplication.class, args);
         // 使用工具类 打印启动信息
         ApplicationStartupUtils.printStartupInfo(application.getEnvironment());
     }

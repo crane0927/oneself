@@ -14,16 +14,15 @@ spring:
         namespace: dev # 配置命名空间，使用命名空间唯一 ID
 
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/oneself-user?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai&useSSL=false
+    url: jdbc:mysql://127.0.0.1:3306/oneself-system?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai&useSSL=false
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: liuhuan
     password: Z6eQaNaitK5vSX
 
-
 mybatis-plus:
   mapper-locations: classpath:mapper/**/*Mapper.xml
   configuration:
-    map-underscore-to-camel-case: false
+    map-underscore-to-camel-case: true # 驼峰命名
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 控制台打印完整带参数 SQL 语句
 
 
@@ -31,9 +30,9 @@ oneself:
   swagger:
     enable: true
     base-package: com.oneself
-    title: oneself-user
-    description: oneself-user description
-    group-name: oneself-user
+    title: oneself-system
+    description: oneself-system description
+    group-name: oneself-system
 
 knife4j:
   enable: true

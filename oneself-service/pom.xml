@@ -17,7 +17,7 @@
     <modules>
         <module>oneself-demo</module>
         <module>oneself-quartz</module>
-        <module>oneself-user</module>
+        <module>oneself-system</module>
     </modules>
 
     <properties>

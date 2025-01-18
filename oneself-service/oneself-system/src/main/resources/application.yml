@@ -1,6 +1,6 @@
 spring:
   application:
-    name: oneself-user
+    name: oneself-system
   profiles:
     active: dev # 设置为开发环境
 #  config:
@@ -9,6 +9,6 @@ spring:
 server:
   port: 9013
   servlet:
-    context-path: /oneself-user
+    context-path: /oneself-system
     session:
       timeout: 600
