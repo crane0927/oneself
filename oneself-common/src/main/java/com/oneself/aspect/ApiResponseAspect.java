@@ -1,5 +1,6 @@
 package com.oneself.aspect;
 
+import com.oneself.model.vo.PageVO;
 import com.oneself.model.vo.ResponseVO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -23,7 +24,7 @@ import java.util.Objects;
 @Component
 public class ApiResponseAspect {
 
-    @Around("execution(* com.*.controller..*(..))")
+    @Around("execution(* com.oneself..controller..*(..))")
     public Object wrapApiResponse(ProceedingJoinPoint joinPoint) {
         Object result;
         String path;
@@ -39,6 +40,9 @@ public class ApiResponseAspect {
             // 如果返回值是 ResponseVO，设置 path
             if (result instanceof ResponseVO) {
                 ((ResponseVO<?>) result).setPath(path);
+            }
+            if (result instanceof PageVO<?>) {
+                ((PageVO<?>) result).setPath(path);
             }
             // 返回结果
             return result;
