@@ -1,9 +1,8 @@
 package com.oneself.dept.controller;
 
-import com.oneself.annotation.LogRequestDetails;
 import com.oneself.annotation.RequireLogin;
 import com.oneself.common.model.enums.StatusEnum;
-import com.oneself.dept.model.dto.AddDeptDTO;
+import com.oneself.dept.model.dto.DeptDTO;
 import com.oneself.dept.model.dto.PageDeptDTO;
 import com.oneself.dept.model.vo.DeptVO;
 import com.oneself.dept.service.DeptService;
@@ -12,10 +11,15 @@ import com.oneself.model.vo.PageVO;
 import com.oneself.model.vo.ResponseVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author liuhuan
@@ -27,7 +31,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Tag(name = "部门信息")
 @Slf4j
-@LogRequestDetails
+//@LogRequestDetails
 @RequireLogin
 @RestController
 @RequestMapping({"/dept"})
@@ -41,7 +45,7 @@ public class DeptController {
 
     @Operation(summary = "新增部门")
     @PostMapping({"/add"})
-    public ResponseVO<Boolean> add(@RequestBody AddDeptDTO dto) {
+    public ResponseVO<Boolean> add(@RequestBody DeptDTO dto) {
         Integer size = deptService.addDept(dto);
         if (ObjectUtils.isEmpty(size)) {
             return ResponseVO.failure("新增部门失败");
@@ -55,10 +59,10 @@ public class DeptController {
         return ResponseVO.success(deptService.getDept(id));
     }
 
-    @Operation(summary = "更新部门")
-    @PutMapping({"/update"})
-    public ResponseVO<Boolean> update(@RequestBody AddDeptDTO dto) {
-        Integer size = deptService.updateDept(dto);
+    @Operation(summary = "修改部门")
+    @PutMapping({"/update/{id}"})
+    public ResponseVO<Boolean> update(@PathVariable("id") Long id, @RequestBody DeptDTO dto) {
+        Integer size = deptService.updateDept(id, dto);
         if (ObjectUtils.isEmpty(size)) {
             return ResponseVO.failure("更新部门失败");
         }
@@ -66,9 +70,9 @@ public class DeptController {
     }
 
     @Operation(summary = "删除部门")
-    @DeleteMapping({"/delete/{id}"})
-    public ResponseVO<Boolean> delete(@PathVariable("id") Long id) {
-        Integer size = deptService.deleteDept(id);
+    @DeleteMapping({"/delete"})
+    public ResponseVO<Boolean> delete(@RequestBody @Valid @NotEmpty List<@NotNull Long> ids) {
+        Integer size = deptService.deleteDept(ids);
         if (ObjectUtils.isEmpty(size)) {
             return ResponseVO.failure("删除部门失败");
         }
@@ -76,9 +80,9 @@ public class DeptController {
     }
 
     @Operation(summary = "更新部门状态")
-    @PutMapping({"/update/status/{id}/{status}"})
-    public ResponseVO<Boolean> updateStatus(@PathVariable("id") Long id, @PathVariable("status") StatusEnum status) {
-        Integer updateStatus = deptService.updateStatus(id, status);
+    @PutMapping({"/update/status/{status}"})
+    public ResponseVO<Boolean> updateStatus(@RequestBody @Valid @NotEmpty List<@NotNull Long> ids, @PathVariable("status") StatusEnum status) {
+        Integer updateStatus = deptService.updateStatus(ids, status);
         if (ObjectUtils.isEmpty(updateStatus)) {
             return ResponseVO.failure("更新部门状态失败");
         }
