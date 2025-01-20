@@ -1,5 +1,6 @@
 package com.oneself.model.vo;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -7,6 +8,8 @@ import org.springframework.http.HttpStatus;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 /**
@@ -90,5 +93,24 @@ public class PageVO<T> extends ResponseVO<PageVO.DataVO<T>> {
 
         return pageVO;
     }
+
+    /**
+     * 分页查询结果转换方法
+     *
+     * 该方法用于将分页查询结果转换为统一的分页响应对象，支持自定义的映射逻辑。
+     *
+     * @param page 分页对象，包含查询到的分页数据
+     * @param mapper 自定义的映射函数，将每个分页记录映射为目标对象
+     * @return 包含分页数据的 PageVO 对象
+     * @param <E> 查询结果中的实体类型
+     * @param <V> 目标映射后的数据类型
+     */
+    public static <E, V> PageVO<V> convert(Page<E> page, Function<E, V> mapper) {
+        List<V> records = page.getRecords().stream()
+                .map(mapper)
+                .collect(Collectors.toList());
+        return PageVO.success(records, page.getTotal(), page.getPages(), page.getCurrent());
+    }
+
 
 }
