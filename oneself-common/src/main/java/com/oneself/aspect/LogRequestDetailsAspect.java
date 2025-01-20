@@ -44,17 +44,14 @@ public class LogRequestDetailsAspect {
         String method = httpServletRequest.getMethod();
 
         log.info("=== Request Details ===");
-        log.info("Request URL: {} [{}]", url, method);
-        log.info("Class: {} Method: {}", className, methodName);
+        log.info("Request URL[{}]: {} ", method, url);
+        log.info("Class Method: {}.{}", className, methodName);
         // 处理路径参数
         Object[] args = joinPoint.getArgs();
         for (int i = 0; i < args.length; i++) {
-            String params;
-            if (args[i] instanceof Enum) {
-                params = args[i].toString();
-            } else {
-                params = objectMapper.writeValueAsString(SensitiveDataUtils.copyAndMaskSensitiveData(args[i]));
-            }
+            String params = (args[i] instanceof Enum)
+                    ? args[i].toString()
+                    : objectMapper.writeValueAsString(SensitiveDataUtils.copyAndMaskSensitiveData(args[i]));
             // 屏蔽请求参数中的敏感数据
             log.info("Request Parameters {}: {}", i + 1, params);
         }
@@ -70,16 +67,16 @@ public class LogRequestDetailsAspect {
         }
 
         // 深拷贝并屏蔽返回值中的敏感数据
-//        Object maskedResult = SensitiveDataUtils.copyAndMaskSensitiveData(result);
-//        String response = objectMapper.writeValueAsString(maskedResult);
+        Object maskedResult = SensitiveDataUtils.copyAndMaskSensitiveData(result);
+        String response = objectMapper.writeValueAsString(maskedResult);
 
         // 获取总耗时
         long totalTime = System.currentTimeMillis() - startTime;
 
 
-//        log.info("Response: {}", response);
+        log.info("Response: {}", response);
         log.info("Total Time: {}ms", totalTime);
-        log.info("=======================");
+        log.info("=== Request End ===");
 
         return result;
     }

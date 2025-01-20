@@ -5,6 +5,7 @@ import com.oneself.annotation.Sensitive;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
 
 /**
  * @author liuhuan
@@ -32,13 +33,18 @@ public class SensitiveDataUtils {
 
         try {
             // 使用深拷贝保证不修改原始对象
+            // TODO 由于深拷贝过程中使用了 writeValueAsString 和 readValue，这会导致原始对象的类型信息和泛型信息在反序列化时丢失。
+            // TODO 但是使用原始数据会导致返回给前端的数据发生改变
             String json = objectMapper.writeValueAsString(obj);
             Object copy = objectMapper.readValue(json, obj.getClass());
             maskSensitiveData(copy);
             return copy;
+
+//            maskSensitiveData(obj);
+//            return obj;
         } catch (Exception e) {
-            log.error("Error during data copy and masking: {},{}", e, e.getMessage());
-            throw new RuntimeException("Error during data copy and masking", e);
+            log.error("在数据复制和屏蔽期间发生错误: {},{}", e, e.getMessage());
+            throw new RuntimeException("在数据复制和屏蔽期间发生错误", e);
         }
     }
 
@@ -53,8 +59,13 @@ public class SensitiveDataUtils {
         }
 
         try {
-            // 如果是基本类型、包装类或字符串，直接返回
-            if (obj instanceof String || obj.getClass().isPrimitive() || isWrapperType(obj.getClass())) {
+            // 如果是基本类型、包装类、字符串或枚举类型，直接返回
+            if (obj instanceof String || obj.getClass().isPrimitive() || isWrapperType(obj.getClass()) || obj.getClass().isEnum()) {
+                return;
+            }
+
+            // 如果是日期时间类型，直接返回
+            if (obj instanceof LocalDateTime) {
                 return;
             }
 
@@ -69,18 +80,24 @@ public class SensitiveDataUtils {
             // 如果是普通对象，反射检查每个字段
             Field[] fields = obj.getClass().getDeclaredFields();
             for (Field field : fields) {
-                // TODO 对于范型处理有问题 java.lang.reflect.InaccessibleObjectException
-                field.setAccessible(true);  // 尝试设置可访问
+                try {
+                    field.setAccessible(true); // 设置可访问性
+                } catch (Exception e) {
+                    continue;  // 跳过无法访问的字段
+                }
+
                 if (field.isAnnotationPresent(Sensitive.class)) {
-                    field.set(obj, "***"); // 屏蔽敏感字段
+                    field.set(obj, "*"); // 屏蔽敏感字段
                 } else {
                     Object value = field.get(obj);
-                    maskSensitiveData(value); // 递归处理
+                    if (value != null) {
+                        maskSensitiveData(value);
+                    }
                 }
             }
         } catch (IllegalAccessException e) {
-            log.error("Error masking sensitive data: {},{}", e, e.getMessage());
-            throw new RuntimeException("Error masking sensitive data", e);
+            log.error("屏蔽敏感数据错误: {},{}", e, e.getMessage());
+            throw new RuntimeException("屏蔽敏感数据错误", e);
         }
     }
 
