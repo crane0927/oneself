@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.oneself.common.model.enums.StatusEnum;
 import com.oneself.model.pojo.BasePojo;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -20,6 +21,7 @@ import java.io.Serial;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
+@Builder
 @TableName("dept")
 public class Dept extends BasePojo {
     @Serial

@@ -1,5 +1,6 @@
 package com.oneself.dept.controller;
 
+import com.oneself.annotation.LogRequestDetails;
 import com.oneself.annotation.RequireLogin;
 import com.oneself.common.model.enums.StatusEnum;
 import com.oneself.dept.model.dto.DeptDTO;
@@ -20,6 +21,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -32,7 +34,7 @@ import java.util.List;
  */
 @Tag(name = "部门信息")
 @Slf4j
-//@LogRequestDetails
+@LogRequestDetails
 @RequireLogin
 @RestController
 @RequestMapping({"/dept"})
@@ -63,8 +65,11 @@ public class DeptController {
     @Operation(summary = "修改部门")
     @PutMapping({"/update/{id}"})
     public ResponseVO<Boolean> update(@PathVariable("id") Long id, @RequestBody DeptDTO dto) {
+        // 1. 更新当前部门
         Integer size = deptService.updateDept(id, dto);
         if (ObjectUtils.isEmpty(size)) {
+            // 2. 更新部门及子部门状态
+            deptService.updateStatus(Collections.singletonList(id), dto.getStatus());
             return ResponseVO.failure("更新部门失败");
         }
         return ResponseVO.success(Boolean.TRUE);

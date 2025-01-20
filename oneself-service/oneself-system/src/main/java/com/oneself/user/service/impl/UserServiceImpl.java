@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Integer addUser(AddUserDTO dto) {
         // 1. 构建用户对象
-        User user = new User();
+        User user = User.builder().build();
         BeanUtils.copyProperties(dto, user);
         // 2. 校验登录名是否重复
         checkLoginName(user);

@@ -3,10 +3,11 @@ package com.oneself.user.model.pojo;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.oneself.user.model.enums.SexEnum;
 import com.oneself.common.model.enums.StatusEnum;
-import com.oneself.user.model.enums.TypeEnum;
 import com.oneself.model.pojo.BasePojo;
+import com.oneself.user.model.enums.SexEnum;
+import com.oneself.user.model.enums.TypeEnum;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -23,6 +24,7 @@ import java.time.LocalDateTime;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
+@Builder
 @TableName("user")
 public class User extends BasePojo {
     @Serial

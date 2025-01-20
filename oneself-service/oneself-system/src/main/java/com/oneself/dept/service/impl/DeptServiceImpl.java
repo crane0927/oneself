@@ -14,12 +14,16 @@ import com.oneself.dept.service.DeptService;
 import com.oneself.model.dto.PageDTO;
 import com.oneself.model.vo.PageVO;
 import com.oneself.model.vo.ResponseVO;
+import com.oneself.user.mapper.UserMapper;
+import com.oneself.user.model.pojo.User;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -36,16 +40,18 @@ import java.util.*;
 public class DeptServiceImpl implements DeptService {
 
     private final DeptMapper deptMapper;
+    private final UserMapper userMapper;
 
     @Autowired
-    public DeptServiceImpl(DeptMapper deptMapper) {
+    public DeptServiceImpl(DeptMapper deptMapper, UserMapper userMapper) {
         this.deptMapper = deptMapper;
+        this.userMapper = userMapper;
     }
 
     @Override
     public Integer addDept(DeptDTO dto) {
         // 1. 构建部门对象
-        Dept dept = new Dept();
+        Dept dept = Dept.builder().build();
         BeanUtils.copyProperties(dto, dept);
         Long parentId = dept.getParentId();
         if (parentId != 0) {
@@ -73,9 +79,10 @@ public class DeptServiceImpl implements DeptService {
     }
 
     @Override
+    @Transactional
     public Integer updateDept(Long id, DeptDTO dto) {
         // 1. 构建部门对象
-        Dept dept = new Dept();
+        Dept dept = Dept.builder().build();
         BeanUtils.copyProperties(dto, dept);
         dept.setId(id);
         // 2. 校验部门名称是否重复
@@ -93,8 +100,19 @@ public class DeptServiceImpl implements DeptService {
     }
 
     @Override
+    @Transactional
     public Integer deleteDept(List<Long> ids) {
-        return 0;
+        // 1. 获取当前部门 ID 和所有子部门 ID
+        List<Long> allChildDeptIds = getAllChildDeptIds(ids);
+        if (CollectionUtils.isEmpty(allChildDeptIds)) {
+            throw new RuntimeException("删除失败，该部门不存在");
+        }
+        // 2. 删除部门下所有的用户
+        List<User> users = userMapper.selectList(new LambdaQueryWrapper<User>()
+                .in(User::getDeptId, allChildDeptIds));
+        userMapper.deleteBatchIds(users);
+        // 3. 删除部门
+        return deptMapper.deleteBatchIds(allChildDeptIds);
     }
 
     @Override
@@ -123,12 +141,64 @@ public class DeptServiceImpl implements DeptService {
     }
 
     @Override
+    @Transactional
     public Integer updateStatus(List<Long> ids, StatusEnum status) {
-        LambdaUpdateWrapper<Dept> wrapper = new LambdaUpdateWrapper<>();
-        wrapper.in(Dept::getId, ids)
-                .set(Dept::getStatus, status.getCode());
+        // 1. 获取当前部门 ID 和所有子部门 ID
+        List<Long> allChildDeptIds = getAllChildDeptIds(ids);
 
+        // 2. 更新用户状态
+        userMapper.update(User.builder().status(status).build(),
+                new LambdaUpdateWrapper<User>().in(User::getDeptId, allChildDeptIds));
+
+        // 3. 更新部门及子部门状态
+        LambdaUpdateWrapper<Dept> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.in(Dept::getId, allChildDeptIds)
+                .set(Dept::getStatus, status.getCode());
         return deptMapper.update(null, wrapper);
+    }
+
+    /**
+     * 递归查询所有子部门的 ID
+     *
+     * @param ids 父部门 ID 列表
+     * @return 所有子部门的 ID 列表
+     */
+    private List<Long> getAllChildDeptIds(List<Long> ids) {
+        List<Long> result = new ArrayList<>(ids);
+        // 递归查询子部门
+        findChildDeptIds(ids, result);
+        return result;
+    }
+
+    /**
+     * 辅助递归方法
+     *
+     * @param ids    父部门 ID 列表
+     * @param result 保存结果的列表
+     */
+    private void findChildDeptIds(List<Long> ids, List<Long> result) {
+        // 如果传入的父部门 ID 列表为空，直接结束递归
+        if (ids == null || ids.isEmpty()) {
+            return;
+        }
+
+        // 查询当前父部门的子部门
+        List<Long> childIds = deptMapper.selectList(
+                        new LambdaQueryWrapper<Dept>().in(Dept::getParentId, ids))
+                .stream()
+                .map(Dept::getId)
+                .toList();
+
+        // 如果没有子部门，结束递归
+        if (childIds.isEmpty()) {
+            return;
+        }
+
+        // 将当前层级的子部门 ID 添加到结果中
+        result.addAll(childIds);
+
+        // 递归查询每个子部门的子部门
+        findChildDeptIds(childIds, result);
     }
 
     @Override
