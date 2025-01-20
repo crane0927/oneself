@@ -41,6 +41,7 @@
         <commons-io.version>2.14.0</commons-io.version>
         <commons-net.version>3.9.0</commons-net.version>
         <jsch.version>0.1.55</jsch.version>
+        <hibernate-validator.version>8.0.2.Final</hibernate-validator.version>
     </properties>
 
     <dependencyManagement>
@@ -175,6 +176,14 @@
             <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
             <version>${knife4j-openapi3-jakarta-spring-boot-starter.version}</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator -->
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate-validator.version}</version>
+        </dependency>
+
 
 
         <!-- JSON Processing -->

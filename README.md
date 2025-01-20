@@ -67,6 +67,7 @@ main
 ## 标准启动类
 ```java
 @SpringBootApplication
+@Validated
 public class DemoApplication {
 
     public static void main(String[] args) {
