@@ -554,4 +554,4 @@ knife4j:
   enable: true # 开启增强配置，启用 Knife4j 功能
   production: true # 是否开启生产环境保护策略，生产环境中会隐藏 Swagger 界面
 ```
-2. AOP 拦截器 @LogRequestDetails 在 SensitiveDataUtils 进行敏感信息处理范型数据时报错 java.lang.reflect.InaccessibleObjectException
+2. 深拷贝过程中使用了 writeValueAsString 和 readValue，导致原始对象的类型信息和泛型信息在反序列化时丢失问题（SensitiveDataUtils 38 - 41 行）
