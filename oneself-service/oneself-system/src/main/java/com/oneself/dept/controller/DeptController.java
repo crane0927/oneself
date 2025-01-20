@@ -4,6 +4,7 @@ import com.oneself.annotation.RequireLogin;
 import com.oneself.common.model.enums.StatusEnum;
 import com.oneself.dept.model.dto.DeptDTO;
 import com.oneself.dept.model.dto.PageDeptDTO;
+import com.oneself.dept.model.vo.DeptTreeVO;
 import com.oneself.dept.model.vo.DeptVO;
 import com.oneself.dept.service.DeptService;
 import com.oneself.model.dto.PageDTO;
@@ -93,5 +94,11 @@ public class DeptController {
     @PostMapping({"/page/list"})
     public PageVO<DeptVO> pageList(@RequestBody PageDTO<PageDeptDTO> dto) {
         return deptService.pageList(dto);
+    }
+
+    @Operation(summary = "查询部门树")
+    @GetMapping({"/get/tree"})
+    public ResponseVO<List<DeptTreeVO>> getTree() {
+        return deptService.getTree();
     }
 }

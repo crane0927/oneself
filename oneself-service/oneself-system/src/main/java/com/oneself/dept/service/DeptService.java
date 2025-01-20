@@ -3,9 +3,11 @@ package com.oneself.dept.service;
 import com.oneself.common.model.enums.StatusEnum;
 import com.oneself.dept.model.dto.DeptDTO;
 import com.oneself.dept.model.dto.PageDeptDTO;
+import com.oneself.dept.model.vo.DeptTreeVO;
 import com.oneself.dept.model.vo.DeptVO;
 import com.oneself.model.dto.PageDTO;
 import com.oneself.model.vo.PageVO;
+import com.oneself.model.vo.ResponseVO;
 
 import java.util.List;
 
@@ -29,4 +31,6 @@ public interface DeptService {
     PageVO<DeptVO> pageList(PageDTO<PageDeptDTO> dto);
 
     Integer updateStatus(List<Long> ids, StatusEnum status);
+
+    ResponseVO<List<DeptTreeVO>> getTree();
 }

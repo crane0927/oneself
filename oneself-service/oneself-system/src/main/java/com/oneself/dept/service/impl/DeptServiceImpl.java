@@ -8,10 +8,12 @@ import com.oneself.dept.mapper.DeptMapper;
 import com.oneself.dept.model.dto.DeptDTO;
 import com.oneself.dept.model.dto.PageDeptDTO;
 import com.oneself.dept.model.pojo.Dept;
+import com.oneself.dept.model.vo.DeptTreeVO;
 import com.oneself.dept.model.vo.DeptVO;
 import com.oneself.dept.service.DeptService;
 import com.oneself.model.dto.PageDTO;
 import com.oneself.model.vo.PageVO;
+import com.oneself.model.vo.ResponseVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -19,8 +21,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author liuhuan
@@ -129,6 +130,40 @@ public class DeptServiceImpl implements DeptService {
 
         return deptMapper.update(null, wrapper);
     }
+
+    @Override
+    public ResponseVO<List<DeptTreeVO>> getTree() {
+        // 1. 查询全部
+        List<Dept> deptList = deptMapper.selectList(null);
+        if (ObjectUtils.isEmpty(deptList)) {
+            return ResponseVO.success(Collections.emptyList());
+        }
+        // 2. 转换为 TreeVO
+        List<DeptTreeVO> treeVOS = deptList.stream().map(DeptTreeVO::new).toList();
+
+        // 3. 构建 id 与 TreeVO 的映射
+        Map<Long, DeptTreeVO> idToTreeVOMap = new HashMap<>();
+        treeVOS.forEach(vo -> idToTreeVOMap.put(vo.getId(), vo));
+
+        // 4. 构建树结构
+        List<DeptTreeVO> rootNodes = new ArrayList<>();
+        // 遍历所有 TreeVO，组装树结构
+        for (DeptTreeVO vo : treeVOS) {
+            if (vo.getParentId() == null || vo.getParentId() == 0) {
+                // 没有父节点的为顶级节点
+                rootNodes.add(vo);
+            } else {
+                // 找到父节点，并把当前节点加入父节点的 children 中
+                DeptTreeVO parent = idToTreeVOMap.get(vo.getParentId());
+                if (parent != null) {
+                    parent.getChildren().add(vo);
+                }
+            }
+        }
+
+        return ResponseVO.success(rootNodes);
+    }
+
 
     /**
      * 校验部门名称是否重复
