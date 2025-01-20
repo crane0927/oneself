@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
+import org.springframework.validation.annotation.Validated;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -12,6 +13,7 @@ import java.util.Optional;
 
 @Slf4j
 @SpringBootApplication
+@Validated
 public class GatewayApplication {
 
     public static void main(String[] args) {
