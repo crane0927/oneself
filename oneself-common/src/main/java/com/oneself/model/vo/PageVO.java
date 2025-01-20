@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 
 /**
@@ -108,7 +107,7 @@ public class PageVO<T> extends ResponseVO<PageVO.DataVO<T>> {
     public static <E, V> PageVO<V> convert(Page<E> page, Function<E, V> mapper) {
         List<V> records = page.getRecords().stream()
                 .map(mapper)
-                .collect(Collectors.toList());
+                .toList();
         return PageVO.success(records, page.getTotal(), page.getPages(), page.getCurrent());
     }
 
