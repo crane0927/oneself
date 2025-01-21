@@ -9,7 +9,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>oneself-user-api</artifactId>
+    <artifactId>oneself-system-api</artifactId>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
