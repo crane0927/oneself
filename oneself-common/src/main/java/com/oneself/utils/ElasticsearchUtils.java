@@ -44,7 +44,7 @@ public class ElasticsearchUtils {
      */
     @PostConstruct
     public synchronized void init() {
-        if (client == null && properties.isEnabled()) {
+        if (client == null && properties.isEnable()) {
             log.info("初始化 Elasticsearch 客户端");
             // 构建 RestClient
             RestClientBuilder restClientBuilder = RestClient.builder(

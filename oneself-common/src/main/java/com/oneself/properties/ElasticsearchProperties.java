@@ -21,7 +21,7 @@ public class ElasticsearchProperties {
     /**
      * 是否启用 Elasticsearch 配置
      */
-    private boolean enabled;
+    private boolean enable;
 
     /**
      * 节点地址（单机模式支持一个地址，集群模式支持多个地址）

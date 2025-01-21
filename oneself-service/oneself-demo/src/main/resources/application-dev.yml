@@ -6,7 +6,7 @@ oneself:
     description: oneself-demo description # 接口文档描述，默认 oneself description
     group-name: oneself-demo # 接口文档分组名称，默认 oneself
   elasticsearch:
-    enabled: true
+    enable: true
     nodes:
       - "127.0.0.1:9200"
     connect-timeout: 5000
