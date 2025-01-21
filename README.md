@@ -372,6 +372,101 @@ public class DemoApplication {
 
 ```
 ---
+## log4j2.xml
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<!-- status: Log4j2 内部日志的输出级别 -->
+<!-- monitorInterval: 定时检测配置文件的修改,有变化则自动重新加载配置,时间单位为秒,最小间隔为 5s -->
+<Configuration status="WARN" monitorInterval="600">
+    <!-- properties: 设置全局变量 -->
+    <properties>
+        <property name="LOG_HOME">logs</property>
+        <property name="LOG_NAME">${sys:log.name:-info}</property>
+        <property name="pattern">%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %c{1.1.1.*}[%M : %L(%tid)] [%X{traceId}] - %msg%n</property>
+    </properties>
+    <!-- Appenders: 定义日志输出目的地，内容和格式等 -->
+    <Appenders>
+        <console name="Console" target="SYSTEM_OUT">
+            <!-- pattern: 日期,线程名,日志级别,日志名称,日志信息,换行 -->
+            <PatternLayout pattern="${pattern}"/>
+        </console>
+        <!-- info log -->
+        <!-- RollingFile: 日志输出到文件,下面的文件都使用相对路径 -->
+        <!-- fileName: 当前日志输出的文件名称 -->
+        <!-- filePattern: 备份日志文件名称，要求按年月日滚动生成日志文件 -->
+        <RollingRandomAccessFile name="InfoFile" fileName="${LOG_HOME}/${LOG_NAME}-info.log" filePattern="${LOG_HOME}/${LOG_NAME}-info-%d{yyyy-MM-dd}-%i.log">
+            <!--控制台只输出 level 及其以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            <!-- 日期,容器主机名,应用名称,pod哈希码,日志名称,行号,日志级别,日志信息,换行等 （以单个空格做为分隔符） -->
+            <PatternLayout pattern="${pattern}"/>
+            <!--Policies: 触发策略决定何时执行备份 -->
+            <Policies>
+                <!-- 单个日志文件生成的大小-->
+                <SizeBasedTriggeringPolicy size="200MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30">
+                <!-- 指向所需删除的日志目录名称 -->
+                <Delete basePath="${LOG_HOME}">
+                    <!-- 删除 7 天前的日志文件，格式为：P天数D -->
+                    <IfLastModified age="P7D"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingRandomAccessFile>
+        <!-- debug log -->
+        <RollingRandomAccessFile name="DebugFile" fileName="${LOG_HOME}/${LOG_NAME}-debug.log" filePattern="${LOG_HOME}/${LOG_NAME}-debug-%d{yyyy-MM-dd}-%i.log">
+            <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${pattern}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="200MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30">
+                <Delete basePath="${LOG_HOME}">
+                    <IfLastModified age="P7D"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingRandomAccessFile>
+        <!-- warn log -->
+        <RollingRandomAccessFile name="WarnFile" fileName="${LOG_HOME}/${LOG_NAME}-warn.log" filePattern="${LOG_HOME}/${LOG_NAME}-warn-%d{yyyy-MM-dd}-%i.log">
+            <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${pattern}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="200MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30">
+                <Delete basePath="${LOG_HOME}">
+                    <IfLastModified age="P7D"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingRandomAccessFile>
+        <!-- error log -->
+        <RollingRandomAccessFile name="ErrorFile" fileName="${LOG_HOME}/${LOG_NAME}-error.log" filePattern="${LOG_HOME}/${LOG_NAME}-error-%d{yyyy-MM-dd}-%i.log">
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${pattern}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="200MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30">
+                <Delete basePath="${LOG_HOME}">
+                    <IfLastModified age="P7D"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingRandomAccessFile>
+    </Appenders>
+    <!--Loggers: 定义日志级别和使用的输出 -->
+    <Loggers>
+        <!-- Root:日志默认打印到控制台 -->
+        <!-- level日志级别: ALL < TRACE < DEBUG < INFO < WARN < ERROR < FATAL < OFF -->
+        <Root level="INFO">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="InfoFile"/>
+            <AppenderRef ref="DebugFile"/>
+            <AppenderRef ref="WarnFile"/>
+            <AppenderRef ref="ErrorFile"/>
+        </Root>
+    </Loggers>
+</Configuration>
+```
+---
 
 ## 环境（JDK 1.8 升级至 JDK 21）
 - ~~JDK 1.8~~ -> JDK 21

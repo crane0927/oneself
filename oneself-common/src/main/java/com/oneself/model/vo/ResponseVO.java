@@ -29,15 +29,16 @@ public class ResponseVO<T> implements Serializable {
     private String path = null;
     @Schema(description = "返回数据", example = "false")
     private T data;
+    @Schema(description = "请求追踪 ID")
+    private String traceId;
 
     ResponseVO() {
 //        throw new AssertionError("此工具类不允许实例化");
     }
 
-    private ResponseVO(int msgCode, String message, String path, T data) {
+    private ResponseVO(int msgCode, String message, T data) {
         this.msgCode = msgCode;
         this.message = message;
-        this.path = path;
         this.data = data;
     }
 
@@ -50,7 +51,7 @@ public class ResponseVO<T> implements Serializable {
      */
     public static <T> ResponseVO<T> success(T data) {
         // 返回状态码 200，表示成功，并且设置 message 为 "请求成功"
-        return new ResponseVO<>(HttpStatus.OK.value(), "请求成功", null, data);
+        return new ResponseVO<>(HttpStatus.OK.value(), "请求成功", data);
     }
 
     /**
@@ -61,9 +62,10 @@ public class ResponseVO<T> implements Serializable {
      * @param <T>  数据类型
      * @return 成功的 ResponseVO 实例
      */
+    @Deprecated
     public static <T> ResponseVO<T> success(T data, String path) {
         // 返回带有路径信息的成功响应
-        return new ResponseVO<>(HttpStatus.OK.value(), "请求成功", path, data);
+        return new ResponseVO<>(HttpStatus.OK.value(), "请求成功", data);
     }
 
     /**
@@ -75,7 +77,7 @@ public class ResponseVO<T> implements Serializable {
      */
     public static <T> ResponseVO<T> failure(String errorMessage) {
         // 返回状态码 500，表示服务器内部错误，并设置相应的错误信息
-        return new ResponseVO<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), errorMessage, null, null);
+        return new ResponseVO<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), errorMessage, null);
     }
 
     /**
@@ -88,7 +90,7 @@ public class ResponseVO<T> implements Serializable {
      */
     public static <T> ResponseVO<T> failure(String errorMessage, HttpStatus status) {
         // 返回状态码 500，表示服务器内部错误，并设置相应的错误信息
-        return new ResponseVO<>(status.value(), errorMessage, null, null);
+        return new ResponseVO<>(status.value(), errorMessage, null);
     }
 
 }

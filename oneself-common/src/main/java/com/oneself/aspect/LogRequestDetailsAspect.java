@@ -1,10 +1,13 @@
 package com.oneself.aspect;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oneself.filter.TraceFilter;
+import com.oneself.model.vo.ResponseVO;
 import com.oneself.utils.JacksonUtils;
 import com.oneself.utils.SensitiveDataUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.ThreadContext;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -35,49 +38,67 @@ public class LogRequestDetailsAspect {
     public Object logDetails(ProceedingJoinPoint joinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
 
-        // 获取类全路径和方法名
+        // 获取请求信息
         String className = joinPoint.getTarget().getClass().getName();
         String methodName = ((MethodSignature) joinPoint.getSignature()).getMethod().getName();
-
-        // 获取请求相关信息
         String url = httpServletRequest.getRequestURL().toString();
+        String uri = httpServletRequest.getRequestURI();
         String method = httpServletRequest.getMethod();
 
         log.info("=== Request Details ===");
         log.info("Request URL[{}]: {} ", method, url);
         log.info("Class Method: {}.{}", className, methodName);
-        // 处理路径参数
-        Object[] args = joinPoint.getArgs();
-        for (int i = 0; i < args.length; i++) {
-            String params = (args[i] instanceof Enum)
-                    ? args[i].toString()
-                    : objectMapper.writeValueAsString(SensitiveDataUtils.copyAndMaskSensitiveData(args[i]));
-            // 屏蔽请求参数中的敏感数据
-            log.info("Request Parameters {}: {}", i + 1, params);
-        }
 
+        // 记录请求参数
+        logRequestParameters(joinPoint);
 
         // 执行目标方法
         Object result;
         try {
             result = joinPoint.proceed();
         } catch (Throwable throwable) {
-            log.error("Error Occurred: {}", throwable.getMessage());
+            log.error("Error occurred: {}", throwable.getMessage(), throwable);
             throw throwable;
         }
 
-        // 深拷贝并屏蔽返回值中的敏感数据
-        Object maskedResult = SensitiveDataUtils.copyAndMaskSensitiveData(result);
-        String response = objectMapper.writeValueAsString(maskedResult);
+        // 如果返回值是 ResponseVO，设置 path
+        if (result instanceof ResponseVO) {
+            ((ResponseVO<?>) result).setPath(uri);
+            ((ResponseVO<?>) result).setTraceId(ThreadContext.get(TraceFilter.TRACE_ID));
+        }
 
-        // 获取总耗时
-        long totalTime = System.currentTimeMillis() - startTime;
-
-
-        log.info("Response: {}", response);
-        log.info("Total Time: {}ms", totalTime);
-        log.info("=== Request End ===");
-
+        // 记录响应信息
+        logResponse(result, System.currentTimeMillis() - startTime);
         return result;
+    }
+
+    /**
+     * 记录请求参数
+     */
+    private void logRequestParameters(ProceedingJoinPoint joinPoint) {
+        Object[] args = joinPoint.getArgs();
+        for (int i = 0; i < args.length; i++) {
+            try {
+                String param = objectMapper.writeValueAsString(SensitiveDataUtils.copyAndMaskSensitiveData(args[i]));
+                log.info("Request Parameter [{}]: {}", i + 1, param);
+            } catch (Exception e) {
+                log.warn("Failed to serialize parameter [{}]: {}", i + 1, e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * 记录响应结果
+     */
+    private void logResponse(Object result, long duration) {
+        try {
+            Object maskedResult = SensitiveDataUtils.copyAndMaskSensitiveData(result);
+            String response = objectMapper.writeValueAsString(maskedResult);
+            log.info("Response: {}", response);
+        } catch (Exception e) {
+            log.warn("Failed to serialize response: {}", e.getMessage());
+        }
+        log.info("Total Time: {}ms", duration);
+        log.info("=== Request End ===");
     }
 }
