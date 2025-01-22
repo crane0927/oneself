@@ -42,6 +42,13 @@ public class ResponseVO<T> implements Serializable {
         this.data = data;
     }
 
+    private ResponseVO(int msgCode, String message, String path, String traceId) {
+        this.msgCode = msgCode;
+        this.message = message;
+        this.path = path;
+        this.traceId = traceId;
+    }
+
     /**
      * 静态方法，返回一个表示成功的 ResponseVO 实例
      *
@@ -91,6 +98,19 @@ public class ResponseVO<T> implements Serializable {
     public static <T> ResponseVO<T> failure(String errorMessage, HttpStatus status) {
         // 返回状态码 500，表示服务器内部错误，并设置相应的错误信息
         return new ResponseVO<>(status.value(), errorMessage, null);
+    }
+
+    /**
+     * 静态方法，返回一个表示失败的 ResponseVO 实例 并自定义状态码
+     *
+     * @param errorMessage 错误信息
+     * @param status       Http 状态码
+     * @param <T>          数据类型
+     * @return 失败的 ResponseVO 实例
+     */
+    public static <T> ResponseVO<T> failure(String errorMessage, HttpStatus status, String path, String traceId) {
+        // 返回状态码 500，表示服务器内部错误，并设置相应的错误信息
+        return new ResponseVO<>(status.value(), errorMessage, path, traceId);
     }
 
 }
