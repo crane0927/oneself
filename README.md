@@ -469,6 +469,35 @@ public class DemoApplication {
 </Configuration>
 ```
 ---
+### 日志推送 Kafka 配置
+1. 添加 maven 依赖
+```xml
+<dependency>
+    <groupId>org.apache.kafka</groupId>
+    <artifactId>kafka-clients</artifactId>
+</dependency>
+```
+2. 配置 `log4j2.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration status="WARN" monitorInterval="600">
+    <!-- 添加 kafka 配置 -->
+    <Appenders>
+        <Kafka name="Kafka" topic="${topic name}">
+            <PatternLayout pattern="${pattern}"/>
+            <Property name="bootstrap.servers">${kafka address}</Property>
+        </Kafka>
+    </Appenders>
+
+    <Loggers>
+        <Root level="DEBUG">
+            <AppenderRef ref="Kafka"/>
+        </Root>
+        <Logger name="org.apache.kafka" level="INFO"/> <!-- 避免递归日志记录 -->
+    </Loggers>
+</Configuration>
+```
+---
 
 ## 环境（JDK 1.8 升级至 JDK 21）
 - ~~JDK 1.8~~ -> JDK 21
