@@ -373,6 +373,54 @@ public class DemoApplication {
 
 ```
 ---
+### 无主类服务打包配置
+```xml
+
+<build>
+    <!-- API 模块 无主类 -->
+    <plugins>
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <executions>
+                <execution>
+                    <id>repackage</id>
+                    <phase>none</phase>
+                </execution>
+            </executions>
+        </plugin>
+
+        <!-- 配置项目的 Java 编译器版本及其他编译相关设置 -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+                <source>21</source> <!-- 源代码的 JDK 版本 -->
+                <target>21</target> <!-- 生成的 class 文件的 JDK 版本 -->
+                <encoding>UTF8</encoding> <!-- 编码格式 -->
+                <annotationProcessorPaths>
+                    <path>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                        <version>${lombok.version}</version>
+                    </path>
+                </annotationProcessorPaths>
+            </configuration>
+        </plugin>
+
+        <!-- maven-surefire-plugin：跳过单元测试 -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+                <skip>true</skip>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+
+```
+---
 ## log4j2.xml
 ### 基础配置
 ```xml
