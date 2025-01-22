@@ -1,6 +1,6 @@
 package com.oneself.user.controller;
 
-import com.oneself.annotation.LogRequestDetails;
+import com.oneself.annotation.RequestLogging;
 import com.oneself.annotation.RequireLogin;
 import com.oneself.model.vo.ResponseVO;
 import com.oneself.user.model.dto.UserDTO;
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Tag(name = "用户信息")
 @Slf4j
-@LogRequestDetails
+@RequestLogging
 @RequireLogin
 @RestController
 @RequestMapping({"/user"})

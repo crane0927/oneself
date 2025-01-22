@@ -1,6 +1,6 @@
 package com.oneself.dept.controller;
 
-import com.oneself.annotation.LogRequestDetails;
+import com.oneself.annotation.RequestLogging;
 import com.oneself.annotation.RequireLogin;
 import com.oneself.common.model.enums.StatusEnum;
 import com.oneself.dept.model.dto.DeptDTO;
@@ -35,7 +35,7 @@ import java.util.List;
  */
 @Tag(name = "部门信息")
 @Slf4j
-@LogRequestDetails
+@RequestLogging
 @RequireLogin
 @RestController
 @RequestMapping({"/dept"})

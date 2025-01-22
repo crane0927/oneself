@@ -1,6 +1,6 @@
 package com.oneself.controller;
 
-import com.oneself.annotation.LogRequestDetails;
+import com.oneself.annotation.RequestLogging;
 import com.oneself.model.dto.*;
 import com.oneself.model.vo.QuartzTaskVO;
 import com.oneself.model.vo.ResponseVO;
@@ -26,7 +26,7 @@ import java.util.List;
  */
 @Tag(name = "Quartz 任务")
 @Slf4j
-@LogRequestDetails
+@RequestLogging
 @RestController
 @RequestMapping({"/job"})
 public class QuartzJobController {
