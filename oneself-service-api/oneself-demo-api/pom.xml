@@ -5,11 +5,11 @@
     <parent>
         <groupId>com.oneself</groupId>
         <artifactId>oneself-service-api</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <artifactId>oneself-demo-api</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>oneself-demo-api</name>
     <description>oneself-demo-api</description>
 

@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.oneself</groupId>
     <artifactId>oneself</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>oneself</name>
     <description>Parent POM for oneself project</description>
     <packaging>pom</packaging>

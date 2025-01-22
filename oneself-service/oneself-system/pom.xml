@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.oneself</groupId>
         <artifactId>oneself-service</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
 
     <artifactId>oneself-system</artifactId>
@@ -21,7 +21,7 @@
         <dependency>
             <groupId>com.oneself</groupId>
             <artifactId>oneself-system-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
@@ -46,7 +46,7 @@
         <defaultGoal>compile</defaultGoal>
 
         <!-- 项目打包后的名称 -->
-        <finalName>${project.artifactId}</finalName>
+        <finalName>${project.artifactId}-${project.version}</finalName>
 
         <!-- 定义资源配置 -->
         <resources>
@@ -160,7 +160,7 @@
                     <archive>
                         <!-- 指定程序的入口 main 函数 -->
                         <manifest>
-                            <mainClass>com.example.oneself.GatewayApplication</mainClass>
+                            <mainClass>com.oneself.SystemApplication</mainClass>
                             <addClasspath>true</addClasspath> <!-- 添加 classpath -->
                             <classpathPrefix>lib/</classpathPrefix>
                         </manifest>

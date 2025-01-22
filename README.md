@@ -88,7 +88,7 @@ public class DemoApplication {
     <defaultGoal>compile</defaultGoal>
 
     <!-- 项目打包后的名称 -->
-    <finalName>${project.artifactId}</finalName>
+    <finalName>${project.artifactId}-${project.version}</finalName>
 
     <!-- 定义资源配置 -->
     <resources>
@@ -234,7 +234,7 @@ public class DemoApplication {
         <defaultGoal>compile</defaultGoal>
 
         <!-- 项目打包后的名称 -->
-        <finalName>${project.artifactId}</finalName>
+        <finalName>${project.artifactId}-${project.version}</finalName>
 
         <!-- 定义资源配置 -->
         <resources>
@@ -518,7 +518,7 @@ public class DemoApplication {
 <dependency>
     <groupId>com.oneself</groupId>
     <artifactId>oneself-common</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 2. ~~在 `application.yml` 中添加以下配置（JDK 1.8）：~~
@@ -591,7 +591,7 @@ knife4j:
 <dependency>
     <groupId>com.oneself</groupId>
     <artifactId>oneself-common</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 2. 在 `application.yml` 中添加以下配置：
@@ -654,7 +654,7 @@ spring:
 <dependency>
     <groupId>com.oneself</groupId>
     <artifactId>oneself-common</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 2. 在 `application.yml` 中添加以下配置：

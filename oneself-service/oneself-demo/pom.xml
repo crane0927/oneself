@@ -5,11 +5,11 @@
     <parent>
         <groupId>com.oneself</groupId>
         <artifactId>oneself-service</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <artifactId>oneself-demo</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>oneself-demo</name>
     <description>oneself-demo</description>
 
@@ -30,7 +30,7 @@
         <dependency>
             <groupId>com.oneself</groupId>
             <artifactId>oneself-demo-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
@@ -50,7 +50,7 @@
         <defaultGoal>compile</defaultGoal>
 
         <!-- 项目打包后的名称 -->
-        <finalName>${project.artifactId}</finalName>
+        <finalName>${project.artifactId}-${project.version}-${project.version}</finalName>
 
         <!-- 定义资源配置 -->
         <resources>
@@ -164,7 +164,7 @@
                     <archive>
                         <!-- 指定程序的入口 main 函数 -->
                         <manifest>
-                            <mainClass>com.example.oneself.GatewayApplication</mainClass>
+                            <mainClass>com.oneself.DemoApplication</mainClass>
                             <addClasspath>true</addClasspath> <!-- 添加 classpath -->
                             <classpathPrefix>lib/</classpathPrefix>
                         </manifest>
