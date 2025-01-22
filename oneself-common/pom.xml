@@ -30,18 +30,6 @@
             <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
             <version>${mybatis-plus-spring-boot3-starter.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
-            <version>${org.bouncycastle.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpkix-jdk15on</artifactId>
-            <version>${org.bouncycastle.version}</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -77,25 +65,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <!--<build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <encoding>UTF-8</encoding>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>${lombok.version}</version>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>-->
 </project>
