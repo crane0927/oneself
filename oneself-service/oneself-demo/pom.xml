@@ -50,7 +50,7 @@
         <defaultGoal>compile</defaultGoal>
 
         <!-- 项目打包后的名称 -->
-        <finalName>${project.artifactId}-${project.version}-${project.version}</finalName>
+        <finalName>${project.artifactId}-${project.version}</finalName>
 
         <!-- 定义资源配置 -->
         <resources>
