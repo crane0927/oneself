@@ -1,6 +1,8 @@
 package com.oneself.model.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.io.Serial;
@@ -19,11 +21,22 @@ public class DeleteJobDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     @Schema(description = "任务名称", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String JobName;
+    @NotBlank(message = "任务名称不能为空")
+    @Size(max = 100, message = "任务名称长度不能超过 100 个字符")
+    private String jobName;
+
     @Schema(description = "任务组名称", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String JobGroupName;
+    @NotBlank(message = "任务组名称不能为空")
+    @Size(max = 50, message = "任务组名称长度不能超过 50 个字符")
+    private String jobGroupName;
+
     @Schema(description = "触发器组名称", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotBlank(message = "触发器组名称不能为空")
+    @Size(max = 50, message = "触发器组名称长度不能超过 50 个字符")
     private String triggerGroupName;
+
     @Schema(description = "触发器前缀", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotBlank(message = "触发器前缀不能为空")
+    @Size(max = 50, message = "触发器前缀长度不能超过 50 个字符")
     private String triggerPrefix;
 }

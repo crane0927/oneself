@@ -82,9 +82,8 @@ public class DeptServiceImpl implements DeptService {
     @Transactional
     public Integer updateDept(Long id, DeptDTO dto) {
         // 1. 构建部门对象
-        Dept dept = Dept.builder().build();
+        Dept dept = Dept.builder().id(id).build();
         BeanUtils.copyProperties(dto, dept);
-        dept.setId(id);
         // 2. 校验部门名称是否重复
         checkDeptName(dept);
         Long parentId = dept.getParentId();

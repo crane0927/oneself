@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,13 +59,13 @@ public class DeptController {
 
     @Operation(summary = "根据 ID 查询部门")
     @GetMapping({"/get/{id}"})
-    public ResponseVO<DeptVO> get(@PathVariable("id") Long id) {
+    public ResponseVO<DeptVO> get(@PathVariable("id") @NotNull @Positive Long id) {
         return ResponseVO.success(deptService.getDept(id));
     }
 
     @Operation(summary = "修改部门")
     @PutMapping({"/update/{id}"})
-    public ResponseVO<Boolean> update(@PathVariable("id") Long id, @RequestBody DeptDTO dto) {
+    public ResponseVO<Boolean> update(@PathVariable("id") @NotNull @Positive Long id, @RequestBody DeptDTO dto) {
         // 1. 更新当前部门
         Integer size = deptService.updateDept(id, dto);
         if (ObjectUtils.isEmpty(size)) {
@@ -87,7 +88,7 @@ public class DeptController {
 
     @Operation(summary = "更新部门状态")
     @PutMapping({"/update/status/{status}"})
-    public ResponseVO<Boolean> updateStatus(@RequestBody @Valid @NotEmpty List<@NotNull Long> ids, @PathVariable("status") StatusEnum status) {
+    public ResponseVO<Boolean> updateStatus(@RequestBody @Valid @NotEmpty List<@NotNull Long> ids, @PathVariable("status") @NotNull StatusEnum status) {
         Integer updateStatus = deptService.updateStatus(ids, status);
         if (ObjectUtils.isEmpty(updateStatus)) {
             return ResponseVO.failure("更新部门状态失败");
