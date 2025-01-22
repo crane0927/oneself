@@ -374,6 +374,7 @@ public class DemoApplication {
 ```
 ---
 ## log4j2.xml
+### 基础配置
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <!-- status: Log4j2 内部日志的输出级别 -->
@@ -383,13 +384,13 @@ public class DemoApplication {
     <properties>
         <property name="LOG_HOME">logs</property>
         <property name="LOG_NAME">${sys:log.name:-info}</property>
-        <property name="pattern">%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %c{1.1.1.*}[%M : %L(%tid)] [%X{traceId}] - %msg%n</property>
+        <property name="pattern">%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %c{1.1.1.*}[%M : %L(%tid)] [%X{traceId}] - %msg</property>
     </properties>
     <!-- Appenders: 定义日志输出目的地，内容和格式等 -->
     <Appenders>
         <console name="Console" target="SYSTEM_OUT">
             <!-- pattern: 日期,线程名,日志级别,日志名称,日志信息,换行 -->
-            <PatternLayout pattern="${pattern}"/>
+            <PatternLayout pattern="${pattern}%n"/>
         </console>
         <!-- info log -->
         <!-- RollingFile: 日志输出到文件,下面的文件都使用相对路径 -->
