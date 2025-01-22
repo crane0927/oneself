@@ -1,6 +1,6 @@
 package com.oneself.user.service;
 
-import com.oneself.user.model.dto.AddUserDTO;
+import com.oneself.user.model.dto.UserDTO;
 import com.oneself.user.model.vo.UserVO;
 
 /**
@@ -12,7 +12,7 @@ import com.oneself.user.model.vo.UserVO;
  * version 1.0
  */
 public interface UserService {
-    Integer addUser(AddUserDTO dto);
+    Integer addUser(UserDTO dto);
 
     UserVO getUser(Long id);
 }

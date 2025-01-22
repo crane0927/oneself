@@ -10,6 +10,7 @@ import com.oneself.model.vo.ResponseVO;
 import com.oneself.utils.ElasticsearchUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +40,7 @@ public class DemoController {
 
     @Operation(summary = "你好 xxx")
     @PostMapping({"/say/hello"})
-    public ResponseVO<DemoVO> sayHello(@RequestBody DemoDTO dto) {
+    public ResponseVO<DemoVO> sayHello(@RequestBody @Valid DemoDTO dto) {
         DemoVO demoVO = DemoVO.builder().info("hello " + dto.getName()).build();
         return ResponseVO.success(demoVO);
     }

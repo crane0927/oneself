@@ -8,6 +8,7 @@ import com.oneself.user.model.vo.UserVO;
 import com.oneself.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +41,7 @@ public class UserController {
 
     @Operation(summary = "新增用户")
     @PostMapping({"/add"})
-    public ResponseVO<Boolean> add(@RequestBody UserDTO dto) {
+    public ResponseVO<Boolean> add(@RequestBody @Valid UserDTO dto) {
         Integer size = userService.addUser(dto);
         if (ObjectUtils.isEmpty(size)) {
             return ResponseVO.failure("新增用户失败");
@@ -50,7 +51,7 @@ public class UserController {
 
     @Operation(summary = "根据 ID 查询用户")
     @GetMapping({"/get/{id}"})
-    public ResponseVO<UserVO> get(@PathVariable("id") @NotNull @Positive Long id) {
+    public ResponseVO<UserVO> get(@PathVariable("id") @Valid @NotNull @Positive Long id) {
         return ResponseVO.success(userService.getUser(id));
     }
 }

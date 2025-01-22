@@ -49,7 +49,7 @@ public class DeptController {
 
     @Operation(summary = "新增部门")
     @PostMapping({"/add"})
-    public ResponseVO<Boolean> add(@RequestBody DeptDTO dto) {
+    public ResponseVO<Boolean> add(@RequestBody @Valid DeptDTO dto) {
         Integer size = deptService.addDept(dto);
         if (ObjectUtils.isEmpty(size)) {
             return ResponseVO.failure("新增部门失败");
@@ -59,13 +59,13 @@ public class DeptController {
 
     @Operation(summary = "根据 ID 查询部门")
     @GetMapping({"/get/{id}"})
-    public ResponseVO<DeptVO> get(@PathVariable("id") @NotNull @Positive Long id) {
+    public ResponseVO<DeptVO> get(@PathVariable("id") @Valid @NotNull @Positive Long id) {
         return ResponseVO.success(deptService.getDept(id));
     }
 
     @Operation(summary = "修改部门")
     @PutMapping({"/update/{id}"})
-    public ResponseVO<Boolean> update(@PathVariable("id") @NotNull @Positive Long id, @RequestBody DeptDTO dto) {
+    public ResponseVO<Boolean> update(@PathVariable("id") @Valid @NotNull @Positive Long id, @RequestBody @Valid DeptDTO dto) {
         // 1. 更新当前部门
         Integer size = deptService.updateDept(id, dto);
         if (ObjectUtils.isEmpty(size)) {
@@ -88,7 +88,7 @@ public class DeptController {
 
     @Operation(summary = "更新部门状态")
     @PutMapping({"/update/status/{status}"})
-    public ResponseVO<Boolean> updateStatus(@RequestBody @Valid @NotEmpty List<@NotNull Long> ids, @PathVariable("status") @NotNull StatusEnum status) {
+    public ResponseVO<Boolean> updateStatus(@RequestBody @Valid @NotEmpty List<@NotNull Long> ids, @PathVariable("status") @Valid @NotNull StatusEnum status) {
         Integer updateStatus = deptService.updateStatus(ids, status);
         if (ObjectUtils.isEmpty(updateStatus)) {
             return ResponseVO.failure("更新部门状态失败");
@@ -98,7 +98,7 @@ public class DeptController {
 
     @Operation(summary = "查询部门列表")
     @PostMapping({"/page/list"})
-    public PageVO<DeptVO> pageList(@RequestBody PageDTO<PageDeptDTO> dto) {
+    public PageVO<DeptVO> pageList(@RequestBody @Valid PageDTO<PageDeptDTO> dto) {
         return deptService.pageList(dto);
     }
 

@@ -2,9 +2,9 @@ package com.oneself.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.oneself.dept.mapper.DeptMapper;
-import com.oneself.user.mapper.UserMapper;
-import com.oneself.user.model.dto.AddUserDTO;
 import com.oneself.dept.model.pojo.Dept;
+import com.oneself.user.mapper.UserMapper;
+import com.oneself.user.model.dto.UserDTO;
 import com.oneself.user.model.pojo.User;
 import com.oneself.user.model.vo.UserVO;
 import com.oneself.user.service.UserService;
@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Integer addUser(AddUserDTO dto) {
+    public Integer addUser(UserDTO dto) {
         // 1. 构建用户对象
         User user = User.builder().build();
         BeanUtils.copyProperties(dto, user);
