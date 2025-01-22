@@ -28,12 +28,13 @@ src
      │           ├── aspect           # 切面包，处理 AOP（面向切面编程）逻辑，如日志、权限、事务管理等
      │           ├── config           # 配置包，存放服务的配置类（如数据源配置、全局配置、缓存配置等）
      │           ├── controller       # 控制器包，处理前端请求，调用业务服务，负责与前端交互
+     │           ├── exception        # 自定义异常包，用于定义项目中的异常类型，通常继承自 RuntimeException
      │           ├── filter           # 过滤器包，处理请求拦截、响应拦截等，通常用于日志记录、权限校验等
      │           ├── handler          # 处理器包，处理具体的业务逻辑或事件（如事件处理器、任务处理器等）
      │           ├── mapper           # 数据访问层包，存放 MyBatis 映射接口及 XML 文件，用于数据库操作
      │           ├── model            # 数据模型包，包含业务数据模型相关的类，通常包括：
      │           │   ├── dto          # 数据传输对象（DTO）包，用于服务之间传输数据或从 API 接口接收数据
-     │           │   ├── pojo       # 实体类包，对应数据库表的实体映射，通常使用 JPA 或 MyBatis 映射
+     │           │   ├── pojo         # 实体类包，对应数据库表的实体映射，通常使用 JPA 或 MyBatis 映射
      │           │   ├── enums        # 枚举类包，定义项目中使用的枚举类型（如状态码、类型分类等）
      │           │   └── vo           # 视图对象（VO）包，用于向前端展示的返回数据结构
      │           ├── service          # 业务逻辑层包，存放服务接口及实现类，负责具体业务逻辑的处理
@@ -42,7 +43,7 @@ src
      └── resource
          ├── mapper                      # 存放 MyBatis 的 XML 映射文件（如 SQL 查询语句）
          ├── application.yml             # Spring Boot 主配置文件，存放全局应用配置（如端口、日志级别等）
-         ├── application-环境.yml        # 环境配置文件，根据不同环境（开发、生产等）配置不同参数
+         ├── application-环境.yml         # 环境配置文件，根据不同环境（开发、生产等）配置不同参数
          ├── log4j2.xml                  # 日志配置文件，配置 Log4j2 的日志输出格式、日志级别等
          ├── run.sh                      # 启动脚本，通常用于容器化或在服务器中自动化运行应用
      
@@ -517,6 +518,33 @@ public class DemoApplication {
 </Configuration>
 ```
 ---
+## Dockerfile
+1. Dockerfile 文件内容
+```dockerfile
+# 基础镜像
+FROM openjdk:21-jdk-alpine
+
+# 构建参数（服务名和版本号）
+ARG SERVICE_NAME=service-name
+ARG SERVICE_VERSION=1.0.0
+ARG ENV_PROFILE=dev
+
+# 环境变量
+ENV SPRING_PROFILES_ACTIVE=${ENV_PROFILE}
+
+# 创建工作目录
+RUN mkdir -p /usr/${SERVICE_NAME}
+WORKDIR /usr/${SERVICE_NAME}
+
+# 复制 Jar 文件到工作目录
+COPY oneself.jar /usr/${SERVICE_NAME}/${SERVICE_NAME}-${SERVICE_VERSION}.jar
+
+# 设置启动命令
+ENTRYPOINT ["java", "-jar", "/usr/${SERVICE_NAME}/${SERVICE_NAME}-${SERVICE_VERSION}.jar", "--spring.profiles.active=${SPRING_PROFILES_ACTIVE}"]
+```
+2. 构建镜像：`docker build --build-arg SERVICE_NAME=my-service --build-arg SERVICE_VERSION=1.0.0 --build-arg ENV_PROFILE=prod -t my-service:1.0.0 .`
+3. 运行容器：`docker run -e SPRING_PROFILES_ACTIVE=prod -d my-service:1.0.0`
+---
 ### 日志推送 Kafka 配置
 1. 添加 maven 依赖
 ```xml
@@ -549,7 +577,7 @@ public class DemoApplication {
 
 ## 环境（JDK 1.8 升级至 JDK 21）
 - ~~JDK 1.8~~ -> JDK 21
-- ~~Spring Boot 2.7.18~~ -> Spring Boot 3.2.12
+- ~~Spring Boot 2.7.18~~ -> ~~Spring Boot 3.2.12~~ -> Spring Boot 3.3.7
 - ~~Spring Cloud 2021.0.9~~ -> Spring Cloud 2023.0.5
 - ~~Spring Cloud Alibaba 2021.0.6.2~~ -> Spring Cloud Alibaba 2023.0.3.2
 - ~~Eleasticsearch 7.17.7~~ -> Eleasticsearch 8.17.0
