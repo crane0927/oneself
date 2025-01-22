@@ -31,15 +31,20 @@ public class TraceFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        long startTime = System.currentTimeMillis();
         // 生成唯一 traceId 并放入 ThreadContext
         ThreadContext.put(TRACE_ID, UUID.randomUUID().toString());
-
+        log.info("=== Request Details ===");
+        log.info("Request URL[{}]: {} ", request.getMethod(), request.getRequestURL().toString());
         try {
             // 记录请求链路日志
             filterChain.doFilter(request, response);
         } finally {
             // 清理 ThreadContext
+            log.info("Total Time: {} ms", System.currentTimeMillis() - startTime);
+            log.info("===== Request End =====");
             ThreadContext.clearAll();
         }
     }
+
 }

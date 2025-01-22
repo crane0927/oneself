@@ -1,75 +1,43 @@
 package com.oneself.aspect;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.oneself.filter.TraceFilter;
-import com.oneself.model.vo.ResponseVO;
 import com.oneself.utils.JacksonUtils;
 import com.oneself.utils.SensitiveDataUtils;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.ThreadContext;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
 /**
  * @author liuhuan
  * date 2025/1/15
  * packageName com.oneself.aspect
- * className LogRequestDetailsAspect
+ * className RequestLoggingAspect
  * description 记录日志的切面
  * version 1.0
  */
 @Slf4j
 @Aspect
 @Component
-public class LogRequestDetailsAspect {
+public class RequestLoggingAspect {
 
     private final ObjectMapper objectMapper = JacksonUtils.getObjectMapper();
-    private final HttpServletRequest httpServletRequest;
 
-    public LogRequestDetailsAspect(HttpServletRequest httpServletRequest) {
-        this.httpServletRequest = httpServletRequest;
-    }
-
-    @Around("@within(com.oneself.annotation.LogRequestDetails) || @annotation(com.oneself.annotation.LogRequestDetails)")
+    @Around("@within(com.oneself.annotation.RequestLogging) || @annotation(com.oneself.annotation.RequestLogging)")
     public Object logDetails(ProceedingJoinPoint joinPoint) throws Throwable {
-        long startTime = System.currentTimeMillis();
-
-        // 获取请求信息
-        String className = joinPoint.getTarget().getClass().getName();
-        String methodName = ((MethodSignature) joinPoint.getSignature()).getMethod().getName();
-        String url = httpServletRequest.getRequestURL().toString();
-        String uri = httpServletRequest.getRequestURI();
-        String method = httpServletRequest.getMethod();
-
-        log.info("=== Request Details ===");
-        log.info("Request URL[{}]: {} ", method, url);
-        log.info("Class Method: {}.{}", className, methodName);
-
         // 记录请求参数
         logRequestParameters(joinPoint);
-
         // 执行目标方法
-        Object result = null;
+        Object result;
         try {
             result = joinPoint.proceed();
         } catch (Throwable throwable) {
             log.error("Error occurred: {}", throwable.getMessage(), throwable);
             throw throwable;
-        } finally {
-            // 如果返回值是 ResponseVO，设置 path 和 traceId
-            if (result instanceof ResponseVO) {
-                ((ResponseVO<?>) result).setPath(uri);
-                ((ResponseVO<?>) result).setTraceId(ThreadContext.get(TraceFilter.TRACE_ID));
-            }
         }
-
-
         // 记录响应信息
-        logResponse(result, System.currentTimeMillis() - startTime);
+        logResponse(result);
         return result;
     }
 
@@ -91,7 +59,7 @@ public class LogRequestDetailsAspect {
     /**
      * 记录响应结果
      */
-    private void logResponse(Object result, long duration) {
+    private void logResponse(Object result) {
         try {
             Object maskedResult = SensitiveDataUtils.copyAndMaskSensitiveData(result);
             String response = objectMapper.writeValueAsString(maskedResult);
@@ -99,7 +67,5 @@ public class LogRequestDetailsAspect {
         } catch (Exception e) {
             log.warn("Failed to serialize response: {}", e.getMessage());
         }
-        log.info("Total Time: {}ms", duration);
-        log.info("==== Request End ====");
     }
 }
