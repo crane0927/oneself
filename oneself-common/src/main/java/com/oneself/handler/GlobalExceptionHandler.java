@@ -1,6 +1,6 @@
 package com.oneself.handler;
 
-import com.oneself.exception.BusinessException;
+import com.oneself.exception.OneselfException;
 import com.oneself.filter.TraceFilter;
 import com.oneself.model.vo.ResponseVO;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,8 +30,8 @@ public class GlobalExceptionHandler {
      * @param request 请求对象
      * @return 响应结果
      */
-    @ExceptionHandler(BusinessException.class)
-    public ResponseVO<Object> handleBusinessException(BusinessException e, HttpServletRequest request) {
+    @ExceptionHandler(OneselfException.class)
+    public ResponseVO<Object> handleBusinessException(OneselfException e, HttpServletRequest request) {
         log.info("请求：{}，发生异常：{}", request.getRequestURL(), e.getMessage(), e);
         return ResponseVO.failure(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR,
                 request.getRequestURI(), ThreadContext.get(TraceFilter.TRACE_ID));

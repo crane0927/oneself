@@ -6,11 +6,11 @@ import java.io.Serial;
  * @author liuhuan
  * date 2025/1/22
  * packageName com.oneself.exception
- * className BusinessException
- * description 自定义业务异常
+ * className OneselfException
+ * description 自定义异常
  * version 1.0
  */
-public class BusinessException extends RuntimeException {
+public class OneselfException extends RuntimeException {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -23,7 +23,9 @@ public class BusinessException extends RuntimeException {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public BusinessException(String message) {
+    public OneselfException(String message) {
         super(message);
     }
+
+
 }
