@@ -53,19 +53,20 @@ public class LogRequestDetailsAspect {
         logRequestParameters(joinPoint);
 
         // 执行目标方法
-        Object result;
+        Object result = null;
         try {
             result = joinPoint.proceed();
         } catch (Throwable throwable) {
             log.error("Error occurred: {}", throwable.getMessage(), throwable);
             throw throwable;
+        } finally {
+            // 如果返回值是 ResponseVO，设置 path 和 traceId
+            if (result instanceof ResponseVO) {
+                ((ResponseVO<?>) result).setPath(uri);
+                ((ResponseVO<?>) result).setTraceId(ThreadContext.get(TraceFilter.TRACE_ID));
+            }
         }
 
-        // 如果返回值是 ResponseVO，设置 path
-        if (result instanceof ResponseVO) {
-            ((ResponseVO<?>) result).setPath(uri);
-            ((ResponseVO<?>) result).setTraceId(ThreadContext.get(TraceFilter.TRACE_ID));
-        }
 
         // 记录响应信息
         logResponse(result, System.currentTimeMillis() - startTime);
@@ -99,6 +100,6 @@ public class LogRequestDetailsAspect {
             log.warn("Failed to serialize response: {}", e.getMessage());
         }
         log.info("Total Time: {}ms", duration);
-        log.info("=== Request End ===");
+        log.info("==== Request End ====");
     }
 }

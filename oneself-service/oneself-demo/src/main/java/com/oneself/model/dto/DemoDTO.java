@@ -2,6 +2,7 @@ package com.oneself.model.dto;
 
 import com.oneself.annotation.Sensitive;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.io.Serial;
@@ -22,5 +23,6 @@ public class DemoDTO implements Serializable {
 
     @Sensitive
     @Schema(description = "姓名", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotBlank(message = "姓名不能为空")
     private String name;
 }
