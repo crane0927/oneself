@@ -525,25 +525,38 @@ public class DemoApplication {
 FROM openjdk:21-jdk-alpine
 
 # 构建参数（服务名和版本号）
-ARG SERVICE_NAME=service-name
+ARG SERVICE_NAME=oneself-demo
 ARG SERVICE_VERSION=1.0.0
 ARG ENV_PROFILE=dev
 
 # 环境变量
 ENV SPRING_PROFILES_ACTIVE=${ENV_PROFILE}
 
-# 创建工作目录
+# 创建应用目录
 RUN mkdir -p /usr/${SERVICE_NAME}
 WORKDIR /usr/${SERVICE_NAME}
 
-# 复制 Jar 文件到工作目录
+# 复制打包后的 Jar 文件
 COPY ${SERVICE_NAME}-${SERVICE_VERSION}.jar /usr/${SERVICE_NAME}/${SERVICE_NAME}-${SERVICE_VERSION}.jar
 
-# 设置启动命令
-ENTRYPOINT ["java", "-jar", "/usr/${SERVICE_NAME}/${SERVICE_NAME}-${SERVICE_VERSION}.jar", "--spring.profiles.active=${SPRING_PROFILES_ACTIVE}"]
+# 复制依赖库
+COPY lib /usr/${SERVICE_NAME}/lib
+
+# 复制配置文件
+COPY config /usr/${SERVICE_NAME}/config
+
+# 复制运行脚本
+COPY run.sh /usr/${SERVICE_NAME}/run.sh
+RUN chmod +x /usr/${SERVICE_NAME}/run.sh
+
+# 暴露端口（根据你的应用配置调整）
+EXPOSE 8080
+
+# 启动命令
+ENTRYPOINT ["/bin/sh", "-c", "./run.sh start ${SERVICE_VERSION}"]
 ```
-2. 构建镜像：`docker build --build-arg SERVICE_NAME=my-service --build-arg SERVICE_VERSION=1.0.0 --build-arg ENV_PROFILE=prod -t my-service:1.0.0 .`
-3. 运行容器：`docker run -e SPRING_PROFILES_ACTIVE=prod -d my-service:1.0.0`
+2. 构建镜像：`docker build --build-arg SERVICE_NAME=oneself-demo --build-arg SERVICE_VERSION=1.0.0 --build-arg ENV_PROFILE=prod -t oneself-demo:1.0.0 .`
+3. 运行容器：`docker run -e SPRING_PROFILES_ACTIVE=prod -d -p 8080:8080 oneself-demo:1.0.0`
 ---
 ### 日志推送 Kafka 配置
 1. 添加 maven 依赖
@@ -755,12 +768,21 @@ oneself:
 
 project_name=$(basename "$(pwd)")
 
+log_message() {
+    echo "$(date '+%Y-%m-%d %H:%M:%S') $1"
+}
+
 start_project() {
     version="$1"
     jar_name="${project_name}-${version}.jar"
 
     if [ -z "$version" ]; then
-        echo "Please specify the version. Usage: $0 {start|stop|restart} <version>"
+        echo "Please specify the version. Usage: $0 {start|stop|restart|status} <version>"
+        exit 1
+    fi
+
+    if [ ! -f "${jar_name}" ]; then
+        echo "Jar file ${jar_name} does not exist. Please check the version or file path."
         exit 1
     fi
 
@@ -771,12 +793,12 @@ start_project() {
         PID=$(pgrep -f "${jar_name}")
 
         if [ -n "$PID" ]; then
-            printf "%-5s %-22s %-8s\n" start "$jar_name" success
+            log_message "start ${jar_name} success"
         else
-            printf "%-5s %-22s %-8s\n" start "$jar_name" failed
+            log_message "start ${jar_name} failed"
         fi
     else
-        printf "%-5s %-22s %-8s\n" start "$jar_name" "already running"
+        log_message "start ${jar_name} already running (PID: $PID)"
     fi
 }
 
@@ -785,7 +807,7 @@ stop_project() {
     jar_name="${project_name}-${version}.jar"
 
     if [ -z "$version" ]; then
-        echo "Please specify the version. Usage: $0 {start|stop|restart} <version>"
+        echo "Please specify the version. Usage: $0 {start|stop|restart|status} <version>"
         exit 1
     fi
 
@@ -796,12 +818,12 @@ stop_project() {
         PID1=$(pgrep -f "${jar_name}")
 
         if [ -z "$PID1" ]; then
-            printf "%-5s %-22s %-8s\n" stop "$jar_name" success
+            log_message "stop ${jar_name} success"
         else
-            printf "%-5s %-22s %-8s\n" stop "$jar_name" failed
+            log_message "stop ${jar_name} failed"
         fi
     else
-        printf "%-5s %-22s %-8s\n" stop "$jar_name" "not running"
+        log_message "stop ${jar_name} not running"
     fi
 }
 
@@ -811,8 +833,19 @@ restart_project() {
     start_project "$version"
 }
 
+status_project() {
+    version="$1"
+    jar_name="${project_name}-${version}.jar"
+    PID=$(pgrep -f "${jar_name}")
+    if [ -n "$PID" ]; then
+        log_message "status ${jar_name} running (PID: $PID)"
+    else
+        log_message "status ${jar_name} not running"
+    fi
+}
+
 if [ -z "$2" ]; then
-    echo "Please specify the version. Usage: $0 {start|stop|restart} <version>"
+    echo "Please specify the version. Usage: $0 {start|stop|restart|status} <version>"
     exit 1
 fi
 
@@ -826,8 +859,11 @@ case "$1" in
     restart)
         restart_project "$2"
         ;;
+    status)
+        status_project "$2"
+        ;;
     *)
-        echo "Usage: $0 {start|stop|restart} <version>"
+        echo "Usage: $0 {start|stop|restart|status} <version>"
         exit 1
         ;;
 esac

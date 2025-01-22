@@ -7,7 +7,7 @@ spring:
 #    use-legacy-processing: true # Spring Boot 2.4.0 开始，bootstrap.yml 被废弃，显式启用 bootstrap.yml
 
 server:
-  port: 9012
+  port: 9102
   servlet:
     context-path: /oneself-quartz
     session:

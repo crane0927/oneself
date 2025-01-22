@@ -2,12 +2,21 @@
 
 project_name=$(basename "$(pwd)")
 
+log_message() {
+    echo "$(date '+%Y-%m-%d %H:%M:%S') $1"
+}
+
 start_project() {
     version="$1"
     jar_name="${project_name}-${version}.jar"
 
     if [ -z "$version" ]; then
-        echo "Please specify the version. Usage: $0 {start|stop|restart} <version>"
+        echo "Please specify the version. Usage: $0 {start|stop|restart|status} <version>"
+        exit 1
+    fi
+
+    if [ ! -f "${jar_name}" ]; then
+        echo "Jar file ${jar_name} does not exist. Please check the version or file path."
         exit 1
     fi
 
@@ -18,12 +27,12 @@ start_project() {
         PID=$(pgrep -f "${jar_name}")
 
         if [ -n "$PID" ]; then
-            printf "%-5s %-22s %-8s\n" start "$jar_name" success
+            log_message "start ${jar_name} success"
         else
-            printf "%-5s %-22s %-8s\n" start "$jar_name" failed
+            log_message "start ${jar_name} failed"
         fi
     else
-        printf "%-5s %-22s %-8s\n" start "$jar_name" "already running"
+        log_message "start ${jar_name} already running (PID: $PID)"
     fi
 }
 
@@ -32,7 +41,7 @@ stop_project() {
     jar_name="${project_name}-${version}.jar"
 
     if [ -z "$version" ]; then
-        echo "Please specify the version. Usage: $0 {start|stop|restart} <version>"
+        echo "Please specify the version. Usage: $0 {start|stop|restart|status} <version>"
         exit 1
     fi
 
@@ -43,12 +52,12 @@ stop_project() {
         PID1=$(pgrep -f "${jar_name}")
 
         if [ -z "$PID1" ]; then
-            printf "%-5s %-22s %-8s\n" stop "$jar_name" success
+            log_message "stop ${jar_name} success"
         else
-            printf "%-5s %-22s %-8s\n" stop "$jar_name" failed
+            log_message "stop ${jar_name} failed"
         fi
     else
-        printf "%-5s %-22s %-8s\n" stop "$jar_name" "not running"
+        log_message "stop ${jar_name} not running"
     fi
 }
 
@@ -58,8 +67,19 @@ restart_project() {
     start_project "$version"
 }
 
+status_project() {
+    version="$1"
+    jar_name="${project_name}-${version}.jar"
+    PID=$(pgrep -f "${jar_name}")
+    if [ -n "$PID" ]; then
+        log_message "status ${jar_name} running (PID: $PID)"
+    else
+        log_message "status ${jar_name} not running"
+    fi
+}
+
 if [ -z "$2" ]; then
-    echo "Please specify the version. Usage: $0 {start|stop|restart} <version>"
+    echo "Please specify the version. Usage: $0 {start|stop|restart|status} <version>"
     exit 1
 fi
 
@@ -73,8 +93,11 @@ case "$1" in
     restart)
         restart_project "$2"
         ;;
+    status)
+        status_project "$2"
+        ;;
     *)
-        echo "Usage: $0 {start|stop|restart} <version>"
+        echo "Usage: $0 {start|stop|restart|status} <version>"
         exit 1
         ;;
 esac
