@@ -36,13 +36,17 @@ public class ApplicationStartupUtils {
         String swaggerUrl = baseUrl + "/doc.html";
 
         // 打印启动信息
-        log.info("\n----------------------------------------------------------\n\t" +
-                        "{} 服务启动成功:\n\t" +
-                        "本机 IP 地址：{}\n\t" +
-                        "项目接口路径：{}\n\t" +
-                        "Swagger 文档：{}\n" +
-                        "----------------------------------------------------------",
-                applicationName, ip, baseUrl, swaggerUrl);
+        System.out.printf("""
+                                                  ┓┏
+                                         ┏┓┏┓┏┓┏┏┓┃╋
+                                         ┗┛┛┗┗ ┛┗ ┗┛  (v1.0.0)
+                ***************************************************************
+                    %s 服务启动成功:
+                    本机 IP 地址：%s
+                    项目接口路径：%s
+                    Swagger 文档：%s
+                ***************************************************************
+                %n""", applicationName, ip, baseUrl, swaggerUrl);
     }
 
     /**
