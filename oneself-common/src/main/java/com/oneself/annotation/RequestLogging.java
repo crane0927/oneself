@@ -6,7 +6,7 @@ import java.lang.annotation.*;
  * @author liuhuan
  * date 2025/1/15
  * packageName com.oneself.annotation
- * interfaceName RequestLoggingAspect
+ * interfaceName RequestLogging
  * description 用于记录请求参数与返回结果
  * version 1.0
  */
