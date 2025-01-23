@@ -1,14 +1,21 @@
-spring:
-  application:
-    name: oneself-gateway
-  profiles:
-    active: dev # 设置为开发环境
-#  config:
-#    use-legacy-processing: true # Spring Boot 2.4.0 开始，bootstrap.yml 被废弃，显式启用 bootstrap.yml
-
 server:
   port: 9100
   servlet:
-    context-path: /oneself-gateway
     session:
       timeout: 600
+
+spring:
+  application:
+    name: oneself-gateway
+  cloud:
+    nacos:
+      server-addr: 127.0.0.1:8848 # Nacos 地址
+      discovery:
+        cluster-name: dev # 设置 Nacos 的集群属性
+        namespace: dev # 配置命名空间，使用命名空间唯一 ID
+    gateway:
+      routes: # 路由配置
+        - id: oneself-demo # 路由 id 自定义 只要唯一即可
+          uri: lb://oneself-demo # 路由的目标地址 lb 就是负载均衡，后面跟服务名称
+          predicates: # 路由断言，也就是判断请是否符合路由规则的条件
+            - Path=/oneself-demo/** # /order 开头的请求访问 service-order
