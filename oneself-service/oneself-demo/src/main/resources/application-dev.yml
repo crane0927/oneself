@@ -16,6 +16,9 @@ oneself:
 
 spring:
   cloud:
+    sentinel:
+      transport:
+        dashboard: 127.0.0.1:8090 # Sentinel 地址
     nacos:
       server-addr: 127.0.0.1:8848 # Nacos 地址
       config:

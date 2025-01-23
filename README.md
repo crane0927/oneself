@@ -843,9 +843,25 @@ spring:
         namespace: dev # 配置命名空间，使用命名空间唯一 ID
 ```
 4. 启动类中添加注解 `@EnableDiscoveryClient`
-
 ---
-### 9.4 配置 Elasticsearch
+### 9.4 配置 Sentinel
+1. 引入依赖 Sentinel 依赖
+```xml
+<dependency>
+    <groupId>com.alibaba.cloud</groupId>
+    <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+</dependency>
+```
+2. 在 `application.yml` 中添加以下配置：
+```yaml
+spring:
+  cloud:
+    sentinel:
+      transport:
+        dashboard: 127.0.0.1:8090 # Sentinel 地址
+```
+---
+### 9.5 配置 Elasticsearch
 1. 引入依赖 oneself-common
 ```xml
 <dependency>
