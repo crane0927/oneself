@@ -17,7 +17,6 @@ import java.io.Serializable;
  * version 1.0
  */
 @Data
-@Builder
 public class DemoVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -25,10 +24,4 @@ public class DemoVO implements Serializable {
     @Schema(description = "信息")
     private String info;
 
-//    public DemoVO() {
-//    }
-//
-//    public DemoVO(String info) {
-//        this.info = info;
-//    }
 }
