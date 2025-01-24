@@ -2,8 +2,6 @@ package com.oneself.controller;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.InfoResponse;
-import com.oneself.annotation.RequestLogging;
-import com.oneself.annotation.RequireLogin;
 import com.oneself.model.dto.DemoDTO;
 import com.oneself.model.vo.DemoVO;
 import com.oneself.model.vo.ResponseVO;
@@ -13,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -41,7 +40,8 @@ public class DemoController {
     @Operation(summary = "你好 xxx")
     @PostMapping({"/say/hello"})
     public ResponseVO<DemoVO> sayHello(@RequestBody @Valid DemoDTO dto) {
-        DemoVO demoVO = DemoVO.builder().info("hello " + dto.getName()).build();
+        DemoVO demoVO = new DemoVO();
+        demoVO.setInfo("hello " + dto.getName());
         return ResponseVO.success(demoVO);
     }
 
@@ -52,7 +52,8 @@ public class DemoController {
         try {
             InfoResponse info = client.info();
             log.info("Elasticsearch 集群名称: {}", info.clusterName());
-            DemoVO demoVO = DemoVO.builder().info(info.clusterName()).build();
+            DemoVO demoVO = new DemoVO();
+            demoVO.setInfo(info.clusterName());
             return ResponseVO.success(demoVO);
         } catch (Exception e) {
             log.error("Elasticsearch 集群名称获取异常: {}", e.getMessage());

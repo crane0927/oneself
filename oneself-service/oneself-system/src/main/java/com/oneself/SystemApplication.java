@@ -4,6 +4,7 @@ import com.oneself.utils.ApplicationStartupUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.validation.annotation.Validated;
 
@@ -15,6 +16,8 @@ import org.springframework.validation.annotation.Validated;
  * description
  * version 1.0
  */
+@EnableFeignClients(basePackages = "com.oneself.client")
+//@EnableFeignClients(clients = DemoClient.class)
 @EnableDiscoveryClient
 @SpringBootApplication
 @Validated

@@ -886,6 +886,25 @@ oneself:
     max-connections-per-route: 10 # 每个路由的最大连接数
 ```
 ---
+### 9.7 服务间调用
+1. 调用方引入负载均衡依赖
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-loadbalancer</artifactId>
+</dependency>
+```
+2. 调用方引入对应服务的 api 依赖
+```xml
+
+<dependency>
+    <groupId>com.oneself</groupId>
+    <artifactId>oneself-demo-api</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+3. 调用方启动类新增注解 `@EnableFeignClients(basePackages = "com.oneself.client")`
+---
 # 问题记录
 1. JDK 21 中使用 knife4j-openapi3 如何配置 Swagger 在生产环境中关闭
 ```yaml
