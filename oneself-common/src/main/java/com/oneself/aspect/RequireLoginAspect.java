@@ -1,8 +1,8 @@
 package com.oneself.aspect;
 
 import com.oneself.annotation.RequireLogin;
+import com.oneself.exception.OneselfLoginException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
@@ -36,12 +35,10 @@ public class RequireLoginAspect {
         if (requireLogin != null && requireLogin.strict()) {
             ServletRequestAttributes attributes = (ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes());
             HttpServletRequest request = attributes.getRequest();
-            HttpServletResponse response = attributes.getResponse();
 
             String token = request.getHeader("user-token");
             if (!isValidToken(token)) {
-                handleUnauthorized(response, request.getRequestURI());
-                throw new RuntimeException(">>>>>>> 请先登录");
+                throw new OneselfLoginException("请先登录");
             }
         }
     }
@@ -67,13 +64,5 @@ public class RequireLoginAspect {
     private boolean isValidToken(String token) {
         // 实际的令牌验证逻辑，例如调用认证服务
         return token != null;
-    }
-
-    private void handleUnauthorized(HttpServletResponse response, String requestURI) throws IOException {
-        if (response != null) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("{\"timestamp\":\"" + System.currentTimeMillis() + "\",\"status\":401,\"error\":\"请先登录\",\"path\":\"" + requestURI + "\"}");
-            response.getWriter().flush();
-        }
     }
 }
