@@ -8,7 +8,7 @@
 - ~~Eleasticsearch 7.17.7~~ -> Eleasticsearch 8.17.0
 - ~~knife4j-openapi2-spring-boot-starter 4.5.0~~ -> openapi3-jakarta-spring-boot-starter.version 4.4.0
 - ~~mybatis-plus-boot-starter 3.5.3.1~~ -> mybatis-plus-spring-boot3-starter 3.5.5
-- Nacos 2.4.1
+- Nacos 2.4.3
 - MySQL 8.0.39
 - Maven 3.9.9
 ---
@@ -913,3 +913,5 @@ knife4j:
   production: true # 是否开启生产环境保护策略，生产环境中会隐藏 Swagger 界面
 ```
 2. 深拷贝过程中使用了 writeValueAsString 和 readValue，导致原始对象的类型信息和泛型信息在反序列化时丢失问题（SensitiveDataUtils 38 - 41 行）
+3. 服务间调用时，用户信息认证问题
+4. 无法读取到 nacos 配置中心配置文件问题

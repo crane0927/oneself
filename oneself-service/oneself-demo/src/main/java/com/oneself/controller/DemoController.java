@@ -2,6 +2,8 @@ package com.oneself.controller;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.InfoResponse;
+import com.oneself.annotation.RequestLogging;
+import com.oneself.annotation.RequireLogin;
 import com.oneself.model.dto.DemoDTO;
 import com.oneself.model.vo.DemoVO;
 import com.oneself.model.vo.ResponseVO;
@@ -29,6 +31,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping({"/demo"})
 public class DemoController {
+
+    @Value("${oneself.name:123}")
+    private String name;
 
     private final ElasticsearchUtils elasticsearchUtils;
 
@@ -60,5 +65,11 @@ public class DemoController {
             return ResponseVO.failure("Elasticsearch 集群名称获取异常: " + e.getMessage());
         }
 
+    }
+
+    @Operation(summary = "配置文件信息读取")
+    @GetMapping({"/get/properties"})
+    public ResponseVO<String > getProperties() {
+        return ResponseVO.success(name);
     }
 }
