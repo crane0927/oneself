@@ -914,4 +914,12 @@ knife4j:
 ```
 2. 深拷贝过程中使用了 writeValueAsString 和 readValue，导致原始对象的类型信息和泛型信息在反序列化时丢失问题（SensitiveDataUtils 38 - 41 行）
 3. 服务间调用时，用户信息认证问题
-4. 无法读取到 nacos 配置中心配置文件问题
+4. Nacos 2.4.2 无法读取到 nacos 配置中心配置文件问题
+> 版本问题， NacosConfigAutoConfiguration 类不能注入到 Spring 容器内，导致配置的类不能正确读取到
+解决方案：
+```yaml
+spring:
+  config:
+    import:
+      - nacos:${spring.application.name}-${spring.profiles.active}.yaml?refreshEnabled=true
+```

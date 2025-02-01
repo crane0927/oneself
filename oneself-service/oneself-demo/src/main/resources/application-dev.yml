@@ -15,6 +15,9 @@ oneself:
     max-connections-per-route: 10
 
 spring:
+  config:
+    import:
+      - nacos:${spring.application.name}-${spring.profiles.active}.yaml?refreshEnabled=true
   cloud:
     sentinel:
       transport:

@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -30,10 +31,11 @@ import org.springframework.web.bind.annotation.*;
 @RequireLogin
 @RequestLogging
 @RestController
+@RefreshScope
 @RequestMapping({"/demo"})
 public class DemoController {
 
-    @Value("${oneself.name:123}")
+    @Value("${name:123}")
     private String name;
 
     private final ElasticsearchUtils elasticsearchUtils;
