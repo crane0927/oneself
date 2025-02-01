@@ -48,3 +48,7 @@ knife4j:
     enable: true # 是否启用用户认证功能
     username: dev # 用户名，用于登录 Swagger 界面
     password: dev123 # 密码，用于登录 Swagger 界面
+
+oneself-starter:
+  enabled: true
+  config-value: Hello Oneself Starter

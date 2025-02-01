@@ -7,6 +7,7 @@ import com.oneself.annotation.RequireLogin;
 import com.oneself.model.dto.DemoDTO;
 import com.oneself.model.vo.DemoVO;
 import com.oneself.model.vo.ResponseVO;
+import com.oneself.service.OneselfService;
 import com.oneself.utils.ElasticsearchUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,9 +38,12 @@ public class DemoController {
 
     private final ElasticsearchUtils elasticsearchUtils;
 
+    private final OneselfService oneselfService;
+
     @Autowired
-    public DemoController(ElasticsearchUtils elasticsearchUtils) {
+    public DemoController(ElasticsearchUtils elasticsearchUtils, OneselfService oneselfService) {
         this.elasticsearchUtils = elasticsearchUtils;
+        this.oneselfService = oneselfService;
     }
 
     @Operation(summary = "你好 xxx")
@@ -71,5 +75,11 @@ public class DemoController {
     @GetMapping({"/get/properties"})
     public ResponseVO<String > getProperties() {
         return ResponseVO.success(name);
+    }
+
+    @Operation(summary = "自定义 Starter 功能测试")
+    @GetMapping({"/get/starter/info"})
+    public ResponseVO<String > getStarterInfo() {
+        return ResponseVO.success(oneselfService.doSomething());
     }
 }
