@@ -14,4 +14,13 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Documented
 public @interface RequestLogging {
+    /**
+     * 是否打印请求参数，默认打印
+     */
+    boolean logRequest() default true;
+
+    /**
+     * 是否打印响应结果，默认打印
+     */
+    boolean logResponse() default true;
 }

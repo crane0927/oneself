@@ -9,6 +9,8 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Method;
+
 /**
  * @author liuhuan
  * date 2025/1/15
@@ -26,8 +28,30 @@ public class RequestLoggingAspect {
 
     @Around("@within(com.oneself.annotation.RequestLogging) || @annotation(com.oneself.annotation.RequestLogging)")
     public Object logDetails(ProceedingJoinPoint joinPoint) throws Throwable {
-        // 记录请求参数
-        logRequestParameters(joinPoint);
+
+        // 获取方法级别的 @RequestLogging 注解，优先使用方法级别注解
+        boolean logRequest = true;
+        boolean logResponse = true;
+
+        // 获取目标方法
+        Method method = ((org.aspectj.lang.reflect.MethodSignature) joinPoint.getSignature()).getMethod();
+        // 如果方法级别有 @Loggable 注解，优先使用方法级别的设置
+        if (method.isAnnotationPresent(com.oneself.annotation.RequestLogging.class)) {
+            com.oneself.annotation.RequestLogging requestLogging = method.getAnnotation(com.oneself.annotation.RequestLogging.class);
+            logRequest = requestLogging.logRequest();
+            logResponse = requestLogging.logResponse();
+        } else if (joinPoint.getTarget().getClass().isAnnotationPresent(com.oneself.annotation.RequestLogging.class)) {
+            // 如果方法级别没有注解，再检查类级别的 @Loggable 注解
+            com.oneself.annotation.RequestLogging requestLogging = joinPoint.getTarget().getClass().getAnnotation(com.oneself.annotation.RequestLogging.class);
+            logRequest = requestLogging.logRequest();
+            logResponse = requestLogging.logResponse();
+        }
+
+        // 记录请求参数（如果 logRequest 为 true）
+        if (logRequest) {
+            logRequestParameters(joinPoint);
+        }
+
         // 执行目标方法
         Object result;
         try {
@@ -36,8 +60,11 @@ public class RequestLoggingAspect {
             log.error("Error occurred: {}", throwable.getMessage(), throwable);
             throw throwable;
         }
-        // 记录响应信息
-        logResponse(result);
+
+        // 记录响应结果（如果 logResponse 为 true）
+        if (logResponse) {
+            logResponse(result);
+        }
         return result;
     }
 
