@@ -9,14 +9,19 @@ import com.oneself.model.vo.DemoVO;
 import com.oneself.model.vo.ResponseVO;
 import com.oneself.service.OneselfService;
 import com.oneself.utils.ElasticsearchUtils;
+import com.oneself.utils.ExportFileUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.map.LinkedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.*;
 
 /**
  * @author liuhuan
@@ -29,7 +34,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "接口样例")
 @Slf4j
 @RequireLogin
-@RequestLogging
+//@RequestLogging
 @RestController
 @RefreshScope
 @RequestMapping({"/demo"})
@@ -48,6 +53,7 @@ public class DemoController {
         this.oneselfService = oneselfService;
     }
 
+    @RequestLogging
     @Operation(summary = "你好 xxx")
     @PostMapping({"/say/hello"})
     public ResponseVO<DemoVO> sayHello(@RequestBody @Valid DemoDTO dto) {
@@ -75,13 +81,38 @@ public class DemoController {
 
     @Operation(summary = "配置文件信息读取")
     @GetMapping({"/get/properties"})
-    public ResponseVO<String > getProperties() {
+    public ResponseVO<String> getProperties() {
         return ResponseVO.success(name);
     }
 
     @Operation(summary = "自定义 Starter 功能测试")
     @GetMapping({"/get/starter/info"})
-    public ResponseVO<String > getStarterInfo() {
+    public ResponseVO<String> getStarterInfo() {
         return ResponseVO.success(oneselfService.doSomething());
+    }
+
+
+    @RequestLogging(logRequest = false, logResponse = false)
+    @Operation(summary = "导出文件")
+    @GetMapping({"/export/file"})
+    public void export(HttpServletResponse response) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        LinkedHashMap<String, String> headers = new LinkedHashMap<>();
+        headers.put("name", "姓名");
+        headers.put("age", "年龄");
+        headers.put("sex", "性别");
+        for (int i = 0; i < 100; i++) {
+            Map<String, Object> map = new LinkedMap<>();
+            map.put("name", "张三" + i);
+            map.put("age", 18 + i);
+            map.put("sex", "男");
+            list.add(map);
+        }
+
+        try {
+            ExportFileUtils.exportToExcel(response, "test.xls", list, headers);
+        } catch (Exception e) {
+            log.error("导出文件异常: {}", e.getMessage());
+        }
     }
 }
