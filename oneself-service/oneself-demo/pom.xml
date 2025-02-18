@@ -55,6 +55,13 @@
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.sonarsource.sonarqube/sonar-ws -->
+        <dependency>
+            <groupId>org.sonarsource.sonarqube</groupId>
+            <artifactId>sonar-ws</artifactId>
+            <version>9.9.8.100196</version>
+        </dependency>
     </dependencies>
 
     <build>
