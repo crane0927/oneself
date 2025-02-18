@@ -34,7 +34,7 @@ public class TraceFilter extends OncePerRequestFilter {
         long startTime = System.currentTimeMillis();
         // 生成唯一 traceId 并放入 ThreadContext
         // UUID 去除 "-"
-        String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+        String uuid = UUID.randomUUID().toString().replace("-", "");
         ThreadContext.put(TRACE_ID, uuid);
         log.info("=== Request Details ===");
         log.info("Request URL[{}]: {} ", request.getMethod(), request.getRequestURL().toString());

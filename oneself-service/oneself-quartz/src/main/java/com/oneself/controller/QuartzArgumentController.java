@@ -49,11 +49,13 @@ public class QuartzArgumentController {
                 if (lastTime == null) {
                     break;
                 }
-                result.add(DateFormatUtils.SDF_YYYY_MM_DD_HH_MM_SS.format(lastTime));
+                result.add(DateFormatUtils.getSdfYyyyMmDdHhMmSs().format(lastTime));
             }
         } catch (Exception e) {
             log.error("解析 CRON 表达式失败: {}", e.getMessage(), e);
             return ResponseVO.failure("CRON 表达式解析失败，请检查表达式是否正确");
+        } finally {
+            DateFormatUtils.remove();
         }
 
         return ResponseVO.success(result);

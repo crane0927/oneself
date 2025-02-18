@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    // 在类的开头定义常量
+    private static final String LOG_MESSAGE_TEMPLATE = "请求：{}，发生异常：{}";
 
     /**
      * 处理业务异常
@@ -33,7 +35,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(OneselfException.class)
     public ResponseVO<Object> handleOneselfException(OneselfException e, HttpServletRequest request) {
-        log.info("请求：{}，发生异常：{}", request.getRequestURL(), e.getMessage(), e);
+        log.info(LOG_MESSAGE_TEMPLATE, request.getRequestURL(), e.getMessage(), e);
         return ResponseVO.failure(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR,
                 request.getRequestURI(), ThreadContext.get(TraceFilter.TRACE_ID));
     }
@@ -47,7 +49,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(OneselfLoginException.class)
     public ResponseVO<Object> handleOneselfLoginException(OneselfLoginException e, HttpServletRequest request) {
-        log.info("请求：{}，发生异常：{}", request.getRequestURL(), e.getMessage(), e);
+        log.info(LOG_MESSAGE_TEMPLATE, request.getRequestURL(), e.getMessage(), e);
         return ResponseVO.failure(e.getMessage(), HttpStatus.UNAUTHORIZED,
                 request.getRequestURI(), ThreadContext.get(TraceFilter.TRACE_ID));
     }
@@ -62,7 +64,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BindException.class)
     public ResponseVO<Object> handleBindException(BindException e, HttpServletRequest request) {
-        log.info("请求：{}，发生异常：{}", request.getRequestURL(), e.getMessage(), e);
+        log.info(LOG_MESSAGE_TEMPLATE, request.getRequestURL(), e.getMessage(), e);
         return ResponseVO.failure(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR,
                 request.getRequestURI(), ThreadContext.get(TraceFilter.TRACE_ID));
     }
@@ -76,7 +78,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public ResponseVO<Object> handleException(Exception e, HttpServletRequest request) {
-        log.info("请求：{}，发生异常：{}", request.getRequestURL(), e.getMessage(), e);
+        log.info(LOG_MESSAGE_TEMPLATE, request.getRequestURL(), e.getMessage(), e);
         return ResponseVO.failure("系统异常，请稍后重试", HttpStatus.INTERNAL_SERVER_ERROR,
                 request.getRequestURI(), ThreadContext.get(TraceFilter.TRACE_ID));
     }

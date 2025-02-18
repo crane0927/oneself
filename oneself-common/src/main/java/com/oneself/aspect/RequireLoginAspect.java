@@ -28,7 +28,7 @@ import java.util.Objects;
 public class RequireLoginAspect {
 
     @Before("@within(requireLogin) || @annotation(requireLogin)")
-    public void checkLoginStatus(JoinPoint joinPoint, RequireLogin requireLogin) throws Throwable {
+    public void checkLoginStatus(JoinPoint joinPoint, RequireLogin requireLogin) {
         if (requireLogin == null) {
             requireLogin = getRequireLoginAnnotation(joinPoint);
         }

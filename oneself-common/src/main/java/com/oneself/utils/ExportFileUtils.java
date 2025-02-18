@@ -3,11 +3,11 @@ package com.oneself.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
-import java.io.*;
-import java.util.LinkedHashMap;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -22,7 +22,14 @@ import java.util.zip.ZipOutputStream;
  * version 1.0
  */
 public class ExportFileUtils {
+
+    private static final String CONTENT_DISPOSITION = "Content-Disposition";
+    private static final String CONTENT_DISPOSITION_ATTACHMENT = "attachment; filename=\"%s\"";
     private static final int MAX_ROWS_PER_SHEET = 100000; // 每个 Sheet 页的最大行数
+
+    private ExportFileUtils() {
+        throw new AssertionError("此工具类不允许实例化");
+    }
 
     /**
      * 导出数据到 Excel 文件，支持大数据量分 Sheet 页。
@@ -33,7 +40,7 @@ public class ExportFileUtils {
      * @param headers  列头映射，键为列标识，值为中文名称
      * @throws IOException 导出过程中的异常
      */
-    public static void exportToExcel(HttpServletResponse response, String fileName, List<Map<String, Object>> data, LinkedHashMap<String, String> headers) throws IOException {
+    public static void exportToExcel(HttpServletResponse response, String fileName, List<Map<String, Object>> data, Map<String, String> headers) throws IOException {
         // 使用 SXSSFWorkbook 以流式写入支持大数据量导出
         try (SXSSFWorkbook workbook = new SXSSFWorkbook(); OutputStream outputStream = response.getOutputStream()) {
             int totalRows = data.size(); // 总数据行数
@@ -70,7 +77,7 @@ public class ExportFileUtils {
 
             // 设置响应头，写出 Excel 文件
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+            response.setHeader(CONTENT_DISPOSITION, String.format(CONTENT_DISPOSITION_ATTACHMENT, fileName));
             workbook.write(outputStream);
         }
     }
@@ -81,7 +88,7 @@ public class ExportFileUtils {
      * @param sheet   工作表对象
      * @param headers 标题映射，键为列标识，值为中文名称
      */
-    private static void createHeaderRow(Sheet sheet, LinkedHashMap<String, String> headers) {
+    private static void createHeaderRow(Sheet sheet, Map<String, String> headers) {
         Row headerRow = sheet.createRow(0); // 标题行固定在第一行
         int columnIndex = 0;
         for (String header : headers.values()) {
@@ -119,7 +126,7 @@ public class ExportFileUtils {
     public static void exportToZip(HttpServletResponse response, String fileName, Map<String, byte[]> files) throws IOException {
         try (ZipOutputStream zipOut = new ZipOutputStream(response.getOutputStream())) {
             response.setContentType("application/zip");
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+            response.setHeader(CONTENT_DISPOSITION, String.format(CONTENT_DISPOSITION_ATTACHMENT, fileName));
 
             for (Map.Entry<String, byte[]> entry : files.entrySet()) {
                 ZipEntry zipEntry = new ZipEntry(entry.getKey());
@@ -140,7 +147,7 @@ public class ExportFileUtils {
      */
     public static void exportToTxt(HttpServletResponse response, String fileName, String content) throws IOException {
         response.setContentType("text/plain");
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+        response.setHeader(CONTENT_DISPOSITION, String.format(CONTENT_DISPOSITION_ATTACHMENT, fileName));
         try (OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream())) {
             writer.write(content);
         }
@@ -156,7 +163,7 @@ public class ExportFileUtils {
      */
     public static void exportToJson(HttpServletResponse response, String fileName, Object data) throws IOException {
         response.setContentType("application/json");
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+        response.setHeader(CONTENT_DISPOSITION, String.format(CONTENT_DISPOSITION_ATTACHMENT, fileName));
         ObjectMapper objectMapper = new ObjectMapper();
         try (OutputStream outputStream = response.getOutputStream()) {
             objectMapper.writeValue(outputStream, data);
@@ -173,7 +180,7 @@ public class ExportFileUtils {
      */
     public static void exportToWord(HttpServletResponse response, String fileName, String content) throws IOException {
         response.setContentType("application/msword");
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+        response.setHeader(CONTENT_DISPOSITION, String.format(CONTENT_DISPOSITION_ATTACHMENT, fileName));
         try (OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream())) {
             writer.write(content);
         }

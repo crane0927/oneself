@@ -1,6 +1,7 @@
 package com.oneself.utils;
 
 import com.jcraft.jsch.*;
+import com.oneself.exception.OneselfFtpUploadException;
 import com.oneself.properties.FileProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTP;
@@ -23,6 +24,8 @@ import java.nio.charset.StandardCharsets;
 @Component
 public class FileUploaderUtils {
 
+    private static final String STRICT_HOST_KEY_CHECKING = "StrictHostKeyChecking";
+
     private final FileProperties fileProperties;
 
     @Autowired
@@ -37,7 +40,7 @@ public class FileUploaderUtils {
      * @param fileContent   文件内容
      * @param directoryPath 文件所在目录（相对于FTP服务器根目录）
      */
-    public void saveFileToFtp(String fileName, String fileContent, String directoryPath) throws Exception {
+    public void saveFileToFtp(String fileName, String fileContent, String directoryPath) throws OneselfFtpUploadException {
         FTPClient ftpClient = new FTPClient();
         try {
             ftpClient.connect(fileProperties.getFtp().getHost(), fileProperties.getFtp().getPort());
@@ -64,7 +67,7 @@ public class FileUploaderUtils {
             log.info("文件上传 FTP 服务器成功，路径为: 【{}】", directoryPath);
         } catch (IOException e) {
             log.error("文件上传 FTP 服务器失败，报错信息为: {}", e.getMessage());
-            throw new Exception("文件上传 FTP 服务器失败，报错信息为", e);
+            throw new OneselfFtpUploadException("文件上传 FTP 服务器失败，报错信息为", e);
         } finally {
             if (ftpClient.isConnected()) {
                 try {
@@ -72,7 +75,6 @@ public class FileUploaderUtils {
                     ftpClient.disconnect();
                 } catch (IOException e) {
                     log.error("文件上传 FTP 服务器失败，报错信息为: {}", e.getMessage());
-                    throw new Exception("文件上传 FTP 服务器失败，报错信息", e);
                 }
             }
         }
@@ -87,8 +89,9 @@ public class FileUploaderUtils {
      */
     private void createDirectories(FTPClient ftpClient, String directoryPath) throws IOException {
         // 确保路径是绝对路径
-        if (!directoryPath.startsWith("/")) {
-            directoryPath = "/" + directoryPath;
+        // 使用系统默认的文件分隔符
+        if (!directoryPath.startsWith(File.separator)) {
+            directoryPath = File.separator + directoryPath;
         }
 
         // 将路径分解为各级目录
@@ -138,33 +141,22 @@ public class FileUploaderUtils {
             JSch jsch = new JSch();
             session = jsch.getSession(fileProperties.getSftp().getUser(), fileProperties.getSftp().getHost(), fileProperties.getSftp().getPort());
             session.setPassword(fileProperties.getSftp().getPassword());
-            session.setConfig("StrictHostKeyChecking", "no");
+            session.setConfig(STRICT_HOST_KEY_CHECKING, "no");
             session.connect();
 
             sftpChannel = (ChannelSftp) session.openChannel("sftp");
             sftpChannel.connect();
 
             // 切换到指定目录，如果目录不存在则创建
-            try {
-                sftpChannel.cd(directoryPath);
-            } catch (SftpException e) {
-                createDirectories(sftpChannel, directoryPath);
-                sftpChannel.cd(directoryPath);
-            }
+            changeOrCreateDirectory(sftpChannel, directoryPath);
 
-            try (OutputStream outputStream = sftpChannel.put(fileName);
-                 Writer writer = new BufferedWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8))) {
-
-                // 使用缓冲提高写入效率
-                try (BufferedWriter bufferedWriter = new BufferedWriter(writer)) {
-                    bufferedWriter.write(fileContent);
-                }
-            }
+            // 文件写入
+            writeToSftpFile(sftpChannel, fileName, fileContent);
 
             log.info("文件上传 SFTP 服务器成功，路径为: 【{}】", directoryPath);
         } catch (JSchException | SftpException | IOException e) {
             log.error("文件上传 SFTP 服务器失败，报错信息为: {}", e.getMessage());
-            throw new Exception("文件上传 SFTP 服务器失败", e);
+            throw new OneselfFtpUploadException("文件上传 SFTP 服务器失败", e);
         } finally {
             if (sftpChannel != null) {
                 sftpChannel.disconnect();
@@ -174,6 +166,45 @@ public class FileUploaderUtils {
             }
         }
     }
+
+
+    /**
+     * 将文件内容写入到 SFTP 服务器中的文件
+     *
+     * @param sftpChannel SFTP 渠道，用于与 SFTP 服务器进行通信
+     * @param fileName   文件名，文件将被上传到 SFTP 服务器上的该路径
+     * @param fileContent 文件内容，将写入到指定文件中
+     * @throws SftpException 如果 SFTP 操作失败
+     * @throws IOException 如果写入文件时发生 I/O 异常
+     */
+    private void writeToSftpFile(ChannelSftp sftpChannel, String fileName, String fileContent) throws SftpException, IOException {
+        // 使用 OutputStream 将文件内容上传到 SFTP 服务器
+        try (OutputStream outputStream = sftpChannel.put(fileName);
+             Writer writer = new BufferedWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8))) {
+
+            // 使用 BufferedWriter 提高写入效率
+            try (BufferedWriter bufferedWriter = new BufferedWriter(writer)) {
+                bufferedWriter.write(fileContent);
+            }
+        }
+    }
+
+    /**
+     * 切换到指定目录，如果目录不存在则创建该目录
+     *
+     * @param sftpChannel SFTP 渠道，用于与 SFTP 服务器进行通信
+     * @param directoryPath 目录路径，目标目录的相对路径
+     * @throws SftpException 如果无法切换目录或创建目录时发生错误
+     */
+    private void changeOrCreateDirectory(ChannelSftp sftpChannel, String directoryPath) throws SftpException {
+        try {
+            sftpChannel.cd(directoryPath); // 切换到指定目录
+        } catch (SftpException e) {
+            createDirectories(sftpChannel, directoryPath); // 创建目录
+            sftpChannel.cd(directoryPath); // 再次尝试切换到目录
+        }
+    }
+
 
     /**
      * 创建 SFTP 目录
@@ -268,7 +299,7 @@ public class FileUploaderUtils {
             JSch jsch = new JSch();
             Session session = jsch.getSession(fileProperties.getSftp().getUser(), fileProperties.getSftp().getHost(), fileProperties.getSftp().getPort());
             session.setPassword(fileProperties.getSftp().getPassword());
-            session.setConfig("StrictHostKeyChecking", "no");
+            session.setConfig(STRICT_HOST_KEY_CHECKING, "no");
             session.connect();
 
             ChannelSftp sftpChannel = (ChannelSftp) session.openChannel("sftp");
@@ -355,7 +386,7 @@ public class FileUploaderUtils {
             JSch jsch = new JSch();
             Session session = jsch.getSession(fileProperties.getSftp().getUser(), fileProperties.getSftp().getHost(), fileProperties.getSftp().getPort());
             session.setPassword(fileProperties.getSftp().getPassword());
-            session.setConfig("StrictHostKeyChecking", "no");
+            session.setConfig(STRICT_HOST_KEY_CHECKING, "no");
             session.connect();
 
             ChannelSftp sftpChannel = (ChannelSftp) session.openChannel("sftp");

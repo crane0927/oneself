@@ -15,21 +15,21 @@ import java.util.List;
  * version 1.0
  */
 public interface QuartzJobService {
-    Boolean addCronJob(String jobName, String cron, String jobClassName, JobDataMap dataMap, String jobGroup, String triggerGroup, String triggerPer);
+    boolean addCronJob(String jobName, String cron, String jobClassName, JobDataMap dataMap, String jobGroup, String triggerGroup, String triggerPer);
 
-    Boolean addOneTimeJob(String jobName, LocalDateTime executeTime, String jobClassName, JobDataMap dataMap, String jobGroup, String triggerGroup, String triggerPer);
+    boolean addOneTimeJob(String jobName, LocalDateTime executeTime, String jobClassName, JobDataMap dataMap, String jobGroup, String triggerGroup, String triggerPer);
 
-    Boolean updateOneTimeJob(String jobName, LocalDateTime newExecuteTime, String jobGroup, String triggerGroup, String triggerPer);
+    boolean updateOneTimeJob(String jobName, LocalDateTime newExecuteTime, String jobGroup, String triggerGroup, String triggerPer);
 
-    Boolean updateCronJob(String jobName, String newCron, String jobClassName, JobDataMap dataMap, String jobGroup, String triggerGroup, String triggerPer);
+    boolean updateCronJob(String jobName, String newCron, String jobClassName, JobDataMap dataMap, String jobGroup, String triggerGroup, String triggerPer);
 
-    Boolean deleteJob(String jobName, String jobGroup, String triggerGroup, String triggerPer);
+    boolean deleteJob(String jobName, String jobGroup, String triggerGroup, String triggerPer);
 
-    Boolean pauseJob(String jobName, String jobGroup);
+    boolean pauseJob(String jobName, String jobGroup);
 
-    Boolean resumeJob(String jobName, String jobGroup);
+    boolean resumeJob(String jobName, String jobGroup);
 
-    Boolean executeImmediately(String jobName, String jobClassName, JobDataMap dataMap, String jobGroup, String triggerGroup, String triggerPer);
+    boolean executeImmediately(String jobName, String jobClassName, JobDataMap dataMap, String jobGroup, String triggerGroup, String triggerPer);
 
     List<QuartzTaskVO> getPageList();
 }

@@ -17,6 +17,8 @@ import java.time.LocalDateTime;
 @Component
 public class MyMetaObjectHandler implements MetaObjectHandler {
 
+    private static final String USER = "admin";
+
     /**
      * 在插入实体时，自动填充 `createTime` 和 `updateTime` 字段为当前时间戳。
      *
@@ -25,8 +27,8 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
         // TODO 根据实际情况修改创建用户和更新用户的获取方式
-        this.setFieldValByName("createBy", "admin", metaObject);
-        this.setFieldValByName("updateBy", "admin", metaObject);
+        this.setFieldValByName("createBy", USER, metaObject);
+        this.setFieldValByName("updateBy", USER, metaObject);
         this.setFieldValByName("createTime", LocalDateTime.now(), metaObject);
         this.setFieldValByName("updateTime", LocalDateTime.now(), metaObject);
     }
@@ -39,7 +41,7 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void updateFill(MetaObject metaObject) {
         // TODO 根据实际情况修改创建用户和更新用户的获取方式
-        this.setFieldValByName("updateBy", "admin", metaObject);
+        this.setFieldValByName("updateBy", USER, metaObject);
         this.setFieldValByName("updateTime", LocalDateTime.now(), metaObject);
     }
 }

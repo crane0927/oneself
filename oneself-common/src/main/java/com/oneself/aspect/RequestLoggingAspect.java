@@ -1,6 +1,7 @@
 package com.oneself.aspect;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oneself.exception.OneselfException;
 import com.oneself.utils.JacksonUtils;
 import com.oneself.utils.SensitiveDataUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,7 @@ public class RequestLoggingAspect {
     private final ObjectMapper objectMapper = JacksonUtils.getObjectMapper();
 
     @Around("@within(com.oneself.annotation.RequestLogging) || @annotation(com.oneself.annotation.RequestLogging)")
-    public Object logDetails(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object logDetails(ProceedingJoinPoint joinPoint) throws OneselfException {
 
         // 获取方法级别的 @RequestLogging 注解，优先使用方法级别注解
         boolean logRequest = true;
@@ -56,9 +57,9 @@ public class RequestLoggingAspect {
         Object result;
         try {
             result = joinPoint.proceed();
-        } catch (Throwable throwable) {
-            log.error("Error occurred: {}", throwable.getMessage(), throwable);
-            throw throwable;
+        } catch (Throwable e) {
+            log.error("Error occurred: {}", e.getMessage(), e);
+            throw new OneselfException(e.getMessage(), e);
         }
 
         // 记录响应结果（如果 logResponse 为 true）

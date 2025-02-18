@@ -1,5 +1,6 @@
 package com.oneself.service.impl;
 
+import com.oneself.exception.OneselfException;
 import com.oneself.mapper.JobDetailsMapper;
 import com.oneself.model.vo.QuartzTaskVO;
 import com.oneself.service.QuartzJobService;
@@ -48,11 +49,11 @@ public class QuartzJobServiceImpl implements QuartzJobService {
      * @return 成功返回 true，失败返回 false
      */
     @Override
-    public Boolean addCronJob(String jobName, String cron, String jobClassName, JobDataMap dataMap, String jobGroup, String triggerGroup, String triggerPer) {
+    public boolean addCronJob(String jobName, String cron, String jobClassName, JobDataMap dataMap, String jobGroup, String triggerGroup, String triggerPer) {
         try {
             if (isJobExists(jobName, jobGroup)) {
                 log.error("【新增定时任务】已存在该作业，jobKey 为：{}", jobName);
-                return Boolean.FALSE;
+                return false;
             }
 
             // 构建 JobDetail
@@ -74,11 +75,11 @@ public class QuartzJobServiceImpl implements QuartzJobService {
             // 调度任务
             scheduler.scheduleJob(job, trigger);
             logJobAction("新增定时任务", jobName, jobGroup, true);
-            return Boolean.TRUE;
+            return true;
         } catch (SchedulerException e) {
             log.error("【新增定时任务】失败，报错：{}", e.getMessage(), e);
         }
-        return Boolean.FALSE;
+        return false;
     }
 
     /**
@@ -94,11 +95,11 @@ public class QuartzJobServiceImpl implements QuartzJobService {
      * @return 成功返回 true，失败返回 false
      */
     @Override
-    public Boolean addOneTimeJob(String jobName, LocalDateTime executeTime, String jobClassName, JobDataMap dataMap, String jobGroup, String triggerGroup, String triggerPer) {
+    public boolean addOneTimeJob(String jobName, LocalDateTime executeTime, String jobClassName, JobDataMap dataMap, String jobGroup, String triggerGroup, String triggerPer) {
         try {
             if (isJobExists(jobName, jobGroup)) {
                 log.error("【添加单次定时任务】已存在该作业，jobKey 为：{}", jobName);
-                return Boolean.FALSE;
+                return false;
             }
 
             // 构建 JobDetail
@@ -119,11 +120,11 @@ public class QuartzJobServiceImpl implements QuartzJobService {
             // 调度任务
             scheduler.scheduleJob(job, trigger);
             logJobAction("添加单次定时任务", jobName, jobGroup, true);
-            return Boolean.TRUE;
+            return true;
         } catch (SchedulerException e) {
             log.error("【添加单次定时任务】失败，报错：{}", e.getMessage(), e);
         }
-        return Boolean.FALSE;
+        return false;
     }
 
     /**
@@ -137,21 +138,21 @@ public class QuartzJobServiceImpl implements QuartzJobService {
      * @return 修改结果，成功返回 true
      */
     @Override
-    public Boolean updateOneTimeJob(String jobName, LocalDateTime newExecuteTime, String jobGroup, String triggerGroup, String triggerPer) {
+    public boolean updateOneTimeJob(String jobName, LocalDateTime newExecuteTime, String jobGroup, String triggerGroup, String triggerPer) {
         try {
             JobKey jobKey = JobKey.jobKey(jobName, jobGroup);
             TriggerKey triggerKey = TriggerKey.triggerKey(triggerPer + jobName, triggerGroup);
 
             if (!isJobExists(jobName, jobGroup)) {
                 log.error("【修改单次任务】作业不存在，jobKey 为：{}", jobKey);
-                return Boolean.FALSE;
+                return false;
             }
 
             // 获取原有 Trigger
             Trigger oldTrigger = scheduler.getTrigger(triggerKey);
             if (oldTrigger == null) {
                 log.info("【修改单次任务】触发器不存在，triggerKey 为：{}", triggerKey);
-                return Boolean.FALSE;
+                return false;
             }
 
             // 构建新的 Trigger
@@ -160,11 +161,11 @@ public class QuartzJobServiceImpl implements QuartzJobService {
             // 替换旧的 Trigger
             scheduler.rescheduleJob(triggerKey, newTrigger);
             logJobAction("修改单次任务", jobName, jobGroup, true);
-            return Boolean.TRUE;
+            return true;
         } catch (SchedulerException e) {
             log.error("【修改单次任务】失败，jobName 为：{}，报错：{}", jobName, e.getMessage(), e);
         }
-        return Boolean.FALSE;
+        return false;
     }
 
     /**
@@ -180,21 +181,21 @@ public class QuartzJobServiceImpl implements QuartzJobService {
      * @return 成功返回 true，失败返回 false
      */
     @Override
-    public Boolean updateCronJob(String jobName, String newCron, String jobClassName, JobDataMap dataMap, String jobGroup, String triggerGroup, String triggerPer) {
+    public boolean updateCronJob(String jobName, String newCron, String jobClassName, JobDataMap dataMap, String jobGroup, String triggerGroup, String triggerPer) {
         try {
             JobKey jobKey = JobKey.jobKey(jobName, jobGroup);
             TriggerKey triggerKey = TriggerKey.triggerKey(triggerPer + jobName, triggerGroup);
 
             if (!isJobExists(jobName, jobGroup)) {
                 log.error("【修改定时任务】作业不存在，jobKey 为：{}", jobKey);
-                return Boolean.FALSE;
+                return false;
             }
 
             // 获取原有 Trigger
             Trigger oldTrigger = scheduler.getTrigger(triggerKey);
             if (oldTrigger == null) {
                 log.info("【修改定时任务】触发器不存在，triggerKey 为：{}", triggerKey);
-                return Boolean.FALSE;
+                return false;
             }
 
             // 构建 JobDetail
@@ -216,11 +217,11 @@ public class QuartzJobServiceImpl implements QuartzJobService {
             scheduler.deleteJob(jobKey);
             scheduler.scheduleJob(newJobDetail, newTrigger);
             log.info("【修改定时任务】成功，jobName 为：{}，新的 Cron 为：{}", jobName, newCron);
-            return Boolean.TRUE;
+            return true;
         } catch (SchedulerException e) {
             log.error("【修改定时任务】失败，jobName 为：{}，报错：{}", jobName, e.getMessage(), e);
         }
-        return Boolean.FALSE;
+        return false;
     }
 
     /**
@@ -233,11 +234,11 @@ public class QuartzJobServiceImpl implements QuartzJobService {
      * @return 成功返回 true，失败返回 false
      */
     @Override
-    public Boolean deleteJob(String jobName, String jobGroup, String triggerGroup, String triggerPer) {
+    public boolean deleteJob(String jobName, String jobGroup, String triggerGroup, String triggerPer) {
         try {
             if (!isJobExists(jobName, jobGroup)) {
                 log.error("【删除定时任务】作业不存在，jobKey 为：{}", jobName);
-                return Boolean.FALSE;
+                return false;
             }
 
             TriggerKey triggerKey = TriggerKey.triggerKey(triggerPer + jobName, triggerGroup);
@@ -250,7 +251,7 @@ public class QuartzJobServiceImpl implements QuartzJobService {
         } catch (SchedulerException e) {
             log.error("【删除定时任务】失败，jobName: {}，报错：{}", jobName, e.getMessage(), e);
         }
-        return Boolean.FALSE;
+        return false;
     }
 
     /**
@@ -261,19 +262,19 @@ public class QuartzJobServiceImpl implements QuartzJobService {
      * @return 暂停结果，成功返回 true
      */
     @Override
-    public Boolean pauseJob(String jobName, String jobGroup) {
+    public boolean pauseJob(String jobName, String jobGroup) {
         try {
             if (!isJobExists(jobName, jobGroup)) {
                 log.error("【暂停定时任务】作业不存在，jobKey 为：{}", jobName);
-                return Boolean.FALSE;
+                return false;
             }
             scheduler.pauseJob(JobKey.jobKey(jobName, jobGroup));
             log.info("【暂停定时任务】成功，jobName 为：{}", jobName);
-            return Boolean.TRUE;
+            return true;
         } catch (SchedulerException e) {
             log.error("【暂停定时任务】失败，jobName 为：{}，报错：{}", jobName, e.getMessage(), e);
         }
-        return Boolean.FALSE;
+        return false;
     }
 
     /**
@@ -284,19 +285,19 @@ public class QuartzJobServiceImpl implements QuartzJobService {
      * @return 恢复结果，成功返回 true
      */
     @Override
-    public Boolean resumeJob(String jobName, String jobGroup) {
+    public boolean resumeJob(String jobName, String jobGroup) {
         try {
             if (!isJobExists(jobName, jobGroup)) {
                 log.error("【恢复定时任务】作业不存在，jobKey 为：{}", jobName);
-                return Boolean.FALSE;
+                return false;
             }
             scheduler.resumeJob(JobKey.jobKey(jobName, jobGroup));
             log.info("【恢复定时任务】成功，jobName 为：{}", jobName);
-            return Boolean.TRUE;
+            return true;
         } catch (SchedulerException e) {
             log.error("【恢复定时任务】失败，jobName 为：{}，报错：{}", jobName, e.getMessage(), e);
         }
-        return Boolean.FALSE;
+        return false;
     }
 
     /**
@@ -311,11 +312,11 @@ public class QuartzJobServiceImpl implements QuartzJobService {
      * @return 成功返回 true，失败返回 false
      */
     @Override
-    public Boolean executeImmediately(String jobName, String jobClassName, JobDataMap dataMap, String jobGroup, String triggerGroup, String triggerPer) {
+    public boolean executeImmediately(String jobName, String jobClassName, JobDataMap dataMap, String jobGroup, String triggerGroup, String triggerPer) {
         try {
             if (!isJobExists(jobName, jobGroup)) {
                 log.error("【立即执行一次任务】作业不存在，jobKey 为：{}", jobName);
-                return Boolean.FALSE;
+                return false;
             }
 
             // 创建 JobKey，使用任务名称和任务组
@@ -348,11 +349,11 @@ public class QuartzJobServiceImpl implements QuartzJobService {
                 scheduler.start();
             }
 
-            return Boolean.TRUE;
+            return true;
         } catch (SchedulerException e) {
             log.error("【立即执行一次任务，不定时】失败，报错：", e);
         }
-        return Boolean.FALSE;
+        return false;
     }
 
     @Override
@@ -431,14 +432,14 @@ public class QuartzJobServiceImpl implements QuartzJobService {
      *
      * @param className 类的全限定名称
      * @return 对应的 Class<? extends Job> 类型
-     * @throws RuntimeException 如果类加载失败抛出异常
+     * @throws OneselfException 如果类加载失败抛出异常
      */
     private static Class<? extends Job> getJobClass(String className) {
         try {
             return (Class<? extends Job>) Class.forName(className);
         } catch (ClassNotFoundException e) {
             log.error("【获取 Job 类】失败，className 为：{}", className, e);
-            throw new RuntimeException(e);
+            throw new OneselfException("获取 Job 类失败");
         }
     }
 }

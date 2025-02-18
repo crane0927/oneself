@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.oneself.exception.OneselfException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
@@ -18,6 +19,10 @@ import java.lang.reflect.Method;
  */
 @Slf4j
 public class DuplicateCheckUtils {
+
+    private DuplicateCheckUtils() {
+        throw new AssertionError("此工具类不允许实例化");
+    }
 
     /**
      * 检查实体对象中的字段值是否存在重复
@@ -40,7 +45,7 @@ public class DuplicateCheckUtils {
                 Object currentIdValue = idGetter.invoke(entity);
 
                 if (ObjectUtils.isNotEmpty(currentIdValue) && !currentIdValue.equals(idValue)) {
-                    throw new RuntimeException("当前记录 ID 值与传入的 ID 值不一致！");
+                    throw new OneselfException("当前记录 ID 值与传入的 ID 值不一致！");
                 }
 
                 // 排除当前记录
@@ -59,10 +64,10 @@ public class DuplicateCheckUtils {
 
             if (ObjectUtils.isNotEmpty(existingEntity)) {
                 String errorMessage = "已经存在名为【" + fieldValue + "】的数据，请重命名！";
-                throw new RuntimeException(errorMessage);
+                throw new OneselfException(errorMessage);
             }
         } catch (Exception e) {
-            throw new RuntimeException("检查重复数据时出错：" + e.getMessage(), e);
+            throw new OneselfException("检查重复数据时出错：" + e.getMessage(), e);
         }
     }
 
@@ -92,7 +97,7 @@ public class DuplicateCheckUtils {
             // 动态获取字段对应的 lambda 表达式
             return (SFunction<T, ?>) entity.getClass().getDeclaredField(field).get(entity);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException("获取字段 Lambda 表达式失败：" + e.getMessage(), e);
+            throw new OneselfException("获取字段 Lambda 表达式失败：" + e.getMessage(), e);
         }
     }
 }

@@ -43,51 +43,59 @@ public class ElasticsearchUtils {
      * 初始化 Elasticsearch 客户端
      */
     @PostConstruct
-    public synchronized void init() {
-        if (client == null && properties.isEnable()) {
-            log.info("初始化 Elasticsearch 客户端");
-            // 构建 RestClient
-            RestClientBuilder restClientBuilder = RestClient.builder(
-                    properties.getNodes().stream()
-                            .map(node -> {
-                                String[] parts = node.split(":");
-                                if (parts.length != 2) {
-                                    throw new IllegalArgumentException("无效的节点格式: " + node);
-                                }
-                                return new org.apache.http.HttpHost(parts[0], Integer.parseInt(parts[1]));
-                            })
-                            .toArray(org.apache.http.HttpHost[]::new)
-            );
+    public void init() {
+        // 双重检查锁定确保线程安全且性能优化
+        if (client == null) {
+            synchronized (this) {
+                if (client == null && properties.isEnable()) {
+                    log.info("初始化 Elasticsearch 客户端");
+                    // 构建 RestClient
+                    RestClientBuilder restClientBuilder = RestClient.builder(
+                            properties.getNodes().stream()
+                                    .map(node -> {
+                                        String[] parts = node.split(":");
+                                        if (parts.length != 2) {
+                                            throw new IllegalArgumentException("无效的节点格式: " + node);
+                                        }
+                                        return new org.apache.http.HttpHost(parts[0], Integer.parseInt(parts[1]));
+                                    })
+                                    .toArray(org.apache.http.HttpHost[]::new)
+                    );
 
-            // 配置安全认证（如果启用）
-            if (properties.getUsername() != null && properties.getPassword() != null) {
-                final BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-                credentialsProvider.setCredentials(
-                        AuthScope.ANY,
-                        new UsernamePasswordCredentials(properties.getUsername(), properties.getPassword())
-                );
+                    // 配置安全认证（如果启用）
+                    if (properties.getUsername() != null && properties.getPassword() != null) {
+                        final BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+                        credentialsProvider.setCredentials(
+                                AuthScope.ANY,
+                                new UsernamePasswordCredentials(properties.getUsername(), properties.getPassword())
+                        );
 
-                restClientBuilder.setHttpClientConfigCallback(httpClientBuilder ->
-                        httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
-                                .setMaxConnTotal(properties.getMaxConnections())
-                                .setMaxConnPerRoute(properties.getMaxConnectionsPerRoute())
-                );
+                        restClientBuilder.setHttpClientConfigCallback(httpClientBuilder ->
+                                httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
+                                        .setMaxConnTotal(properties.getMaxConnections())
+                                        .setMaxConnPerRoute(properties.getMaxConnectionsPerRoute())
+                        );
+                    }
+
+                    // 设置连接超时
+                    restClientBuilder.setRequestConfigCallback(requestConfigBuilder ->
+                            requestConfigBuilder
+                                    .setConnectTimeout(properties.getConnectTimeout())
+                                    .setSocketTimeout(properties.getSocketTimeout())
+                    );
+
+                    RestClient restClient = restClientBuilder.build();
+                    RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
+                    this.client = new ElasticsearchClient(transport);
+                    log.info("Elasticsearch 客户端初始化完成");
+                }
             }
-
-            // 设置连接超时
-            restClientBuilder.setRequestConfigCallback(requestConfigBuilder ->
-                    requestConfigBuilder
-                            .setConnectTimeout(properties.getConnectTimeout())
-                            .setSocketTimeout(properties.getSocketTimeout())
-            );
-
-            RestClient restClient = restClientBuilder.build();
-            RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
-            this.client = new ElasticsearchClient(transport);
-            log.info("Elasticsearch 客户端初始化完成");
         }
     }
 
+    /**
+     * 获取 Elasticsearch 客户端
+     */
     public ElasticsearchClient getClient() {
         if (client == null) {
             throw new IllegalStateException("Elasticsearch 客户端未初始化");

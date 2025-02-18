@@ -54,6 +54,6 @@ public class OneJobDTO implements Serializable {
     private LocalDateTime executionTime;
 
     @Schema(description = "任务参数")
-    private Map<String, Object> dataMap;
+    private transient Map<String, Object> dataMap;
 }
 

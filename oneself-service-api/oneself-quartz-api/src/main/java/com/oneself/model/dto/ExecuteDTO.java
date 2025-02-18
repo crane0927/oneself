@@ -33,7 +33,7 @@ public class ExecuteDTO implements Serializable {
     private String jobClassName;
 
     @Schema(description = "任务参数")
-    private Map<String, Object> dataMap;
+    private transient Map<String, Object> dataMap;
 
     @Schema(description = "任务组名称", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "任务组名称不能为空")

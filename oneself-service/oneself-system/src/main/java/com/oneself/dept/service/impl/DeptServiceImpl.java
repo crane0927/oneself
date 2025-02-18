@@ -11,6 +11,7 @@ import com.oneself.dept.model.pojo.Dept;
 import com.oneself.dept.model.vo.DeptTreeVO;
 import com.oneself.dept.model.vo.DeptVO;
 import com.oneself.dept.service.DeptService;
+import com.oneself.exception.OneselfException;
 import com.oneself.model.dto.PageDTO;
 import com.oneself.model.vo.PageVO;
 import com.oneself.model.vo.ResponseVO;
@@ -58,7 +59,7 @@ public class DeptServiceImpl implements DeptService {
             // 2. 校验上级部门是否存在
             Dept parentDept = deptMapper.selectById(parentId);
             if (ObjectUtils.isEmpty(parentDept)) {
-                throw new RuntimeException("上级部门不存在");
+                throw new OneselfException("上级部门不存在");
             }
         }
         // 3. 校验部门名称是否重复
@@ -71,7 +72,7 @@ public class DeptServiceImpl implements DeptService {
     public DeptVO getDept(Long id) {
         Dept dept = deptMapper.selectById(id);
         if (ObjectUtils.isEmpty(dept)) {
-            throw new RuntimeException("部门不存在");
+            throw new OneselfException("部门不存在");
         }
         DeptVO deptVO = new DeptVO();
         BeanUtils.copyProperties(dept, deptVO);
@@ -91,7 +92,7 @@ public class DeptServiceImpl implements DeptService {
             // 3. 校验上级部门是否存在
             Dept parentDept = deptMapper.selectById(parentId);
             if (ObjectUtils.isEmpty(parentDept)) {
-                throw new RuntimeException("上级部门不存在");
+                throw new OneselfException("上级部门不存在");
             }
         }
         // 4. 更新部门
@@ -104,7 +105,7 @@ public class DeptServiceImpl implements DeptService {
         // 1. 获取当前部门 ID 和所有子部门 ID
         List<Long> allChildDeptIds = getAllChildDeptIds(ids);
         if (CollectionUtils.isEmpty(allChildDeptIds)) {
-            throw new RuntimeException("删除失败，该部门不存在");
+            throw new OneselfException("删除失败，该部门不存在");
         }
         // 2. 删除部门下所有的用户
         List<User> users = userMapper.selectList(new LambdaQueryWrapper<User>()
@@ -248,7 +249,7 @@ public class DeptServiceImpl implements DeptService {
         wrapper.eq(Dept::getParentId, dept.getParentId())
                 .eq(Dept::getDeptName, dept.getDeptName());
         if (deptMapper.selectCount(wrapper) > 0) {
-            throw new RuntimeException("部门名称已存在");
+            throw new OneselfException("部门名称已存在");
         }
 
     }

@@ -39,7 +39,6 @@ public class PageVO<T> extends ResponseVO<PageVO.DataVO<T>> {
 
     private PageVO() {
         super();
-//        throw new AssertionError("此工具类不允许实例化");
     }
 
     /**

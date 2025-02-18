@@ -3,6 +3,7 @@ package com.oneself.user.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.oneself.dept.mapper.DeptMapper;
 import com.oneself.dept.model.pojo.Dept;
+import com.oneself.exception.OneselfException;
 import com.oneself.user.mapper.UserMapper;
 import com.oneself.user.model.dto.UserDTO;
 import com.oneself.user.model.pojo.User;
@@ -45,7 +46,7 @@ public class UserServiceImpl implements UserService {
         // 3. 校验部门是否存在
         Dept dept = deptMapper.selectById(user.getDeptId());
         if (ObjectUtils.isEmpty(dept)) {
-            throw new RuntimeException("部门不存在");
+            throw new OneselfException("部门不存在");
         }
         // 4. 插入用户
         return userMapper.insert(user);
@@ -55,7 +56,7 @@ public class UserServiceImpl implements UserService {
     public UserVO getUser(Long id) {
         User user = userMapper.selectById(id);
         if (ObjectUtils.isEmpty(user)) {
-            throw new RuntimeException("用户不存在");
+            throw new OneselfException("用户不存在");
         }
         UserVO userVO = new UserVO();
         BeanUtils.copyProperties(user, userVO);
@@ -75,7 +76,7 @@ public class UserServiceImpl implements UserService {
         }
         wrapper.eq(User::getLoginName, user.getLoginName());
         if (userMapper.selectCount(wrapper) > 0) {
-            throw new RuntimeException("用户登录名已存在");
+            throw new OneselfException("用户登录名已存在");
         }
     }
 }

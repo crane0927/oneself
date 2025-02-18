@@ -60,6 +60,6 @@ public class CronJobDTO implements Serializable {
     private String cronExpression;
 
     @Schema(description = "任务参数")
-    private Map<String, Object> dataMap;
+    private transient Map<String, Object> dataMap;
 
 }

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.oneself.exception.OneselfException;
 
 import java.util.List;
 
@@ -120,7 +121,7 @@ public class JacksonUtils {
             JavaType javaType = OBJECT_MAPPER.getTypeFactory().constructCollectionType(List.class, clazz);
             return OBJECT_MAPPER.readValue(jsonString, javaType);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("JSON 反序列化失败", e);
+            throw new OneselfException("JSON 反序列化失败", e);
         }
     }
 
@@ -131,15 +132,6 @@ public class JacksonUtils {
      */
     private static void handleJsonProcessingException(JsonProcessingException e) {
         // 可以将异常记录到日志或者包装成自定义异常
-        throw new JsonProcessingRuntimeException("JSON 处理错误", e);
-    }
-
-    /**
-     * 自定义运行时异常，用于 JSON 处理的异常封装
-     */
-    public static class JsonProcessingRuntimeException extends RuntimeException {
-        public JsonProcessingRuntimeException(String message, Throwable cause) {
-            super(message, cause);
-        }
+        throw new OneselfException("JSON 处理错误", e);
     }
 }

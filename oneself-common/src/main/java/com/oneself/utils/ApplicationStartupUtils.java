@@ -7,8 +7,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Optional;
 
-import static java.lang.System.out;
-
 /**
  * @author liuhuan
  * date 2024/12/31
@@ -19,6 +17,12 @@ import static java.lang.System.out;
  */
 @Slf4j
 public class ApplicationStartupUtils {
+
+    private ApplicationStartupUtils() {
+        throw new AssertionError("此工具类不允许实例化");
+    }
+
+
     /**
      * 打印启动信息
      *
@@ -38,14 +42,15 @@ public class ApplicationStartupUtils {
         String swaggerUrl = baseUrl + "/doc.html";
 
         // 打印启动信息
-        out.printf("""
+        log.info("""
+                
                 ***************************************************************
-                    %s 服务启动成功:
-                    本机 IP 地址：%s
-                    项目接口路径：%s
-                    Swagger 文档：%s
+                    {} 服务启动成功:
+                    本机 IP 地址：{}
+                    项目接口路径：{}
+                    Swagger 文档：{}
                 ***************************************************************
-                %n""", applicationName, ip, baseUrl, swaggerUrl);
+                """, applicationName, ip, baseUrl, swaggerUrl);
     }
 
     /**

@@ -20,7 +20,7 @@ public class HelloJob implements Job {
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         JobDataMap jobDataMap = jobExecutionContext.getJobDetail().getJobDataMap();
 
-        jobDataMap.forEach((k, v) -> System.out.println(k + ":" + v));
+        jobDataMap.forEach((k, v) -> log.info("{}:{}", k, v));
         log.info("HelloJob is running");
 
     }

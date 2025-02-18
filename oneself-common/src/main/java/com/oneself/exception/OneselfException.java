@@ -27,5 +27,8 @@ public class OneselfException extends RuntimeException {
         super(message);
     }
 
+    public OneselfException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 }

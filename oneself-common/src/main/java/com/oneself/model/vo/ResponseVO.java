@@ -28,12 +28,11 @@ public class ResponseVO<T> implements Serializable {
     @Schema(description = "请求路径", example = "/oneself")
     private String path = null;
     @Schema(description = "返回数据", example = "false")
-    private T data;
+    private transient T data;
     @Schema(description = "请求追踪 ID")
     private String traceId;
 
     ResponseVO() {
-//        throw new AssertionError("此工具类不允许实例化");
     }
 
     private ResponseVO(int msgCode, String message, T data) {
@@ -58,20 +57,6 @@ public class ResponseVO<T> implements Serializable {
      */
     public static <T> ResponseVO<T> success(T data) {
         // 返回状态码 200，表示成功，并且设置 message 为 "请求成功"
-        return new ResponseVO<>(HttpStatus.OK.value(), "请求成功", data);
-    }
-
-    /**
-     * 静态方法，返回一个带有自定义路径的成功响应
-     *
-     * @param data 响应数据
-     * @param path 请求路径
-     * @param <T>  数据类型
-     * @return 成功的 ResponseVO 实例
-     */
-    @Deprecated
-    public static <T> ResponseVO<T> success(T data, String path) {
-        // 返回带有路径信息的成功响应
         return new ResponseVO<>(HttpStatus.OK.value(), "请求成功", data);
     }
 
