@@ -16,6 +16,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>oneself-ai</module>
         <module>oneself-common</module>
         <module>oneself-gateway</module>
         <module>oneself-service</module>
