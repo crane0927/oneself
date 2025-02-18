@@ -16,6 +16,7 @@
 ```text
 oneself
 ├── oneself-common                  # 公共模块，存放共享的工具类、公共服务、通用配置等
+├── oneself-ai                      # 人工智能模块，提供 AI 服务，如文本翻译、语音识别、语音合成等（未开发）
 ├── oneself-gateway                 # 网关模块，处理请求路由、认证、限流等、默认端口 9001
 ├── oneself-service                 # 核心业务模块，包含多个子模块，处理具体的业务逻辑
 │   ├── oneself-demo                # 示例服务模块，演示服务如何使用
