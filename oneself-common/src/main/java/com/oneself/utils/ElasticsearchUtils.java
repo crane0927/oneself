@@ -1,5 +1,14 @@
 package com.oneself.utils;
 
+/**
+ * @author liuhuan
+ * date 2025/1/2
+ * packageName com.oneself.utils
+ * className ElasticsearchUtils
+ * description Elasticsearch 工具类
+ * version 1.0
+ */
+
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
@@ -14,15 +23,8 @@ import org.elasticsearch.client.RestClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.atomic.AtomicReference;
 
-/**
- * @author liuhuan
- * date 2025/1/2
- * packageName com.oneself.utils
- * className ElasticsearchUtils
- * description Elasticsearch 工具类
- * version 1.0
- */
 @Slf4j
 @Component
 public class ElasticsearchUtils {
@@ -30,9 +32,9 @@ public class ElasticsearchUtils {
     private final ElasticsearchProperties properties;
 
     /**
-     * 确保线程安全的单例
+     * 线程安全的单例
      */
-    private volatile ElasticsearchClient client;
+    private final AtomicReference<ElasticsearchClient> client = new AtomicReference<>();
 
     @Autowired
     public ElasticsearchUtils(ElasticsearchProperties properties) {
@@ -44,10 +46,9 @@ public class ElasticsearchUtils {
      */
     @PostConstruct
     public void init() {
-        // 双重检查锁定确保线程安全且性能优化
-        if (client == null) {
+        if (client.get() == null && properties.isEnable()) {
             synchronized (this) {
-                if (client == null && properties.isEnable()) {
+                if (client.get() == null) {
                     log.info("初始化 Elasticsearch 客户端");
                     // 构建 RestClient
                     RestClientBuilder restClientBuilder = RestClient.builder(
@@ -86,7 +87,7 @@ public class ElasticsearchUtils {
 
                     RestClient restClient = restClientBuilder.build();
                     RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
-                    this.client = new ElasticsearchClient(transport);
+                    client.set(new ElasticsearchClient(transport));
                     log.info("Elasticsearch 客户端初始化完成");
                 }
             }
@@ -97,9 +98,10 @@ public class ElasticsearchUtils {
      * 获取 Elasticsearch 客户端
      */
     public ElasticsearchClient getClient() {
-        if (client == null) {
+        ElasticsearchClient localClient = client.get();
+        if (localClient == null) {
             throw new IllegalStateException("Elasticsearch 客户端未初始化");
         }
-        return client;
+        return localClient;
     }
 }

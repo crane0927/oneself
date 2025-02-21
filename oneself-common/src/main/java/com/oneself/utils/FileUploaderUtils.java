@@ -273,7 +273,7 @@ public class FileUploaderUtils {
 
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("从 FTP 目录检索文件数据失败，报错信息为: {}", e.getMessage());
             return null;
         } finally {
             try {
@@ -282,7 +282,7 @@ public class FileUploaderUtils {
                     ftpClient.disconnect();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("从 FTP 目录检索文件数据失败，报错信息为: {}", e.getMessage());
             }
         }
     }
@@ -332,7 +332,7 @@ public class FileUploaderUtils {
             }
 
         } catch (JSchException | SftpException | IOException e) {
-            e.printStackTrace();
+            log.error("从 SFTP 目录检索文件数据失败，报错信息为: {}", e.getMessage());
             return null;
         }
     }
@@ -357,12 +357,12 @@ public class FileUploaderUtils {
             if (deleted) {
                 log.info("从 FTP 目录成功删除文件: 【{}】", directoryPath);
             } else {
-                log.warn("Failed to delete file from FTP: " + fileName);
+                log.warn("从 FTP 目录删除文件失败: " + fileName);
             }
 
             ftpClient.logout();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("从 FTP 目录删除文件失败，报错信息为: {}", e.getMessage());
         } finally {
             try {
                 if (ftpClient.isConnected()) {
@@ -370,7 +370,7 @@ public class FileUploaderUtils {
                     ftpClient.disconnect();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("从 FTP 目录删除文件失败，报错信息为: {}", e.getMessage());
             }
         }
     }
@@ -402,7 +402,7 @@ public class FileUploaderUtils {
             sftpChannel.disconnect();
             session.disconnect();
         } catch (JSchException | SftpException e) {
-            e.printStackTrace();
+            log.error("从 SFTP 目录删除文件失败，报错信息为: {}", e.getMessage());
         }
     }
 }

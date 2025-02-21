@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.oneself.exception.OneselfException;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -104,7 +105,7 @@ public class JacksonUtils {
             return OBJECT_MAPPER.readValue(jsonString, typeReference);
         } catch (JsonProcessingException e) {
             handleJsonProcessingException(e);
-            return null;
+            return Collections.emptyList();
         }
     }
 

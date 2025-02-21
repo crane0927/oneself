@@ -49,7 +49,7 @@ public class SonarController {
     static {
         HttpConnector httpConnector = HttpConnector
                 .newBuilder()
-                .url("http://192.168.199.177:9000")
+                .url("http://localhost:9000")
                 .token("squ_7d6aa3dda5bd4df837cca2c51ab3ae46d9e4e0d8")
                 .build();
         // 创建 SonarQube Web 服务客户端

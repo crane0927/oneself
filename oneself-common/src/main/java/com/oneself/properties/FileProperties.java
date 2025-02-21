@@ -22,34 +22,18 @@ public class FileProperties {
 
     @Data
     public static class SftpConfig {
-        private String host = "127.0.0.1";
+        private String host = "localhost";
         private int port = 22;
-        private String user = "root";
-        private String password = "123456";
+        private String user;
+        private String password;
 
     }
 
     @Data
     public static class FtpConfig {
-        private String host = "127.0.0.1";
+        private String host = "localhost";
         private int port = 21;
-        private String user = "root";
-        private String password = "123456";
-    }
-
-    public SftpConfig getSftp() {
-        return sftp;
-    }
-
-    public void setSftp(SftpConfig sftp) {
-        this.sftp = sftp;
-    }
-
-    public FtpConfig getFtp() {
-        return ftp;
-    }
-
-    public void setFtp(FtpConfig ftp) {
-        this.ftp = ftp;
+        private String user;
+        private String password;
     }
 }
