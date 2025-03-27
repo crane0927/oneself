@@ -1,6 +1,6 @@
 package com.oneself.client;
 
-import com.oneself.client.fallback.DemoClientFallback;
+import com.oneself.client.fallback.DemoClientFallbackFactory;
 import com.oneself.model.dto.DemoDTO;
 import com.oneself.model.vo.DemoVO;
 import com.oneself.model.vo.ResponseVO;
@@ -20,7 +20,10 @@ import org.springframework.web.bind.annotation.RequestBody;
  * version 1.0
  */
 @Tag(name = "feign demo")
-@FeignClient(value = "oneself-demo", path = "/oneself-demo/demo", fallback = DemoClientFallback.class)
+@FeignClient(value = "oneself-demo", path = "/oneself-demo/demo",
+//        fallback = DemoClientFallback.class,
+        fallbackFactory = DemoClientFallbackFactory.class
+)
 public interface DemoClient {
 
 
