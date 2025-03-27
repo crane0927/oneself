@@ -860,6 +860,10 @@ spring:
     sentinel:
       transport:
         dashboard: 127.0.0.1:8090 # Sentinel 地址
+
+feign:
+  sentinel:
+    enabled: true # 开启 feign 对 Sentinel 的支持
 ```
 ---
 ### 9.5 配置 Elasticsearch
