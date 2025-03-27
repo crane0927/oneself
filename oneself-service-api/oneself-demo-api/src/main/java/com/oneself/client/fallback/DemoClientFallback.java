@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * date 2025/3/27
  * packageName com.oneself.client.fallback
  * className DemoClientFallback
- * description
+ * description Demo 请求降级
  * version 1.0
  */
 @Slf4j
