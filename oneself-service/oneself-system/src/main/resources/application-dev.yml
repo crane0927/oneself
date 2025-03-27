@@ -3,6 +3,9 @@ spring:
     import:
       - nacos:${spring.application.name}-${spring.profiles.active}.yaml?refreshEnabled=true
   cloud:
+    sentinel:
+      transport:
+        dashboard: 127.0.0.1:8090 # Sentinel 地址
     nacos:
       server-addr: 127.0.0.1:8848 # Nacos 地址
       config:
@@ -15,12 +18,15 @@ spring:
       discovery:
         cluster-name: dev # 设置 Nacos 的集群属性
         namespace: dev # 配置命名空间，使用命名空间唯一 ID
-
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/oneself-system?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai&useSSL=false
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: liuhuan
     password: Z6eQaNaitK5vSX
+
+feign:
+  sentinel:
+    enabled: true
 
 mybatis-plus:
   mapper-locations: classpath:mapper/**/*Mapper.xml

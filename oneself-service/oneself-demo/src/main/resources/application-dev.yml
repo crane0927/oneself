@@ -14,6 +14,10 @@ oneself:
     max-connections: 100
     max-connections-per-route: 10
 
+feign:
+  sentinel:
+    enabled: true
+
 spring:
   config:
     import:
