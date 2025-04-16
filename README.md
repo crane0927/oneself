@@ -6,8 +6,8 @@
 - ~~Spring Cloud 2021.0.9~~ -> Spring Cloud 2023.0.5
 - ~~Spring Cloud Alibaba 2021.0.6.2~~ -> Spring Cloud Alibaba 2023.0.3.2
 - ~~Eleasticsearch 7.17.7~~ -> Eleasticsearch 8.17.0
-- ~~knife4j-openapi2-spring-boot-starter 4.5.0~~ -> openapi3-jakarta-spring-boot-starter.version 4.4.0
-- ~~mybatis-plus-boot-starter 3.5.3.1~~ -> mybatis-plus-spring-boot3-starter 3.5.5
+- ~~knife4j-openapi2-spring-boot-starter 4.5.0~~ -> ~~openapi3-jakarta-spring-boot-starter.version 4.4.0~~ -> openapi3-jakarta-spring-boot-starter.version 4.5.0
+- ~~mybatis-plus-boot-starter 3.5.3.1~~ -> ~~mybatis-plus-spring-boot3-starter 3.5.5~~ -> mybatis-plus-spring-boot3-starter 3.5.8
 - Nacos 2.4.3
 - MySQL 8.0.39
 - Maven 3.9.9
