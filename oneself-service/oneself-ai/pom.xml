@@ -28,9 +28,26 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>com.alibaba.cloud</groupId>
+			<artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.alibaba.cloud</groupId>
+			<artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>com.oneself</groupId>
 			<artifactId>oneself-common</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.oneself</groupId>
+			<artifactId>oneself-ai-api</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 	</dependencies>

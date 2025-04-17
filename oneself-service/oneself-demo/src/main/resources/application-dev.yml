@@ -44,17 +44,18 @@ spring:
     username: liuhuan
     password: Z6eQaNaitK5vSX
 
-knife4j:
-  enable: true # 开启增强配置，启用 Knife4j 功能
-  setting: # 前端 Ui 的个性化配置属性
-    enable-version: true # 是否开启界面中对某接口的版本控制，如果开启，后端变化后 Ui 界面会存在小蓝点，默认关闭
-    enable-footer-custom: true # 是否开启自定义 Footer，默认关闭
-    footer-custom-content: GitHub-[oneself](https://github.com/crane0927) # 自定义 Footer 内容
-  production: false # 是否开启生产环境保护策略，生产环境中会隐藏 Swagger 界面
-  basic: # 用户认证配置
-    enable: true # 是否启用用户认证功能
-    username: dev # 用户名，用于登录 Swagger 界面
-    password: dev123 # 密码，用于登录 Swagger 界面
+# 完整依赖报错，暂时不使用高级功能
+#knife4j:
+#  enable: true # 开启增强配置，启用 Knife4j 功能
+#  setting: # 前端 Ui 的个性化配置属性
+#    enable-version: true # 是否开启界面中对某接口的版本控制，如果开启，后端变化后 Ui 界面会存在小蓝点，默认关闭
+#    enable-footer-custom: true # 是否开启自定义 Footer，默认关闭
+#    footer-custom-content: GitHub-[oneself](https://github.com/crane0927) # 自定义 Footer 内容
+#  production: false # 是否开启生产环境保护策略，生产环境中会隐藏 Swagger 界面
+#  basic: # 用户认证配置
+#    enable: true # 是否启用用户认证功能
+#    username: dev # 用户名，用于登录 Swagger 界面
+#    password: dev123 # 密码，用于登录 Swagger 界面
 
 oneself-starter:
   enabled: true
