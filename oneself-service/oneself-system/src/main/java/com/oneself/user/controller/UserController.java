@@ -11,9 +11,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Tag(name = "用户信息")
 @Slf4j
+@RequiredArgsConstructor
 @RequestLogging
 @RequireLogin
 @RestController
@@ -33,11 +34,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @Operation(summary = "新增用户")
     @PostMapping({"/add"})

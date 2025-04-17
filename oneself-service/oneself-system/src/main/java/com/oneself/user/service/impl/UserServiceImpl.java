@@ -9,10 +9,10 @@ import com.oneself.user.model.dto.UserDTO;
 import com.oneself.user.model.pojo.User;
 import com.oneself.user.model.vo.UserVO;
 import com.oneself.user.service.UserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,17 +24,12 @@ import org.springframework.stereotype.Service;
  * version 1.0
  */
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
     private final DeptMapper deptMapper;
-
-    @Autowired
-    public UserServiceImpl(UserMapper userMapper, DeptMapper deptMapper) {
-        this.userMapper = userMapper;
-        this.deptMapper = deptMapper;
-    }
 
     @Override
     public Integer addUser(UserDTO dto) {

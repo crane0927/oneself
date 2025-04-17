@@ -4,6 +4,7 @@ import com.oneself.properties.SwaggerProperties;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import lombok.RequiredArgsConstructor;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +18,7 @@ import org.springframework.context.annotation.Configuration;
  * description Swagger 主页信息配置类
  * version 1.0
  */
+@RequiredArgsConstructor
 @Configuration
 @ConditionalOnProperty(
         name = {"oneself.swagger.enable"},
@@ -25,10 +27,6 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerConfig {
 
     private final SwaggerProperties swaggerProperties;
-
-    public SwaggerConfig(SwaggerProperties swaggerProperties) {
-        this.swaggerProperties = swaggerProperties;
-    }
 
     @Bean
     public GroupedOpenApi groupedOpenApi() {

@@ -4,9 +4,9 @@ import com.oneself.exception.OneselfException;
 import com.oneself.mapper.JobDetailsMapper;
 import com.oneself.model.vo.QuartzTaskVO;
 import com.oneself.service.QuartzJobService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -24,17 +24,12 @@ import java.util.List;
  * version 1.0
  */
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class QuartzJobServiceImpl implements QuartzJobService {
 
     private final Scheduler scheduler;
     private final JobDetailsMapper jobDetailsMapper;
-
-    @Autowired
-    public QuartzJobServiceImpl(Scheduler scheduler, JobDetailsMapper jobDetailsMapper) {
-        this.scheduler = scheduler;
-        this.jobDetailsMapper = jobDetailsMapper;
-    }
 
     /**
      * 添加一个 Cron 定时任务

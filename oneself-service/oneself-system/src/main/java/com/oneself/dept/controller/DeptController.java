@@ -17,9 +17,9 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -35,17 +35,13 @@ import java.util.List;
  */
 @Tag(name = "部门信息")
 @Slf4j
+@RequiredArgsConstructor
 @RequestLogging
 @RequireLogin
 @RestController
 @RequestMapping({"/dept"})
 public class DeptController {
     private final DeptService deptService;
-
-    @Autowired
-    public DeptController(DeptService deptService) {
-        this.deptService = deptService;
-    }
 
     @Operation(summary = "新增部门")
     @PostMapping({"/add"})

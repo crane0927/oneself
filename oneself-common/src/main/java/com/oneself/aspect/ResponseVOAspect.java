@@ -3,6 +3,7 @@ package com.oneself.aspect;
 import com.oneself.filter.TraceFilter;
 import com.oneself.model.vo.ResponseVO;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.ThreadContext;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -20,15 +21,12 @@ import org.springframework.stereotype.Component;
  * version 1.0
  */
 @Slf4j
+@RequiredArgsConstructor
 @Aspect
 @Component
 public class ResponseVOAspect {
 
     private final HttpServletRequest httpServletRequest;
-
-    public ResponseVOAspect(HttpServletRequest httpServletRequest) {
-        this.httpServletRequest = httpServletRequest;
-    }
 
 
     @Around("execution(* com.oneself..controller..*(..))")

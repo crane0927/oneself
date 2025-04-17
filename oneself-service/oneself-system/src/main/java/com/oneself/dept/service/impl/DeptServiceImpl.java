@@ -17,12 +17,12 @@ import com.oneself.model.vo.PageVO;
 import com.oneself.model.vo.ResponseVO;
 import com.oneself.user.mapper.UserMapper;
 import com.oneself.user.model.pojo.User;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,17 +37,12 @@ import java.util.*;
  * version 1.0
  */
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class DeptServiceImpl implements DeptService {
 
     private final DeptMapper deptMapper;
     private final UserMapper userMapper;
-
-    @Autowired
-    public DeptServiceImpl(DeptMapper deptMapper, UserMapper userMapper) {
-        this.deptMapper = deptMapper;
-        this.userMapper = userMapper;
-    }
 
     @Override
     public Integer addDept(DeptDTO dto) {

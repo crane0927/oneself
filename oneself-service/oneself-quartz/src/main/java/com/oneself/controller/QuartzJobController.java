@@ -8,10 +8,10 @@ import com.oneself.service.QuartzJobService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.quartz.JobDataMap;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,17 +26,13 @@ import java.util.List;
  */
 @Tag(name = "Quartz 任务")
 @Slf4j
+@RequiredArgsConstructor
 @RequestLogging
 @RestController
 @RequestMapping({"/job"})
 public class QuartzJobController {
 
     private final QuartzJobService quartzJobService;
-
-    @Autowired
-    public QuartzJobController(QuartzJobService quartzJobService) {
-        this.quartzJobService = quartzJobService;
-    }
 
     @Operation(summary = "任务信息列表")
     @GetMapping("/get/page/list")
