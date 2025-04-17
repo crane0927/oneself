@@ -14,9 +14,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.map.LinkedMap;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +33,7 @@ import java.util.*;
  */
 @Tag(name = "接口样例")
 @Slf4j
+@RequiredArgsConstructor
 @RequireLogin
 //@RequestLogging
 @RestController
@@ -46,12 +47,6 @@ public class DemoController {
     private final ElasticsearchUtils elasticsearchUtils;
 
     private final OneselfService oneselfService;
-
-    @Autowired
-    public DemoController(ElasticsearchUtils elasticsearchUtils, OneselfService oneselfService) {
-        this.elasticsearchUtils = elasticsearchUtils;
-        this.oneselfService = oneselfService;
-    }
 
     @RequestLogging
     @Operation(summary = "你好 xxx")

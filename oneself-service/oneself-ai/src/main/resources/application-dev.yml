@@ -1,0 +1,7 @@
+oneself:
+  swagger: # swagger 主页配置
+    enable: true # 开启 Swagger 主页配置，默认 false
+    base-package: com.oneself # 扫描的包名，默认扫描 com.oneself 包下的所有接口
+    title: oneself-ai # 接口文档标题，默认 oneself
+    description: oneself-ai description # 接口文档描述，默认 oneself description
+    group-name: oneself-ai # 接口文档分组名称，默认 oneself

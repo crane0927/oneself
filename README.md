@@ -2,8 +2,8 @@
 ---
 ## 1 环境（JDK 1.8 升级至 JDK 21）
 - ~~JDK 1.8~~ -> JDK 21
-- ~~Spring Boot 2.7.18~~ -> ~~Spring Boot 3.2.12~~ -> Spring Boot 3.3.7
-- ~~Spring Cloud 2021.0.9~~ -> Spring Cloud 2023.0.5
+- ~~Spring Boot 2.7.18~~ -> ~~Spring Boot 3.2.12~~ -> ~~Spring Boot 3.3.7~~ -> Spring Boot 3.4.4
+- ~~Spring Cloud 2021.0.9~~ -> ~~Spring Cloud 2023.0.5~~ -> Spring Cloud 2024.0.1
 - ~~Spring Cloud Alibaba 2021.0.6.2~~ -> Spring Cloud Alibaba 2023.0.3.2
 - ~~Eleasticsearch 7.17.7~~ -> Eleasticsearch 8.17.0
 - ~~knife4j-openapi2-spring-boot-starter 4.5.0~~ -> ~~openapi3-jakarta-spring-boot-starter.version 4.4.0~~ -> openapi3-jakarta-spring-boot-starter.version 4.5.0
