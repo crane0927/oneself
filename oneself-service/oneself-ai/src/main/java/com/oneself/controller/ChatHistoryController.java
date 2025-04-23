@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,20 +39,19 @@ public class ChatHistoryController {
     private final ChatMemory chatMemory;
 
     @Operation(summary = "根据对话类型获取历史列表")
-    @GetMapping("/list")
+    @GetMapping
     public ResponseVO<List<ChatHistoryVO>> getChatHistoryList(@Schema(description = "会话类型", requiredMode = Schema.RequiredMode.REQUIRED) @RequestParam @NotNull ChatTypeEnum chatType) {
         return ResponseVO.success(chatHistoryService.getChatHistoryList(chatType));
     }
 
     @Operation(summary = "归档对话")
-    @GetMapping("/archive")
+    @PostMapping("/archive")
     public ResponseVO<Boolean> archive(@Schema(description = "会话 ID", requiredMode = Schema.RequiredMode.REQUIRED) @RequestParam @NotNull String conversationId) {
         return ResponseVO.success(chatHistoryService.archive(conversationId));
     }
 
-
     @Operation(summary = "获取对话消息")
-    @GetMapping("/message")
+    @GetMapping("/messages")
     public ResponseVO<List<Message>> getChatMessageByConversationId(@Schema(description = "会话 ID", requiredMode = Schema.RequiredMode.REQUIRED) @RequestParam @NotNull String conversationId) {
         return ResponseVO.success(chatMemory.get(conversationId, Integer.MAX_VALUE));
     }

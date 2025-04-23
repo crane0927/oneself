@@ -9,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
 import javax.validation.constraints.NotNull;
@@ -37,7 +34,7 @@ public class AiChatController {
     private final ChatHistoryService chatHistoryService;
 
     @Operation(summary = "非流式")
-    @GetMapping("/call")
+    @GetMapping
     public String call(@Schema(description = "用户输入的提示词", requiredMode = Schema.RequiredMode.REQUIRED) @RequestParam @NotNull String prompt) {
         return chatClient.prompt()
                 .user(prompt)
