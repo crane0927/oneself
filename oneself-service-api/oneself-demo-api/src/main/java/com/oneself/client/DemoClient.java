@@ -28,6 +28,6 @@ public interface DemoClient {
 
 
     @Operation(summary = "你好 xxx")
-    @PostMapping("/say/hello")
+    @PostMapping("/hello")
     ResponseVO<DemoVO> sayHello(@RequestBody @Valid DemoDTO dto);
 }

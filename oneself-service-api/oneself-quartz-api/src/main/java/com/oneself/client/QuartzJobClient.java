@@ -20,34 +20,34 @@ import org.springframework.web.bind.annotation.*;
 public interface QuartzJobClient {
 
     @Operation(summary = "创建定时任务")
-    @PostMapping("/create/cron/job")
+    @PostMapping("/cron")
     ResponseVO<Boolean> createCronJob(@RequestBody CronJobDTO dto);
 
     @Operation(summary = "创建执行一次的任务")
-    @PostMapping("/create/one/job")
+    @PostMapping("/one-time")
     ResponseVO<Boolean> createOneJob(@RequestBody OneJobDTO dto);
 
     @Operation(summary = "更新定时任务")
-    @PutMapping("/update/cron/job")
+    @PutMapping("/cron")
     ResponseVO<Boolean> updateCronJob(@RequestBody CronJobDTO dto);
 
     @Operation(summary = "更新执行一次的任务")
-    @PutMapping("/update/one/job")
+    @PutMapping("/one-time")
     ResponseVO<Boolean> updateOneJob(@RequestBody OneJobDTO dto);
 
     @Operation(summary = "删除定时任务")
-    @DeleteMapping("/delete")
+    @DeleteMapping
     ResponseVO<Boolean> delete(@RequestBody DeleteJobDTO dto);
 
     @Operation(summary = "暂停任务")
-    @PostMapping("/pause")
+    @PutMapping("/pause")
     ResponseVO<Boolean> pause(@RequestBody PauseJobDTO dto);
 
     @Operation(summary = "恢复任务")
-    @PostMapping("/resume")
+    @PutMapping("/resume")
     ResponseVO<Boolean> resume(@RequestBody ResumeJobDTO dto);
 
     @Operation(summary = "立即执行任务")
-    @PostMapping("/execute/immediately")
+    @PostMapping("/execute")
     ResponseVO<Boolean> executeImmediately(@RequestBody ExecuteDTO dto);
 }
