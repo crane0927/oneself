@@ -16,12 +16,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.map.LinkedMap;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author liuhuan
@@ -89,25 +92,35 @@ public class DemoController {
 
     @RequestLogging(logRequest = false, logResponse = false)
     @Operation(summary = "导出文件")
-    @GetMapping({"/export/file"})
+    @GetMapping("/export/file")
     public void export(HttpServletResponse response) {
-        List<Map<String, Object>> list = new ArrayList<>();
+        List<Map<String, Object>> list = generateTestData();
+
         LinkedHashMap<String, String> headers = new LinkedHashMap<>();
         headers.put("name", "姓名");
         headers.put("age", "年龄");
         headers.put("sex", "性别");
+
+        try {
+            // 如果 ExportFileUtils 没设置响应头，这里添加
+            response.setContentType("application/vnd.ms-excel");
+            response.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode("test.xls", "UTF-8"));
+
+            ExportFileUtils.exportToExcel(response, "test.xls", list, headers);
+        } catch (Exception e) {
+            log.error("导出文件异常: {}", e.getMessage(), e);
+        }
+    }
+
+    private List<Map<String, Object>> generateTestData() {
+        List<Map<String, Object>> list = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
-            Map<String, Object> map = new LinkedMap<>();
+            Map<String, Object> map = new LinkedHashMap<>();
             map.put("name", "张三" + i);
             map.put("age", 18 + i);
             map.put("sex", "男");
             list.add(map);
         }
-
-        try {
-            ExportFileUtils.exportToExcel(response, "test.xls", list, headers);
-        } catch (Exception e) {
-            log.error("导出文件异常: {}", e.getMessage());
-        }
+        return list;
     }
 }
