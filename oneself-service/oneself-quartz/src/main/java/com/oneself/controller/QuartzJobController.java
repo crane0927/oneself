@@ -35,14 +35,13 @@ public class QuartzJobController {
     private final QuartzJobService quartzJobService;
 
     @Operation(summary = "任务信息列表")
-    @GetMapping("/get/page/list")
+    @GetMapping
     public ResponseVO<List<QuartzTaskVO>> getPageList() {
         return ResponseVO.success(quartzJobService.getPageList());
-
     }
 
     @Operation(summary = "创建定时任务")
-    @PostMapping("/create/cron/job")
+    @PostMapping("/cron")
     public ResponseVO<Boolean> createCronJob(@RequestBody @Valid CronJobDTO dto) {
         boolean b = quartzJobService.addCronJob(dto.getJobName(),
                 dto.getCronExpression(),
@@ -58,7 +57,7 @@ public class QuartzJobController {
     }
 
     @Operation(summary = "创建执行一次的任务")
-    @PostMapping("/create/one/job")
+    @PostMapping("/one-time")
     public ResponseVO<Boolean> createOneJob(@RequestBody @Valid OneJobDTO dto) {
         boolean b = quartzJobService.addOneTimeJob(dto.getJobName(),
                 dto.getExecutionTime(),
@@ -74,7 +73,7 @@ public class QuartzJobController {
     }
 
     @Operation(summary = "更新定时任务")
-    @PutMapping("/update/cron/job")
+    @PutMapping("/cron")
     public ResponseVO<Boolean> updateCronJob(@RequestBody @Valid CronJobDTO dto) {
         boolean b = quartzJobService.updateCronJob(dto.getJobName(),
                 dto.getCronExpression(),
@@ -90,7 +89,7 @@ public class QuartzJobController {
     }
 
     @Operation(summary = "更新执行一次的任务")
-    @PutMapping("/update/one/job")
+    @PutMapping("/one-time")
     public ResponseVO<Boolean> updateOneJob(@RequestBody @Valid OneJobDTO dto) {
         boolean b = quartzJobService.updateOneTimeJob(dto.getJobName(),
                 dto.getExecutionTime(),
@@ -104,7 +103,7 @@ public class QuartzJobController {
     }
 
     @Operation(summary = "删除定时任务")
-    @DeleteMapping("/delete")
+    @DeleteMapping
     public ResponseVO<Boolean> delete(@RequestBody @Valid DeleteJobDTO dto) {
         boolean b = quartzJobService.deleteJob(dto.getJobName(),
                 dto.getJobGroupName(),
@@ -117,7 +116,7 @@ public class QuartzJobController {
     }
 
     @Operation(summary = "暂停任务")
-    @PostMapping("/pause")
+    @PutMapping("/pause")
     public ResponseVO<Boolean> pause(@RequestBody @Valid PauseJobDTO dto) {
         boolean b = quartzJobService.pauseJob(dto.getJobName(),
                 dto.getJobGroupName());
@@ -128,7 +127,7 @@ public class QuartzJobController {
     }
 
     @Operation(summary = "恢复任务")
-    @PostMapping("/resume")
+    @PutMapping("/resume")
     public ResponseVO<Boolean> resume(@RequestBody @Valid ResumeJobDTO dto) {
         boolean b = quartzJobService.resumeJob(dto.getJobName(),
                 dto.getJobGroupName());
@@ -139,7 +138,7 @@ public class QuartzJobController {
     }
 
     @Operation(summary = "立即执行任务")
-    @PostMapping("/execute/immediately")
+    @PostMapping("/execute")
     public ResponseVO<Boolean> executeImmediately(@RequestBody @Valid ExecuteDTO dto) {
         boolean b = quartzJobService.executeImmediately(dto.getJobName(),
                 dto.getJobClassName(),

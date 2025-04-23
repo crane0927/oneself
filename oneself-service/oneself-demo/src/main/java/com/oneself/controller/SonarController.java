@@ -24,6 +24,8 @@ import org.sonarqube.ws.client.rules.RulesService;
 import org.sonarqube.ws.client.usertokens.GenerateRequest;
 import org.sonarqube.ws.client.usertokens.UserTokensService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -58,7 +60,7 @@ public class SonarController {
 
     @RequestLogging(logRequest = false, logResponse = false)
     @Operation(summary = "获取项目列表")
-    @GetMapping("/get/projects")
+    @GetMapping("/projects")
     public ResponseVO<List<String>> getProjects() {
         // 获取 ProjectsService，用于操作 SonarQube 项目数据
         ProjectsService projects = wsClient.projects();
@@ -82,7 +84,7 @@ public class SonarController {
 
     @RequestLogging(logRequest = false, logResponse = false)
     @Operation(summary = "获取支持的语言")
-    @GetMapping("/get/languages")
+    @GetMapping("/languages")
     public ResponseVO<List<LanguageVO.Language>> getLanguages() {
         LanguagesService languages = wsClient.languages();
 
@@ -99,7 +101,7 @@ public class SonarController {
 
     @RequestLogging(logRequest = false, logResponse = false)
     @Operation(summary = "获取对应语言的规则")
-    @GetMapping("/get/rules")
+    @GetMapping("/rules")
     public ResponseVO<List<String>> getRules() {
         RulesService rules = wsClient.rules();
         org.sonarqube.ws.client.rules.SearchRequest searchRequest = new org.sonarqube.ws.client.rules.SearchRequest();
@@ -120,7 +122,7 @@ public class SonarController {
 
     @RequestLogging(logRequest = false, logResponse = false)
     @Operation(summary = "获取项目的所有问题列表")
-    @GetMapping("/get/issues")
+    @GetMapping("/issues")
     public void getProjectIssues() {
         IssuesService issuesService = wsClient.issues();
 
@@ -149,11 +151,11 @@ public class SonarController {
 
     @RequestLogging(logRequest = false, logResponse = false)
     @Operation(summary = "根据规则 key 获取规则的详细信息")
-    @GetMapping("/get/rule/details")
-    public void getRuleDetails() {
+    @GetMapping("/rules/{key}")
+    public void getRuleDetails(@PathVariable String key) {
         // 获取规则服务
         RulesService rulesService = wsClient.rules();
-        String ruleKey = "java:S1192";  // 规则 key
+        String ruleKey = key;  // 规则 key
 
         // 创建查询请求对象
         org.sonarqube.ws.client.rules.ShowRequest showRequest = new org.sonarqube.ws.client.rules.ShowRequest();
@@ -174,7 +176,7 @@ public class SonarController {
 
     @RequestLogging(logRequest = false, logResponse = false)
     @Operation(summary = "生成用户 Token")
-    @GetMapping("/get/user/token")
+    @PostMapping("/tokens")
     public void getUserToken() {
         UserTokensService tokensService = wsClient.userTokens();
         GenerateRequest generateRequest = new GenerateRequest();

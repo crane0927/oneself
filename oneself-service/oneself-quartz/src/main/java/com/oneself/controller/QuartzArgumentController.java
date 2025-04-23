@@ -31,7 +31,7 @@ import java.util.List;
 public class QuartzArgumentController {
 
     @Operation(summary = "获取 CRON 表达式后续执行时间")
-    @GetMapping("/nextTriggerTime")
+    @GetMapping("/cron/next-times")
     public ResponseVO<List<String>> nextTriggerTime(@Parameter(description = "CRON表达式", required = true, example = "0 0 9/1 * * ? *")
                                                     @RequestParam String scheduleConf,
                                                     @Parameter(description = "后续执行时间数量", required = true, example = "1")

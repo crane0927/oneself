@@ -53,7 +53,7 @@ public class DemoController {
 
     @RequestLogging
     @Operation(summary = "你好 xxx")
-    @PostMapping({"/say/hello"})
+    @PostMapping("/hello")
     public ResponseVO<DemoVO> sayHello(@RequestBody @Valid DemoDTO dto) {
         DemoVO demoVO = new DemoVO();
         demoVO.setInfo("hello " + dto.getName());
@@ -61,7 +61,7 @@ public class DemoController {
     }
 
     @Operation(summary = "Elasticsearch 集群名称获取")
-    @GetMapping({"/get/elasticsearch/cluster/info"})
+    @GetMapping("/elasticsearch/cluster")
     public ResponseVO<DemoVO> getElasticsearchClusterInfo() {
         ElasticsearchClient client = elasticsearchUtils.getClient();
         try {
@@ -74,25 +74,23 @@ public class DemoController {
             log.error("Elasticsearch 集群名称获取异常: {}", e.getMessage());
             return ResponseVO.failure("Elasticsearch 集群名称获取异常: " + e.getMessage());
         }
-
     }
 
     @Operation(summary = "配置文件信息读取")
-    @GetMapping({"/get/properties"})
+    @GetMapping("/properties")
     public ResponseVO<String> getProperties() {
         return ResponseVO.success(name);
     }
 
     @Operation(summary = "自定义 Starter 功能测试")
-    @GetMapping({"/get/starter/info"})
+    @GetMapping("/starter")
     public ResponseVO<String> getStarterInfo() {
         return ResponseVO.success(oneselfService.doSomething());
     }
 
-
     @RequestLogging(logRequest = false, logResponse = false)
     @Operation(summary = "导出文件")
-    @GetMapping("/export/file")
+    @GetMapping("/export")
     public void export(HttpServletResponse response) {
         List<Map<String, Object>> list = generateTestData();
 
