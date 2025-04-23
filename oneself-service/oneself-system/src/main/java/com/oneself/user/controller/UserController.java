@@ -36,7 +36,7 @@ public class UserController {
     private final UserService userService;
 
     @Operation(summary = "新增用户")
-    @PostMapping({"/add"})
+    @PostMapping
     public ResponseVO<Boolean> add(@RequestBody @Valid UserDTO dto) {
         Integer size = userService.addUser(dto);
         if (ObjectUtils.isEmpty(size)) {
@@ -46,7 +46,7 @@ public class UserController {
     }
 
     @Operation(summary = "根据 ID 查询用户")
-    @GetMapping({"/get/{id}"})
+    @GetMapping("/{id}")
     public ResponseVO<UserVO> get(@PathVariable("id") @Valid @NotNull @Positive Long id) {
         return ResponseVO.success(userService.getUser(id));
     }

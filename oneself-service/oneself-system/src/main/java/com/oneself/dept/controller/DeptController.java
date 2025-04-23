@@ -44,7 +44,7 @@ public class DeptController {
     private final DeptService deptService;
 
     @Operation(summary = "新增部门")
-    @PostMapping({"/add"})
+    @PostMapping
     public ResponseVO<Boolean> add(@RequestBody @Valid DeptDTO dto) {
         Integer size = deptService.addDept(dto);
         if (ObjectUtils.isEmpty(size)) {
@@ -54,13 +54,13 @@ public class DeptController {
     }
 
     @Operation(summary = "根据 ID 查询部门")
-    @GetMapping({"/get/{id}"})
+    @GetMapping("/{id}")
     public ResponseVO<DeptVO> get(@PathVariable("id") @Valid @NotNull @Positive Long id) {
         return ResponseVO.success(deptService.getDept(id));
     }
 
     @Operation(summary = "修改部门")
-    @PutMapping({"/update/{id}"})
+    @PutMapping("/{id}")
     public ResponseVO<Boolean> update(@PathVariable("id") @Valid @NotNull @Positive Long id, @RequestBody @Valid DeptDTO dto) {
         // 1. 更新当前部门
         Integer size = deptService.updateDept(id, dto);
@@ -73,7 +73,7 @@ public class DeptController {
     }
 
     @Operation(summary = "删除部门")
-    @DeleteMapping({"/delete"})
+    @DeleteMapping
     public ResponseVO<Boolean> delete(@RequestBody @Valid @NotEmpty List<@NotNull Long> ids) {
         Integer size = deptService.deleteDept(ids);
         if (ObjectUtils.isEmpty(size)) {
@@ -83,7 +83,7 @@ public class DeptController {
     }
 
     @Operation(summary = "更新部门状态")
-    @PutMapping({"/update/status/{status}"})
+    @PutMapping("/status/{status}")
     public ResponseVO<Boolean> updateStatus(@RequestBody @Valid @NotEmpty List<@NotNull Long> ids, @PathVariable("status") @Valid @NotNull StatusEnum status) {
         Integer updateStatus = deptService.updateStatus(ids, status);
         if (ObjectUtils.isEmpty(updateStatus)) {
@@ -93,13 +93,13 @@ public class DeptController {
     }
 
     @Operation(summary = "查询部门列表")
-    @PostMapping({"/page/list"})
+    @PostMapping("/page")
     public PageVO<DeptVO> pageList(@RequestBody @Valid PageDTO<PageDeptDTO> dto) {
         return deptService.pageList(dto);
     }
 
     @Operation(summary = "查询部门树")
-    @GetMapping({"/get/tree"})
+    @GetMapping("/tree")
     public ResponseVO<List<DeptTreeVO>> getTree() {
         return deptService.getTree();
     }

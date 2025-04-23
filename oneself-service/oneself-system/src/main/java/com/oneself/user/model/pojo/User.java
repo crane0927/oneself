@@ -7,9 +7,7 @@ import com.oneself.common.model.enums.StatusEnum;
 import com.oneself.model.pojo.BasePojo;
 import com.oneself.user.model.enums.SexEnum;
 import com.oneself.user.model.enums.TypeEnum;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.*;
 
 import java.io.Serial;
 import java.time.LocalDateTime;
@@ -25,6 +23,8 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("user")
 public class User extends BasePojo {
     @Serial

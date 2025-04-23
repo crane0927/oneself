@@ -105,9 +105,9 @@ public class DeptServiceImpl implements DeptService {
         // 2. 删除部门下所有的用户
         List<User> users = userMapper.selectList(new LambdaQueryWrapper<User>()
                 .in(User::getDeptId, allChildDeptIds));
-        userMapper.deleteBatchIds(users);
+        userMapper.deleteByIds(users);
         // 3. 删除部门
-        return deptMapper.deleteBatchIds(allChildDeptIds);
+        return deptMapper.deleteByIds(allChildDeptIds);
     }
 
     @Override
