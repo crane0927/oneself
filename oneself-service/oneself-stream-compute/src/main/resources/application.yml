@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: oneself-stream-compute
+  profiles:
+    active: dev
+
+server:
+  port: 9104
+  servlet:
+    context-path: /oneself-stream-compute
+    session:
+      timeout: 600
