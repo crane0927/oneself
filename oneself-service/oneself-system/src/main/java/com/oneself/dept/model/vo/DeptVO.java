@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
  * version 1.0
  */
 @Data
+@Schema(description = "部门信息 VO")
 public class DeptVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -34,6 +35,7 @@ public class DeptVO implements Serializable {
     private String phone;
     @Schema(description = "负责人邮箱")
     private String email;
+    @Schema(description = "部门状态")
     private StatusEnum status;
     @Schema(description = "创建人")
     private String createBy;

@@ -17,6 +17,7 @@ import com.oneself.model.vo.PageVO;
 import com.oneself.model.vo.ResponseVO;
 import com.oneself.user.mapper.UserMapper;
 import com.oneself.user.model.pojo.User;
+import com.oneself.utils.AssertUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -53,9 +54,7 @@ public class DeptServiceImpl implements DeptService {
         if (parentId != 0) {
             // 2. 校验上级部门是否存在
             Dept parentDept = deptMapper.selectById(parentId);
-            if (ObjectUtils.isEmpty(parentDept)) {
-                throw new OneselfException("上级部门不存在");
-            }
+            AssertUtils.isNull(parentDept, "上级部门不存在");
         }
         // 3. 校验部门名称是否重复
         checkDeptName(dept);
@@ -66,9 +65,7 @@ public class DeptServiceImpl implements DeptService {
     @Override
     public DeptVO getDept(Long id) {
         Dept dept = deptMapper.selectById(id);
-        if (ObjectUtils.isEmpty(dept)) {
-            throw new OneselfException("部门不存在");
-        }
+        AssertUtils.isNull(dept, "部门不存在");
         DeptVO deptVO = new DeptVO();
         BeanUtils.copyProperties(dept, deptVO);
         return deptVO;
@@ -86,9 +83,7 @@ public class DeptServiceImpl implements DeptService {
         if (parentId != 0) {
             // 3. 校验上级部门是否存在
             Dept parentDept = deptMapper.selectById(parentId);
-            if (ObjectUtils.isEmpty(parentDept)) {
-                throw new OneselfException("上级部门不存在");
-            }
+            AssertUtils.isNull(parentDept, "上级部门不存在");
         }
         // 4. 更新部门
         return deptMapper.updateById(dept);
@@ -99,9 +94,8 @@ public class DeptServiceImpl implements DeptService {
     public Integer deleteDept(List<Long> ids) {
         // 1. 获取当前部门 ID 和所有子部门 ID
         List<Long> allChildDeptIds = getAllChildDeptIds(ids);
-        if (CollectionUtils.isEmpty(allChildDeptIds)) {
-            throw new OneselfException("删除失败，该部门不存在");
-        }
+
+        AssertUtils.isTrue(CollectionUtils.isEmpty(allChildDeptIds), "删除失败，该部门不存在");
         // 2. 删除部门下所有的用户
         List<User> users = userMapper.selectList(new LambdaQueryWrapper<User>()
                 .in(User::getDeptId, allChildDeptIds));
