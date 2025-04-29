@@ -1,5 +1,6 @@
 package com.oneself.kafka.model.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -18,5 +19,18 @@ public enum KafkaClusterStatusEnum {
     ENABLED(1, "启用");
 
     private final Integer code;
-    private final String description;
+    private final String desc;
+
+    @JsonCreator
+    public static KafkaClusterStatusEnum fromValue(String value) {
+        if (value == null || value.isEmpty()) {
+            return null;
+        }
+        for (KafkaClusterStatusEnum status : KafkaClusterStatusEnum.values()) {
+            if (String.valueOf(status.code).equals(value) || status.name().equalsIgnoreCase(value)) {
+                return status;
+            }
+        }
+        throw new IllegalArgumentException("KafkaClusterStatusEnum 的值无效: " + value);
+    }
 }

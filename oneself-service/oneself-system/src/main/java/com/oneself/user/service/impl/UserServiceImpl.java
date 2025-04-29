@@ -9,10 +9,10 @@ import com.oneself.user.model.dto.UserDTO;
 import com.oneself.user.model.pojo.User;
 import com.oneself.user.model.vo.UserVO;
 import com.oneself.user.service.UserService;
+import com.oneself.utils.BeanCopyUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 /**
@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
     public Integer addUser(UserDTO dto) {
         // 1. 构建用户对象
         User user = User.builder().build();
-        BeanUtils.copyProperties(dto, user);
+        BeanCopyUtils.copy(dto, user);
         // 2. 校验登录名是否重复
         checkLoginName(user);
         // 3. 校验部门是否存在
@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
             throw new OneselfException("用户不存在");
         }
         UserVO userVO = new UserVO();
-        BeanUtils.copyProperties(user, userVO);
+        BeanCopyUtils.copy(user, userVO);
         return userVO;
     }
 

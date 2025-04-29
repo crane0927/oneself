@@ -18,12 +18,12 @@ import com.oneself.model.vo.ResponseVO;
 import com.oneself.user.mapper.UserMapper;
 import com.oneself.user.model.pojo.User;
 import com.oneself.utils.AssertUtils;
+import com.oneself.utils.BeanCopyUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,12 +49,12 @@ public class DeptServiceImpl implements DeptService {
     public Integer addDept(DeptDTO dto) {
         // 1. 构建部门对象
         Dept dept = Dept.builder().build();
-        BeanUtils.copyProperties(dto, dept);
+        BeanCopyUtils.copy(dto, dept);
         Long parentId = dept.getParentId();
         if (parentId != 0) {
             // 2. 校验上级部门是否存在
             Dept parentDept = deptMapper.selectById(parentId);
-            AssertUtils.isNull(parentDept, "上级部门不存在");
+            AssertUtils.notNull(parentDept, "上级部门不存在");
         }
         // 3. 校验部门名称是否重复
         checkDeptName(dept);
@@ -65,9 +65,9 @@ public class DeptServiceImpl implements DeptService {
     @Override
     public DeptVO getDept(Long id) {
         Dept dept = deptMapper.selectById(id);
-        AssertUtils.isNull(dept, "部门不存在");
+        AssertUtils.notNull(dept, "部门不存在");
         DeptVO deptVO = new DeptVO();
-        BeanUtils.copyProperties(dept, deptVO);
+        BeanCopyUtils.copy(dept, deptVO);
         return deptVO;
     }
 
@@ -76,14 +76,14 @@ public class DeptServiceImpl implements DeptService {
     public Integer updateDept(Long id, DeptDTO dto) {
         // 1. 构建部门对象
         Dept dept = Dept.builder().id(id).build();
-        BeanUtils.copyProperties(dto, dept);
+        BeanCopyUtils.copy(dto, dept);
         // 2. 校验部门名称是否重复
         checkDeptName(dept);
         Long parentId = dept.getParentId();
         if (parentId != 0) {
             // 3. 校验上级部门是否存在
             Dept parentDept = deptMapper.selectById(parentId);
-            AssertUtils.isNull(parentDept, "上级部门不存在");
+            AssertUtils.notNull(parentDept, "上级部门不存在");
         }
         // 4. 更新部门
         return deptMapper.updateById(dept);
@@ -95,7 +95,7 @@ public class DeptServiceImpl implements DeptService {
         // 1. 获取当前部门 ID 和所有子部门 ID
         List<Long> allChildDeptIds = getAllChildDeptIds(ids);
 
-        AssertUtils.isTrue(CollectionUtils.isEmpty(allChildDeptIds), "删除失败，该部门不存在");
+        AssertUtils.isFalse(CollectionUtils.isEmpty(allChildDeptIds), "删除失败，该部门不存在");
         // 2. 删除部门下所有的用户
         List<User> users = userMapper.selectList(new LambdaQueryWrapper<User>()
                 .in(User::getDeptId, allChildDeptIds));
@@ -124,7 +124,7 @@ public class DeptServiceImpl implements DeptService {
         // 5. 转换分页数据
         return PageVO.convert(deptPage, dept -> {
             DeptVO deptVO = new DeptVO();
-            BeanUtils.copyProperties(dept, deptVO);
+            BeanCopyUtils.copy(dept, deptVO);
             return deptVO;
         });
     }

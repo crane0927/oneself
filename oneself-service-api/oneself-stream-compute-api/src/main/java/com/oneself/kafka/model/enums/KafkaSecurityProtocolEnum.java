@@ -1,5 +1,6 @@
 package com.oneself.kafka.model.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -20,5 +21,19 @@ public enum KafkaSecurityProtocolEnum {
     SSL("SSL", "纯SSL加密");
 
     private final String code;
-    private final String description;
+    private final String desc;
+
+
+    @JsonCreator
+    public static KafkaSecurityProtocolEnum fromValue(String value) {
+        if (value == null || value.isEmpty()) {
+            return null;
+        }
+        for (KafkaSecurityProtocolEnum securityProtocol : KafkaSecurityProtocolEnum.values()) {
+            if (String.valueOf(securityProtocol.code).equals(value) || securityProtocol.name().equalsIgnoreCase(value)) {
+                return securityProtocol;
+            }
+        }
+        throw new IllegalArgumentException("KafkaSecurityProtocolEnum 的值无效: " + value);
+    }
 }

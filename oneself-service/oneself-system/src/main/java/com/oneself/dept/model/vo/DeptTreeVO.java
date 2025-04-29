@@ -2,9 +2,9 @@ package com.oneself.dept.model.vo;
 
 import com.oneself.common.model.enums.StatusEnum;
 import com.oneself.dept.model.pojo.Dept;
+import com.oneself.utils.BeanCopyUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import org.springframework.beans.BeanUtils;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -55,7 +55,7 @@ public class DeptTreeVO implements Serializable {
     }
 
     public DeptTreeVO(Dept val) {
-        BeanUtils.copyProperties(val, this);
+        BeanCopyUtils.copy(val, this);
         this.children = new ArrayList<>();
     }
 }

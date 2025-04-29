@@ -18,10 +18,8 @@ import java.io.Serial;
  * version 1.0
  */
 @EqualsAndHashCode(callSuper = true)
-@Getter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 @TableName("dept")
 public class Dept extends BasePojo {
     @Serial

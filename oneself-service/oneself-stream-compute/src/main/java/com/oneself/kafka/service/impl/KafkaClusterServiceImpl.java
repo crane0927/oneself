@@ -11,10 +11,10 @@ import com.oneself.kafka.service.KafkaClusterService;
 import com.oneself.model.dto.PageDTO;
 import com.oneself.model.vo.PageVO;
 import com.oneself.utils.AssertUtils;
+import com.oneself.utils.BeanCopyUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,11 +45,11 @@ public class KafkaClusterServiceImpl implements KafkaClusterService {
                         .eq(KafkaCluster::getName, dto.getName())
         );
 
-        AssertUtils.isTrue(count != null && count > 0, "集群名称已存在");
+        AssertUtils.isFalse(count != null && count > 0, "集群名称已存在");
 
         // 2. 新建 KafkaCluster 对象并拷贝属性
-        KafkaCluster kafkaCluster = new KafkaCluster();
-        BeanUtils.copyProperties(dto, kafkaCluster);
+        KafkaCluster kafkaCluster = KafkaCluster.builder().build();
+        BeanCopyUtils.copy(dto, kafkaCluster);
 
         // 3. 插入数据
         return kafkaClusterMapper.insert(kafkaCluster);
@@ -71,9 +71,8 @@ public class KafkaClusterServiceImpl implements KafkaClusterService {
         );
         AssertUtils.isTrue(count == 0, "集群名称已存在");
 
-        KafkaCluster updatedCluster = KafkaCluster.builder().build();
-        BeanUtils.copyProperties(dto, updatedCluster);
-        updatedCluster.setId(id);
+        KafkaCluster updatedCluster = KafkaCluster.builder().id(id).build();
+        BeanCopyUtils.copy(dto, updatedCluster);
 
         return kafkaClusterMapper.updateById(updatedCluster);
     }
@@ -92,7 +91,7 @@ public class KafkaClusterServiceImpl implements KafkaClusterService {
         Page<KafkaCluster> kafkaClusterPage = kafkaClusterMapper.selectPage(pageRequest, wrapper);
         return PageVO.convert(kafkaClusterPage, kafkaCluster -> {
             KafkaClusterVO kafkaClusterVO = new KafkaClusterVO();
-            BeanUtils.copyProperties(kafkaCluster, kafkaClusterVO);
+            BeanCopyUtils.copy(kafkaCluster, kafkaClusterVO);
             return kafkaClusterVO;
         });
     }

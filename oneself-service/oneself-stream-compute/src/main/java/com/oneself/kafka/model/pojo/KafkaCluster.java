@@ -8,7 +8,6 @@ import com.oneself.kafka.model.enums.KafkaClusterStatusEnum;
 import com.oneself.kafka.model.enums.KafkaSecurityProtocolEnum;
 import com.oneself.model.pojo.BasePojo;
 import lombok.*;
-import lombok.experimental.Accessors;
 
 import java.io.Serial;
 
@@ -20,12 +19,12 @@ import java.io.Serial;
  * description Kafka 集群
  * version 1.0
  */
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Accessors(chain = true)
 @TableName("kafka_cluster")
 public class KafkaCluster extends BasePojo {
     @Serial
