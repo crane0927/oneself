@@ -8,10 +8,10 @@ import com.oneself.model.enums.ChatTypeEnum;
 import com.oneself.model.pojo.ChatHistory;
 import com.oneself.model.vo.ChatHistoryVO;
 import com.oneself.service.ChatHistoryService;
+import com.oneself.utils.BeanCopyUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -73,7 +73,7 @@ public class ChatHistoryServiceImpl implements ChatHistoryService {
         }
         return chatHistories.stream().map(chatHistory -> {
             ChatHistoryVO vo = new ChatHistoryVO();
-            BeanUtils.copyProperties(chatHistory, vo);
+            BeanCopyUtils.copy(chatHistory, vo);
             return vo;
         }).toList();
     }
