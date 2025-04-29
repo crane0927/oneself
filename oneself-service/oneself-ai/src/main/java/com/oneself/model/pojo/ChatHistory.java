@@ -1,10 +1,11 @@
 package com.oneself.model.pojo;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.oneself.model.enums.ChatTypeEnum;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.*;
 
 /**
  * @author liuhuan
@@ -14,9 +15,11 @@ import lombok.Getter;
  * description 会话历史表
  * version 1.0
  */
-@EqualsAndHashCode(callSuper = true)
-@Getter
+@Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @TableName("chat_history")
 public class ChatHistory extends BasePojo {
     @TableId(value = "id", type = IdType.AUTO)

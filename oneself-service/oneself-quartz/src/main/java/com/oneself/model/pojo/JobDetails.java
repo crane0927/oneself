@@ -2,7 +2,7 @@ package com.oneself.model.pojo;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
+import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -16,6 +16,9 @@ import java.io.Serializable;
  * version 1.0
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("qrtz_job_details")
 public class JobDetails implements Serializable {
     @Serial

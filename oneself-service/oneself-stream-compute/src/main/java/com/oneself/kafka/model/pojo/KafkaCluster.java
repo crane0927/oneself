@@ -19,8 +19,7 @@ import java.io.Serial;
  * description Kafka 集群
  * version 1.0
  */
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

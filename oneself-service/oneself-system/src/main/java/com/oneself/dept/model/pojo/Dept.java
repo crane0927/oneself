@@ -17,9 +17,11 @@ import java.io.Serial;
  * description 部门信息实体类
  * version 1.0
  */
-@EqualsAndHashCode(callSuper = true)
-@Builder
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @TableName("dept")
 public class Dept extends BasePojo {
     @Serial

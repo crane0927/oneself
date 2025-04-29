@@ -1,9 +1,7 @@
 package com.oneself.model.pojo;
 
 import com.baomidou.mybatisplus.annotation.*;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.*;
 import org.springframework.ai.chat.messages.MessageType;
 
 /**
@@ -14,9 +12,11 @@ import org.springframework.ai.chat.messages.MessageType;
  * description  会话消息表
  * version 1.0
  */
-@EqualsAndHashCode(callSuper = true)
-@Getter
+@Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @TableName("chat_message")
 public class ChatMessage extends BasePojo {
     @TableId(value = "id", type = IdType.AUTO)

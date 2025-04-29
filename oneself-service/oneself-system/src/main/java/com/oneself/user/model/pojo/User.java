@@ -20,11 +20,11 @@ import java.time.LocalDateTime;
  * description 用户信息表实体类
  * version 1.0
  */
-@EqualsAndHashCode(callSuper = true)
-@Getter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @TableName("user")
 public class User extends BasePojo {
     @Serial
