@@ -40,7 +40,7 @@ public class KafkaClusterController {
     @Operation(summary = "新增")
     @PostMapping
     public ResponseVO<Boolean> add(@RequestBody @Valid KafkaClusterDTO dto) {
-        Integer size = kafkaClusterService.addCluster(dto);
+        Integer size = kafkaClusterService.add(dto);
         if (size == null || size <= 0) {
             return ResponseVO.failure("新增集群失败");
         }
@@ -50,7 +50,7 @@ public class KafkaClusterController {
     @Operation(summary = "修改")
     @PutMapping("/{id}")
     public ResponseVO<Boolean> update(@PathVariable("id") @Valid @NotNull @Positive Long id, @RequestBody @Valid KafkaClusterDTO dto) {
-        Integer size = kafkaClusterService.updateCluster(id, dto);
+        Integer size = kafkaClusterService.update(id, dto);
         if (size == null || size <= 0) {
             return ResponseVO.failure("修改集群失败");
         }
@@ -59,8 +59,8 @@ public class KafkaClusterController {
 
     @Operation(summary = "查询列表")
     @PostMapping("/page")
-    public PageVO<KafkaClusterVO> pageList(@RequestBody @Valid PageDTO<PageKafkaClusterDTO> dto) {
-        return kafkaClusterService.pageList(dto);
+    public PageVO<KafkaClusterVO> page(@RequestBody @Valid PageDTO<PageKafkaClusterDTO> dto) {
+        return kafkaClusterService.page(dto);
     }
 
 

@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
     private final DeptMapper deptMapper;
 
     @Override
-    public Integer addUser(UserDTO dto) {
+    public Integer add(UserDTO dto) {
         // 1. 构建用户对象
         User user = User.builder().build();
         BeanCopyUtils.copy(dto, user);
@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserVO getUser(Long id) {
+    public UserVO get(Long id) {
         User user = userMapper.selectById(id);
         if (ObjectUtils.isEmpty(user)) {
             throw new OneselfException("用户不存在");

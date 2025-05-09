@@ -18,9 +18,9 @@ import jakarta.validation.constraints.Positive;
  * version 1.0
  */
 public interface KafkaClusterService {
-    Integer addCluster(@Valid KafkaClusterDTO dto);
+    Integer add(@Valid KafkaClusterDTO dto);
 
-    Integer updateCluster(@Valid @NotNull @Positive Long id, @Valid KafkaClusterDTO dto);
+    Integer update(@Valid @NotNull @Positive Long id, @Valid KafkaClusterDTO dto);
 
-    PageVO<KafkaClusterVO> pageList(@Valid PageDTO<PageKafkaClusterDTO> dto);
+    PageVO<KafkaClusterVO> page(@Valid PageDTO<PageKafkaClusterDTO> dto);
 }

@@ -12,7 +12,7 @@ import com.oneself.user.model.vo.UserVO;
  * version 1.0
  */
 public interface UserService {
-    Integer addUser(UserDTO dto);
+    Integer add(UserDTO dto);
 
-    UserVO getUser(Long id);
+    UserVO get(Long id);
 }

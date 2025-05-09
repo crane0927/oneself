@@ -20,17 +20,17 @@ import java.util.List;
  * version 1.0
  */
 public interface DeptService {
-    Integer addDept(DeptDTO dto);
+    Integer add(DeptDTO dto);
 
-    DeptVO getDept(Long id);
+    DeptVO get(Long id);
 
-    Integer updateDept(Long id, DeptDTO dto);
+    Integer update(Long id, DeptDTO dto);
 
-    Integer deleteDept(List<Long> ids);
+    Integer delete(List<Long> ids);
 
-    PageVO<DeptVO> pageList(PageDTO<PageDeptDTO> dto);
+    PageVO<DeptVO> page(PageDTO<PageDeptDTO> dto);
 
     Integer updateStatus(List<Long> ids, StatusEnum status);
 
-    ResponseVO<List<DeptTreeVO>> getTree();
+    ResponseVO<List<DeptTreeVO>> tree();
 }

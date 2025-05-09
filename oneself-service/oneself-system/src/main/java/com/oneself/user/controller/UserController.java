@@ -38,7 +38,7 @@ public class UserController {
     @Operation(summary = "新增用户")
     @PostMapping
     public ResponseVO<Boolean> add(@RequestBody @Valid UserDTO dto) {
-        Integer size = userService.addUser(dto);
+        Integer size = userService.add(dto);
         if (ObjectUtils.isEmpty(size)) {
             return ResponseVO.failure("新增用户失败");
         }
@@ -48,6 +48,6 @@ public class UserController {
     @Operation(summary = "根据 ID 查询用户")
     @GetMapping("/{id}")
     public ResponseVO<UserVO> get(@PathVariable("id") @Valid @NotNull @Positive Long id) {
-        return ResponseVO.success(userService.getUser(id));
+        return ResponseVO.success(userService.get(id));
     }
 }

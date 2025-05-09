@@ -46,7 +46,7 @@ public class DeptServiceImpl implements DeptService {
     private final UserMapper userMapper;
 
     @Override
-    public Integer addDept(DeptDTO dto) {
+    public Integer add(DeptDTO dto) {
         // 1. 构建部门对象
         Dept dept = Dept.builder().build();
         BeanCopyUtils.copy(dto, dept);
@@ -63,7 +63,7 @@ public class DeptServiceImpl implements DeptService {
     }
 
     @Override
-    public DeptVO getDept(Long id) {
+    public DeptVO get(Long id) {
         Dept dept = deptMapper.selectById(id);
         AssertUtils.notNull(dept, "部门不存在");
         DeptVO deptVO = new DeptVO();
@@ -73,7 +73,7 @@ public class DeptServiceImpl implements DeptService {
 
     @Override
     @Transactional
-    public Integer updateDept(Long id, DeptDTO dto) {
+    public Integer update(Long id, DeptDTO dto) {
         // 1. 构建部门对象
         Dept dept = Dept.builder().id(id).build();
         BeanCopyUtils.copy(dto, dept);
@@ -91,7 +91,7 @@ public class DeptServiceImpl implements DeptService {
 
     @Override
     @Transactional
-    public Integer deleteDept(List<Long> ids) {
+    public Integer delete(List<Long> ids) {
         // 1. 获取当前部门 ID 和所有子部门 ID
         List<Long> allChildDeptIds = getAllChildDeptIds(ids);
 
@@ -105,7 +105,7 @@ public class DeptServiceImpl implements DeptService {
     }
 
     @Override
-    public PageVO<DeptVO> pageList(PageDTO<PageDeptDTO> dto) {
+    public PageVO<DeptVO> page(PageDTO<PageDeptDTO> dto) {
         // 1. 构建查询条件
         PageDeptDTO condition = dto.getCondition();
         // 2. 分页参数
@@ -191,7 +191,7 @@ public class DeptServiceImpl implements DeptService {
     }
 
     @Override
-    public ResponseVO<List<DeptTreeVO>> getTree() {
+    public ResponseVO<List<DeptTreeVO>> tree() {
         // 1. 查询全部
         List<Dept> deptList = deptMapper.selectList(null);
         if (ObjectUtils.isEmpty(deptList)) {

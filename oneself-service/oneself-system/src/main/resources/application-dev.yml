@@ -23,6 +23,25 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: liuhuan
     password: Z6eQaNaitK5vSX
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
+      database: 0
+      timeout: 10s  # 注意单位现在用 s 表示秒
+      client-type: lettuce
+      lettuce:
+        pool:
+          enabled: true
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms  # 等待时间，单位支持 ms、s 等
+
+jwt:
+  secret: your-secret-key-here-must-be-at-least-256-bits-long
+  expiration: 86400 # 24小时
 
 feign:
   sentinel:
@@ -43,14 +62,14 @@ oneself:
     description: oneself-system description
     group-name: oneself-system
 
-knife4j:
-  enable: true
-  setting:
-    enable-version: true
-    enable-footer-custom: true
-    footer-custom-content: GitHub-[oneself](https://github.com/crane0927)
-  production: false
-  basic:
-    enable: true
-    username: dev
-    password: dev123
+#knife4j:
+#  enable: true
+#  setting:
+#    enable-version: true
+#    enable-footer-custom: true
+#    footer-custom-content: GitHub-[oneself](https://github.com/crane0927)
+#  production: false
+#  basic:
+#    enable: true
+#    username: dev
+#    password: dev123

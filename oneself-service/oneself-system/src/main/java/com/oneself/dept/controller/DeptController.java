@@ -46,7 +46,7 @@ public class DeptController {
     @Operation(summary = "新增部门")
     @PostMapping
     public ResponseVO<Boolean> add(@RequestBody @Valid DeptDTO dto) {
-        Integer size = deptService.addDept(dto);
+        Integer size = deptService.add(dto);
         if (ObjectUtils.isEmpty(size)) {
             return ResponseVO.failure("新增部门失败");
         }
@@ -56,14 +56,14 @@ public class DeptController {
     @Operation(summary = "根据 ID 查询部门")
     @GetMapping("/{id}")
     public ResponseVO<DeptVO> get(@PathVariable("id") @Valid @NotNull @Positive Long id) {
-        return ResponseVO.success(deptService.getDept(id));
+        return ResponseVO.success(deptService.get(id));
     }
 
     @Operation(summary = "修改部门")
     @PutMapping("/{id}")
     public ResponseVO<Boolean> update(@PathVariable("id") @Valid @NotNull @Positive Long id, @RequestBody @Valid DeptDTO dto) {
         // 1. 更新当前部门
-        Integer size = deptService.updateDept(id, dto);
+        Integer size = deptService.update(id, dto);
         if (ObjectUtils.isEmpty(size)) {
             // 2. 更新部门及子部门状态
             deptService.updateStatus(Collections.singletonList(id), dto.getStatus());
@@ -75,7 +75,7 @@ public class DeptController {
     @Operation(summary = "删除部门")
     @DeleteMapping
     public ResponseVO<Boolean> delete(@RequestBody @Valid @NotEmpty List<@NotNull Long> ids) {
-        Integer size = deptService.deleteDept(ids);
+        Integer size = deptService.delete(ids);
         if (ObjectUtils.isEmpty(size)) {
             return ResponseVO.failure("删除部门失败");
         }
@@ -94,13 +94,13 @@ public class DeptController {
 
     @Operation(summary = "查询部门列表")
     @PostMapping("/page")
-    public PageVO<DeptVO> pageList(@RequestBody @Valid PageDTO<PageDeptDTO> dto) {
-        return deptService.pageList(dto);
+    public PageVO<DeptVO> page(@RequestBody @Valid PageDTO<PageDeptDTO> dto) {
+        return deptService.page(dto);
     }
 
     @Operation(summary = "查询部门树")
     @GetMapping("/tree")
-    public ResponseVO<List<DeptTreeVO>> getTree() {
-        return deptService.getTree();
+    public ResponseVO<List<DeptTreeVO>> tree() {
+        return deptService.tree();
     }
 }

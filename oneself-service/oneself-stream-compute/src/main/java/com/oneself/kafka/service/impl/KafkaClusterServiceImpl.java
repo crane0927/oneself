@@ -37,7 +37,7 @@ public class KafkaClusterServiceImpl implements KafkaClusterService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Integer addCluster(KafkaClusterDTO dto) {
+    public Integer add(KafkaClusterDTO dto) {
         AssertUtils.notNull(dto, "参数对象不能为空");
         // 1. 查询集群名称是否重复
         Long count = kafkaClusterMapper.selectCount(
@@ -56,7 +56,7 @@ public class KafkaClusterServiceImpl implements KafkaClusterService {
     }
 
     @Override
-    public Integer updateCluster(Long id, KafkaClusterDTO dto) {
+    public Integer update(Long id, KafkaClusterDTO dto) {
         // 简洁版校验
         AssertUtils.notNull(id, "id不能为空");
         AssertUtils.notNull(dto, "参数对象不能为空");
@@ -78,7 +78,7 @@ public class KafkaClusterServiceImpl implements KafkaClusterService {
     }
 
     @Override
-    public PageVO<KafkaClusterVO> pageList(PageDTO<PageKafkaClusterDTO> dto) {
+    public PageVO<KafkaClusterVO> page(PageDTO<PageKafkaClusterDTO> dto) {
         PageKafkaClusterDTO condition = dto.getCondition();
         PageDTO.Pagination pagination = dto.getPagination();
         Page<KafkaCluster> pageRequest = new Page<>(pagination.getPageNum(), pagination.getPageSize());
