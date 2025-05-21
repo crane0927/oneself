@@ -1,20 +1,19 @@
 package com.oneself.utils;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.oneself.exception.OneselfException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 
-import java.lang.reflect.Method;
+import java.util.function.Function;
 
 /**
  * @author liuhuan
  * date 2025/1/2
  * packageName com.oneself.common.utils
  * className DuplicateCheckUtils
- * description 重复数据检查工具类 TODO 逻辑未完成
+ * description 重复数据检查工具类
  * version 1.0
  */
 @Slf4j
@@ -25,79 +24,140 @@ public class DuplicateCheckUtils {
     }
 
     /**
-     * 检查实体对象中的字段值是否存在重复
-     *
-     * @param mapper      MyBatis-Plus 的 Mapper
-     * @param entity      实体对象
-     * @param uniqueField 唯一字段的名称
-     * @param idField     ID 字段名称
-     * @param idValue     当前记录的 ID 值
+     * 条件类型枚举，表示字段查询使用的比较操作符。
      */
-    public static <T> void checkDuplicate(BaseMapper<T> mapper, T entity, String uniqueField, String idField, Object idValue) {
-        try {
-            // 创建 Lambda 查询包装器
-            LambdaQueryWrapper<T> wrapper = new LambdaQueryWrapper<>();
+    public enum ConditionType {
+        EQ,  // 等于
+        NE,  // 不等于
+        LIKE, // 模糊匹配
+        GT,  // 大于
+        LT,  // 小于
+        GE,  // 大于等于
+        LE   // 小于等于
+    }
 
-            // 排除当前记录：根据主键字段和主键值
-            if (ObjectUtils.isNotEmpty(idField) && ObjectUtils.isNotEmpty(idValue)) {
-                // 使用反射获取当前记录的主键字段值
-                Method idGetter = entity.getClass().getMethod("get" + capitalizeFirstLetter(idField));
-                Object currentIdValue = idGetter.invoke(entity);
+    /**
+     * 通用唯一性校验（单字段），用于校验某字段值是否唯一。
+     *
+     * @param val          实体对象
+     * @param getFieldFunc 被校验字段的 getter，例如 Entity::getName
+     * @param getIdFunc    主键 ID 的 getter，例如 Entity::getId
+     * @param countFunc    查询方法，返回满足条件的记录数，例如 wrapper -> mapper.selectCount(wrapper)
+     * @param errorMessage 异常提示信息
+     * @param <T>          实体类型
+     * @param <ID>         主键类型
+     */
+    public static <T, ID> void checkDuplicate(
+            T val,
+            SFunction<T, ?> getFieldFunc,
+            SFunction<T, ID> getIdFunc,
+            Function<LambdaQueryWrapper<T>, Long> countFunc,
+            String errorMessage
+    ) {
+        checkDuplicateMultiFields(
+                val,
+                getIdFunc,
+                countFunc,
+                errorMessage,
+                FieldCondition.of(getFieldFunc)
+        );
+    }
 
-                if (ObjectUtils.isNotEmpty(currentIdValue) && !currentIdValue.equals(idValue)) {
-                    throw new OneselfException("当前记录 ID 值与传入的 ID 值不一致！");
-                }
-
-                // 排除当前记录
-                wrapper.ne(currentIdValue != null, entityField(entity, idField), idValue);
+    /**
+     * 通用唯一性校验方法（支持组合字段和多种条件类型）。
+     * 可用于任意字段组合唯一性校验，例如：部门名 + 父ID、用户名 LIKE 匹配等。
+     *
+     * @param val          实体对象，包含被校验的数据
+     * @param getIdFunc    获取主键 ID 的 getter 方法引用
+     * @param countFunc    查询方法，返回符合条件的记录数
+     * @param errorMessage 校验失败时抛出的错误提示信息
+     * @param conditions   字段条件列表（支持 eq, ne, like 等）
+     * @param <T>          实体类型
+     * @param <ID>         主键 ID 类型（如 Long、String）
+     * @throws OneselfException 如果数据库中已存在重复数据则抛出异常
+     */
+    @SafeVarargs
+    public static <T, ID> void checkDuplicateMultiFields(
+            T val,
+            SFunction<T, ID> getIdFunc,
+            Function<LambdaQueryWrapper<T>, Long> countFunc,
+            String errorMessage,
+            FieldCondition<T>... conditions
+    ) {
+        LambdaQueryWrapper<T> wrapper = new LambdaQueryWrapper<>();
+        for (FieldCondition<T> condition : conditions) {
+            Object value = condition.valueSupplier.apply(val);
+            switch (condition.conditionType) {
+                case EQ -> wrapper.eq(condition.fieldGetter, value);
+                case NE -> wrapper.ne(condition.fieldGetter, value);
+                case LIKE -> wrapper.like(condition.fieldGetter, value);
+                case GT -> wrapper.gt(condition.fieldGetter, value);
+                case GE -> wrapper.ge(condition.fieldGetter, value);
+                case LT -> wrapper.lt(condition.fieldGetter, value);
+                case LE -> wrapper.le(condition.fieldGetter, value);
+                default -> throw new OneselfException("不支持的条件类型: " + condition.conditionType);
             }
+        }
 
-            // 使用反射获取唯一字段的值
-            Method uniqueFieldGetter = entity.getClass().getMethod("get" + capitalizeFirstLetter(uniqueField));
-            Object fieldValue = uniqueFieldGetter.invoke(entity);
+        ID id = getIdFunc.apply(val);
+        if (ObjectUtils.isNotEmpty(id)) {
+            wrapper.ne(getIdFunc, id);
+        }
 
-            // 生成查询条件
-            wrapper.eq(ObjectUtils.isNotEmpty(fieldValue), entityField(entity, uniqueField), fieldValue);
-
-            // 执行查询
-            T existingEntity = mapper.selectOne(wrapper);
-
-            if (ObjectUtils.isNotEmpty(existingEntity)) {
-                String errorMessage = "已经存在名为【" + fieldValue + "】的数据，请重命名！";
-                throw new OneselfException(errorMessage);
-            }
-        } catch (Exception e) {
-            throw new OneselfException("检查重复数据时出错：" + e.getMessage(), e);
+        if (countFunc.apply(wrapper) > 0) {
+            throw new OneselfException(errorMessage);
         }
     }
 
     /**
-     * 将字符串的首字母大写（用于反射时获取 getter 方法名）
+     * 字段条件封装类，表示一个字段的查询条件（字段名、值、比较类型）。
+     * 用于组合字段条件查询时传参，例如唯一性校验。
      *
-     * @param field 字段名
-     * @return 首字母大写的字段名
+     * @param <T> 实体类型
      */
-    private static String capitalizeFirstLetter(String field) {
-        if (field == null || field.isEmpty()) {
-            return field;
-        }
-        return field.substring(0, 1).toUpperCase() + field.substring(1);
-    }
+    public record FieldCondition<T>(
+            SFunction<T, ?> fieldGetter,
+            Function<T, ?> valueSupplier,
+            ConditionType conditionType
+    ) {
 
-    /**
-     * 获取字段对应的实体类 lambda 表达式
-     *
-     * @param entity 实体对象
-     * @param field  字段名
-     * @param <T>    实体类型
-     * @return 字段对应的 lambda 表达式
-     */
-    private static <T> SFunction<T, ?> entityField(T entity, String field) {
-        try {
-            // 动态获取字段对应的 lambda 表达式
-            return (SFunction<T, ?>) entity.getClass().getDeclaredField(field).get(entity);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new OneselfException("获取字段 Lambda 表达式失败：" + e.getMessage(), e);
+        /**
+         * 全参数构造：指定字段、值获取方式与比较类型。
+         *
+         * @param fieldGetter   字段 getter（用于生成 SQL 字段名）
+         * @param valueSupplier 值获取函数（用于从对象中取值）
+         * @param conditionType 条件类型（如 EQ, NE, LIKE 等）
+         * @param <T>           实体类型
+         * @return FieldCondition 实例
+         */
+        public static <T> FieldCondition<T> of(SFunction<T, ?> fieldGetter,
+                                               Function<T, ?> valueSupplier,
+                                               ConditionType conditionType) {
+            return new FieldCondition<>(fieldGetter, valueSupplier, conditionType);
+        }
+
+        /**
+         * 简化构造：字段 getter 与值来源一致，默认使用 EQ 比较。
+         *
+         * @param fieldGetter 字段 getter
+         * @param <T>         实体类型
+         * @return FieldCondition 实例
+         */
+        public static <T> FieldCondition<T> of(SFunction<T, ?> fieldGetter) {
+            return new FieldCondition<>(fieldGetter, fieldGetter, ConditionType.EQ);
+        }
+
+        /**
+         * 简化构造：字段 getter 与值来源一致，指定比较类型。
+         *
+         * @param fieldGetter   字段 getter
+         * @param conditionType 条件类型
+         * @param <T>           实体类型
+         * @return FieldCondition 实例
+         */
+        public static <T> FieldCondition<T> of(SFunction<T, ?> fieldGetter,
+                                               ConditionType conditionType) {
+            return new FieldCondition<>(fieldGetter, fieldGetter, conditionType);
         }
     }
 }
