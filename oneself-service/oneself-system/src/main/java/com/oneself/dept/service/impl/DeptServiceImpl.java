@@ -11,7 +11,6 @@ import com.oneself.dept.model.pojo.Dept;
 import com.oneself.dept.model.vo.DeptTreeVO;
 import com.oneself.dept.model.vo.DeptVO;
 import com.oneself.dept.service.DeptService;
-import com.oneself.exception.OneselfException;
 import com.oneself.model.dto.PageDTO;
 import com.oneself.model.vo.PageVO;
 import com.oneself.model.vo.ResponseVO;
@@ -19,6 +18,7 @@ import com.oneself.user.mapper.UserMapper;
 import com.oneself.user.model.pojo.User;
 import com.oneself.utils.AssertUtils;
 import com.oneself.utils.BeanCopyUtils;
+import com.oneself.utils.DuplicateCheckUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -57,7 +57,14 @@ public class DeptServiceImpl implements DeptService {
             AssertUtils.notNull(parentDept, "上级部门不存在");
         }
         // 3. 校验部门名称是否重复
-        checkDeptName(dept);
+        DuplicateCheckUtils.checkDuplicateMultiFields(
+                dept,
+                Dept::getId,
+                deptMapper::selectCount,
+                "部门名称已存在",
+                DuplicateCheckUtils.FieldCondition.of(Dept::getParentId, Dept::getParentId, DuplicateCheckUtils.ConditionType.EQ),
+                DuplicateCheckUtils.FieldCondition.of(Dept::getDeptName, Dept::getDeptName, DuplicateCheckUtils.ConditionType.EQ)
+        );
         // 4. 插入部门
         return deptMapper.insert(dept);
     }
@@ -78,7 +85,14 @@ public class DeptServiceImpl implements DeptService {
         Dept dept = Dept.builder().id(id).build();
         BeanCopyUtils.copy(dto, dept);
         // 2. 校验部门名称是否重复
-        checkDeptName(dept);
+        DuplicateCheckUtils.checkDuplicateMultiFields(
+                dept,
+                Dept::getId,
+                deptMapper::selectCount,
+                "部门名称已存在",
+                DuplicateCheckUtils.FieldCondition.of(Dept::getParentId, Dept::getParentId, DuplicateCheckUtils.ConditionType.EQ),
+                DuplicateCheckUtils.FieldCondition.of(Dept::getDeptName, Dept::getDeptName, DuplicateCheckUtils.ConditionType.EQ)
+        );
         Long parentId = dept.getParentId();
         if (parentId != 0) {
             // 3. 校验上级部门是否存在
@@ -223,23 +237,4 @@ public class DeptServiceImpl implements DeptService {
         return ResponseVO.success(rootNodes);
     }
 
-
-    /**
-     * 校验部门名称是否重复
-     *
-     * @param dept 部门对象
-     */
-    void checkDeptName(Dept dept) {
-        Long id = dept.getId();
-        LambdaQueryWrapper<Dept> wrapper = new LambdaQueryWrapper<>();
-        if (ObjectUtils.isNotEmpty(id)) {
-            wrapper.ne(Dept::getId, id);
-        }
-        wrapper.eq(Dept::getParentId, dept.getParentId())
-                .eq(Dept::getDeptName, dept.getDeptName());
-        if (deptMapper.selectCount(wrapper) > 0) {
-            throw new OneselfException("部门名称已存在");
-        }
-
-    }
 }

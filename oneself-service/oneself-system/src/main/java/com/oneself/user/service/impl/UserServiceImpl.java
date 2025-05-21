@@ -1,6 +1,5 @@
 package com.oneself.user.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.oneself.dept.mapper.DeptMapper;
 import com.oneself.dept.model.pojo.Dept;
 import com.oneself.exception.OneselfException;
@@ -10,6 +9,7 @@ import com.oneself.user.model.pojo.User;
 import com.oneself.user.model.vo.UserVO;
 import com.oneself.user.service.UserService;
 import com.oneself.utils.BeanCopyUtils;
+import com.oneself.utils.DuplicateCheckUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -37,7 +37,13 @@ public class UserServiceImpl implements UserService {
         User user = User.builder().build();
         BeanCopyUtils.copy(dto, user);
         // 2. 校验登录名是否重复
-        checkLoginName(user);
+        DuplicateCheckUtils.checkDuplicate(
+                user,
+                User::getLoginName,
+                User::getId,
+                userMapper::selectCount,
+                "用户登录名已存在"
+        );
         // 3. 校验部门是否存在
         Dept dept = deptMapper.selectById(user.getDeptId());
         if (ObjectUtils.isEmpty(dept)) {
@@ -58,20 +64,4 @@ public class UserServiceImpl implements UserService {
         return userVO;
     }
 
-    /**
-     * 校验登录名是否重复
-     *
-     * @param user 用户对象
-     */
-    void checkLoginName(User user) {
-        Long id = user.getId();
-        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
-        if (ObjectUtils.isNotEmpty(id)) {
-            wrapper.ne(User::getId, id);
-        }
-        wrapper.eq(User::getLoginName, user.getLoginName());
-        if (userMapper.selectCount(wrapper) > 0) {
-            throw new OneselfException("用户登录名已存在");
-        }
-    }
 }

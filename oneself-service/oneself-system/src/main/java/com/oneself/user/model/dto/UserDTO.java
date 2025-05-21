@@ -48,9 +48,11 @@ public class UserDTO implements Serializable {
     @NotNull(message = "性别不能为空")
     private SexEnum sex;
 
-    @Schema(description = "头像文件路径", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotBlank(message = "头像文件路径不能为空")
-    @Pattern(regexp = "^(http(s?):)([/|.\\w\\s-])*\\.(?:jpg|jpeg|png|gif)$", message = "头像文件路径必须是有效的图片 URL")
+    @Schema(description = "头像文件路径", nullable = true)
+    @Pattern(
+            regexp = "^$|^(https?://)([\\w\\-./]+)\\.(jpg|jpeg|png|gif)$",
+            message = "头像文件路径必须是有效的图片 URL"
+    )
     private String avatar;
 
     @Schema(description = "邮箱")
