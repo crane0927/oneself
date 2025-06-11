@@ -10,10 +10,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author liuhuan
@@ -34,10 +32,20 @@ public class TestController {
 
     private final DemoClient demoClient;
 
+    private final RedisTemplate<String, String> redisTemplate;
+
     @Operation(summary = "你好 xxx")
     @PostMapping({"/feign01"})
     public ResponseVO<DemoVO> feign01(@RequestBody DemoDTO dto) {
         return demoClient.sayHello(dto);
+
+    }
+
+    @Operation(summary = "Redis 测试")
+    @GetMapping({"/redis"})
+    public ResponseVO<String> getRedisTest() {
+        Object taskIdFields = redisTemplate.opsForValue().get("test01");
+        return ResponseVO.success(String.valueOf(taskIdFields));
 
     }
 }

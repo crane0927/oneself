@@ -27,7 +27,7 @@ spring:
     redis:
       host: localhost
       port: 6379
-      password:
+      password: mBYFyN4wXi6WsA
       database: 0
       timeout: 10s  # 注意单位现在用 s 表示秒
       client-type: lettuce
