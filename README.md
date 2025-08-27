@@ -16,6 +16,9 @@
 ```text
 oneself
 ├── oneself-common                  # 公共模块，存放共享的工具类、公共服务、通用配置等
+│   ├── oneself-common-core         # 公共核心模块
+│   ├── oneself-common-utils        # 公共工具模块
+│   └── ...      
 ├── 
 ├── oneself-gateway                 # 网关模块，处理请求路由、认证、限流等、默认端口 9100
 ├── oneself-service                 # 核心业务模块，包含多个子模块，处理具体的业务逻辑 端口从 9101 开始
