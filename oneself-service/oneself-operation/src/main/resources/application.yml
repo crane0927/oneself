@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: oneself-operation
+  profiles:
+    active: dev # 设置为开发环境
+
+server:
+  port: 9105
+  servlet:
+    context-path: /oneself-demo
+    session:
+      timeout: 600

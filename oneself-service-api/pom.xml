@@ -20,6 +20,7 @@
         <module>oneself-quartz-api</module>
         <module>oneself-system-api</module>
         <module>oneself-stream-compute-api</module>
+        <module>oneself-operation-api</module>
     </modules>
 
     <properties>
