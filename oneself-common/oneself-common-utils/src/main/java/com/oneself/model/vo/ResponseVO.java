@@ -16,6 +16,7 @@ import java.io.Serializable;
  * version 1.0
  */
 @Data
+@Schema(description = "响应数据")
 public class ResponseVO<T> implements Serializable {
 
     @Serial
