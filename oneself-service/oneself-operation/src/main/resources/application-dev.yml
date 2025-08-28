@@ -12,6 +12,21 @@ feign:
     enabled: true
 
 spring:
+  datasource:
+    dynamic:
+      primary: postgres
+      strict: false
+      datasource:
+        mysql:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://127.0.0.1:3306/oneself_operation?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai&useSSL=false
+          username: liuhuan
+          password: Z6eQaNaitK5vSX
+        postgres:
+          driver-class-name: org.postgresql.Driver
+          url: jdbc:postgresql://127.0.0.1:5432/oneself?currentSchema=oneself_operation&useUnicode=true&characterEncoding=utf-8
+          username: admin
+          password: PK3uK7pUIwUTi1
   config:
     import:
       - nacos:${spring.application.name}-${spring.profiles.active}.yaml?refreshEnabled=true
@@ -31,8 +46,4 @@ spring:
       discovery:
         cluster-name: dev # 设置 Nacos 的集群属性
         namespace: dev # 配置命名空间，使用命名空间唯一 ID
-  datasource:
-    url: jdbc:mysql://127.0.0.1:3306/oneself-operation?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai&useSSL=false
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: liuhuan
-    password: Z6eQaNaitK5vSX
+

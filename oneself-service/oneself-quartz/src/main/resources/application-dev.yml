@@ -22,7 +22,7 @@ spring:
     auto-startup: true # 是否自动启动计划程序
     startup-delay: 0s # 延迟启动
     jdbc:
-      initialize-schema: "never" # 数据库架构初始化模式（never：从不进行初始化；always：每次都清空数据库进行初始化；embedded：只初始化内存数据库（默认值））
+      initialize-schema: "always" # 数据库架构初始化模式（never：从不进行初始化；always：每次都清空数据库进行初始化；embedded：只初始化内存数据库（默认值））
     properties: # 相关属性配置
       org:
         quartz:
@@ -43,10 +43,20 @@ spring:
             threadPriority: 5
             threadsInheritContextClassLoaderOfInitializingThread: true
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/oneself_quartz?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai&useSSL=false
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: liuhuan
-    password: Z6eQaNaitK5vSX
+    dynamic:
+      primary: postgres
+      strict: false
+      datasource:
+        mysql:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://127.0.0.1:3306/oneself_quartz?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai&useSSL=false
+          username: liuhuan
+          password: Z6eQaNaitK5vSX
+        postgres:
+          driver-class-name: org.postgresql.Driver
+          url: jdbc:postgresql://127.0.0.1:5432/oneself?currentSchema=oneself_quartz&useUnicode=true&characterEncoding=utf-8
+          username: admin
+          password: PK3uK7pUIwUTi1
 
 
 mybatis-plus:

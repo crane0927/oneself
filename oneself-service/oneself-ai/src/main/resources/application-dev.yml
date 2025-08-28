@@ -24,10 +24,20 @@ spring:
         cluster-name: dev # 设置 Nacos 的集群属性
         namespace: dev # 配置命名空间，使用命名空间唯一 ID
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/oneself_ai?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai&useSSL=false
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: liuhuan
-    password: Z6eQaNaitK5vSX
+    dynamic:
+      primary: postgres
+      strict: false
+      datasource:
+        mysql:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://127.0.0.1:3306/oneself_ai?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai&useSSL=false
+          username: liuhuan
+          password: Z6eQaNaitK5vSX
+        postgres:
+          driver-class-name: org.postgresql.Driver
+          url: jdbc:postgresql://127.0.0.1:5432/oneself?currentSchema=oneself_ai&useUnicode=true&characterEncoding=utf-8
+          username: admin
+          password: PK3uK7pUIwUTi1
 
 logging: # 日志配置 记录 AI 请求和响应日志
   level:
