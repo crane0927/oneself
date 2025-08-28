@@ -16,6 +16,7 @@
     <modules>
         <module>oneself-common-core</module>
         <module>oneself-common-jdbc</module>
+        <module>oneself-common-swagger</module>
         <module>oneself-common-utils</module>
     </modules>
     <build>
