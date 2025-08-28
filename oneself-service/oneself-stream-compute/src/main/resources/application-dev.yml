@@ -32,7 +32,7 @@ spring:
         cluster-name: dev # 设置 Nacos 的集群属性
         namespace: dev # 配置命名空间，使用命名空间唯一 ID
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/oneself-stream-compute?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai&useSSL=false
+    url: jdbc:mysql://127.0.0.1:3306/oneself_stream_compute?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai&useSSL=false
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: liuhuan
     password: Z6eQaNaitK5vSX

@@ -43,7 +43,7 @@ spring:
             threadPriority: 5
             threadsInheritContextClassLoaderOfInitializingThread: true
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/oneself-quartz?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai&useSSL=false
+    url: jdbc:mysql://127.0.0.1:3306/oneself_quartz?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai&useSSL=false
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: liuhuan
     password: Z6eQaNaitK5vSX

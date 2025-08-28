@@ -1,5 +1,5 @@
 CREATE
-DATABASE `oneself-system` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */
+DATABASE `oneself_system` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */
 
 create table dept
 (
@@ -27,7 +27,7 @@ create definer = liuhuan@`%` trigger dept_before_insert
     for each row
 BEGIN
   IF NEW.sequence IS NULL THEN
-    SET NEW.sequence = (SELECT IFNULL(MAX(sequence), 0) + 1 FROM `oneself-system`.dept);
+    SET NEW.sequence = (SELECT IFNULL(MAX(sequence), 0) + 1 FROM `oneself_system`.dept);
 END IF;
 END;
 

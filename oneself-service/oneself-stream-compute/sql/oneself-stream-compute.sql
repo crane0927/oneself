@@ -1,5 +1,5 @@
 CREATE
-DATABASE `oneself-stream-compute` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */
+DATABASE `oneself_stream_compute` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */
 
 create table kafka_cluster
 (
