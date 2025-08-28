@@ -53,6 +53,43 @@ spring:
           url: jdbc:postgresql://127.0.0.1:5432/oneself?currentSchema=oneself_demo&useUnicode=true&characterEncoding=utf-8
           username: admin
           password: PK3uK7pUIwUTi1
+      druid: # ================== 全局 Druid 连接池配置 ==================
+        # -------- 基本参数 --------
+        initial-size: 10       # 初始连接数（服务启动时就建 10 个连接）
+        min-idle: 10           # 最小空闲连接数（保证一定的可用连接）
+        max-active: 100        # 最大活跃连接数（并发高时最多可用 100 个连接）
+        max-wait: 60000        # 获取连接最大等待时间（60s），超过报错
+
+        # -------- 空闲连接检测 --------
+        time-between-eviction-runs-millis: 60000   # 每 60s 检测一次空闲连接
+        min-evictable-idle-time-millis: 300000     # 连接空闲超过 5 分钟回收
+        keep-alive: true                          # 保持一定数量的连接长期不被回收
+
+        # -------- SQL 有效性检测 --------
+        validation-query: SELECT 1                # 检测连接有效性的 SQL
+        test-while-idle: true                     # 空闲检测时执行 validation-query
+        test-on-borrow: false                     # 取连接时不检测（性能更优）
+        test-on-return: false                     # 还连接时不检测（性能更优）
+
+        # -------- PSCache（预编译 SQL 缓存）--------
+        pool-prepared-statements: true
+        max-pool-prepared-statement-per-connection-size: 50 # 每个连接缓存 50 条 SQL
+        share-prepared-statements: true            # 是否多个连接共用缓存（一般打开）
+
+        # -------- 监控与日志 --------
+        filters: stat,wall,slf4j   # 开启统计（stat）、防火墙（wall）、SQL 日志（slf4j）
+
+        # -------- 统计参数 --------
+        stat:
+          merge-sql: true              # 合并统计相同 SQL
+          slow-sql-millis: 5000        # 慢 SQL 阈值（毫秒），大于 5s 记为慢 SQL
+          log-slow-sql: true           # 打印慢 SQL 日志
+
+        # -------- 防火墙参数（WallFilter）--------
+        wall:
+          config:
+            multi-statement-allow: true  # 允许一次执行多条 SQL（默认 false）
+            none-base-statement-allow: false # 禁止无 where 的 update/delete
 
 # 完整依赖报错，暂时不使用高级功能
 #knife4j:
