@@ -1,6 +1,5 @@
 package com.oneself.model.vo;
 
-import com.oneself.annotation.Sensitive;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 

@@ -15,6 +15,7 @@ import java.io.Serializable;
  * version 1.0
  */
 @Data
+@Schema(description = "分页查询参数")
 public class PageDTO<T> implements Serializable {
 
     @Serial

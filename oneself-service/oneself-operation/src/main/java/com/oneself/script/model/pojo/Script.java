@@ -1,10 +1,9 @@
 package com.oneself.script.model.pojo;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.oneself.model.pojo.BasePojo;
 import lombok.Data;
-
-import java.io.Serial;
-import java.io.Serializable;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author liuhuan
@@ -14,11 +13,10 @@ import java.io.Serializable;
  * description 脚本信息表
  * version 1.0
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @TableName("script")
-public class Script implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1L;
+public class Script extends BasePojo {
     private Long id;
     private String name;
     private String description;

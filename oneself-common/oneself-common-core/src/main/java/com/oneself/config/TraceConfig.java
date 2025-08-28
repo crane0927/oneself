@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
  * date 2025/1/21
  * packageName com.oneself.config
  * className TraceConfig
- * description
+ * description 跟踪
  * version 1.0
  */
 @Configuration(proxyBeanMethods = false)
