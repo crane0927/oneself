@@ -1,4 +1,4 @@
-package com.oneself.common.config;
+package com.oneself.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +9,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 /**
  * @author liuhuan
  * date 2025/5/28
- * packageName com.oneself.common.config
+ * packageName com.oneself.config
  * className RedisConfig
  * description
  * version 1.0

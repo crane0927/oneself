@@ -749,7 +749,7 @@ ENTRYPOINT ["/bin/sh", "-c", "./run.sh start ${SERVICE_VERSION}"]
 ```xml
 <dependency>
     <groupId>com.oneself</groupId>
-    <artifactId>oneself-common</artifactId>
+    <artifactId>oneself-common-swagger</artifactId>
     <version>1.0.0</version>
 </dependency>
 ```
