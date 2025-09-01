@@ -31,6 +31,9 @@ BEGIN
 END IF;
 END;
 
+INSERT INTO dept (id, dept_name, dept_desc, sequence, parent_id, leader, phone, email, status, deleted, create_by, create_time, update_by, update_time) VALUES (1, 'oneself', null, 1, 0, 'crane', '13300000000', 'crane0927@oneself.com', 'NORMAL', 0, 'admin', '2025-09-01 11:05:22', 'admin', '2025-09-01 11:05:22');
+
+
 create table user
 (
     id              bigint auto_increment comment '用户 ID'
