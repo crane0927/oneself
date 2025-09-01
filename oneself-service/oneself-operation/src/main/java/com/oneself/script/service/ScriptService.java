@@ -21,13 +21,13 @@ import java.util.List;
  * version 1.0
  */
 public interface ScriptService {
-    Long add(@Valid ScriptDTO dto);
+    String add(@Valid ScriptDTO dto);
 
-    boolean edit(@Valid @NotNull @Positive Long id, @Valid ScriptDTO dto);
+    boolean edit(@Valid @NotNull @Positive String id, @Valid ScriptDTO dto);
 
     PageVO<ScriptVO> page(@Valid PageDTO<PageQueryDTO> dto);
 
-    ScriptVO get(@Valid @NotNull @Positive Long id);
+    ScriptVO get(@Valid @NotNull @Positive String id);
 
-    boolean delete(@Valid @NotEmpty List<@NotNull Long> ids);
+    boolean delete(@Valid @NotEmpty List<@NotNull String> ids);
 }

@@ -37,20 +37,20 @@ import java.util.List;
 @RequestLogging
 @RestController
 @RefreshScope
-@RequestMapping({"/script"})
+@RequestMapping({"/scripts"})
 public class ScriptController {
 
     private final ScriptService scriptService;
 
     @Operation(summary = "新增")
     @PostMapping
-    public ResponseVO<Long> add(@RequestBody @Valid ScriptDTO dto) {
+    public ResponseVO<String> add(@RequestBody @Valid ScriptDTO dto) {
         return ResponseVO.success(scriptService.add(dto));
     }
 
     @Operation(summary = "编辑")
     @PutMapping("/{id}")
-    public ResponseVO<Boolean> edit(@PathVariable("id") @Valid @NotNull @Positive Long id, @RequestBody @Valid ScriptDTO dto) {
+    public ResponseVO<Boolean> edit(@PathVariable("id") @Valid @NotNull @Positive String id, @RequestBody @Valid ScriptDTO dto) {
         return ResponseVO.success(scriptService.edit(id, dto));
     }
 
@@ -60,15 +60,16 @@ public class ScriptController {
         return scriptService.page(dto);
     }
 
-    @Operation(summary = "查询列表")
+    @Operation(summary = "根据 ID 查询")
     @GetMapping("/{id}")
-    public ResponseVO<ScriptVO> get(@PathVariable("id") @Valid @NotNull @Positive Long id) {
+    public ResponseVO<ScriptVO> get(@PathVariable("id") @Valid @NotNull @Positive String id) {
         return ResponseVO.success(scriptService.get(id));
     }
 
     @Operation(summary = "批量删除")
     @DeleteMapping
-    public ResponseVO<Boolean> delete(@RequestBody @Valid @NotEmpty List<@NotNull Long> ids) {
+    public ResponseVO<Boolean> delete(@RequestBody @Valid @NotEmpty List<@NotNull String> ids) {
         return ResponseVO.success(scriptService.delete(ids));
     }
+
 }
