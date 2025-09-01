@@ -23,7 +23,7 @@ public class ResponseVO<T> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Schema(description = "状态码", example = "500")
-    private Integer msgCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
+    private int msgCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
     @Schema(description = "状态码说明", example = "请求失败")
     private String message = "请求失败";
     @Schema(description = "请求路径", example = "/oneself")

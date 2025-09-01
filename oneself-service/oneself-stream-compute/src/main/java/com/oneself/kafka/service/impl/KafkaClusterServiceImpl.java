@@ -10,6 +10,7 @@ import com.oneself.kafka.model.vo.KafkaClusterVO;
 import com.oneself.kafka.service.KafkaClusterService;
 import com.oneself.model.dto.PageDTO;
 import com.oneself.model.vo.PageVO;
+import com.oneself.pagination.MyBatisPageWrapper;
 import com.oneself.utils.AssertUtils;
 import com.oneself.utils.BeanCopyUtils;
 import lombok.RequiredArgsConstructor;
@@ -89,7 +90,8 @@ public class KafkaClusterServiceImpl implements KafkaClusterService {
                 .eq(Optional.ofNullable(condition.getSecurityProtocol()).isPresent(), KafkaCluster::getSecurityProtocol, condition.getSecurityProtocol());
 
         Page<KafkaCluster> kafkaClusterPage = kafkaClusterMapper.selectPage(pageRequest, wrapper);
-        return PageVO.convertMybatis(kafkaClusterPage, kafkaCluster -> {
+        MyBatisPageWrapper<KafkaCluster> pageWrapper = new MyBatisPageWrapper<>(kafkaClusterPage);
+        return PageVO.convert(pageWrapper, kafkaCluster -> {
             KafkaClusterVO kafkaClusterVO = new KafkaClusterVO();
             BeanCopyUtils.copy(kafkaCluster, kafkaClusterVO);
             return kafkaClusterVO;

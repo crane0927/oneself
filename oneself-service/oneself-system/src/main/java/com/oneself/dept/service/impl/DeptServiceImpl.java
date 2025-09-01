@@ -14,6 +14,7 @@ import com.oneself.dept.service.DeptService;
 import com.oneself.model.dto.PageDTO;
 import com.oneself.model.vo.PageVO;
 import com.oneself.model.vo.ResponseVO;
+import com.oneself.pagination.MyBatisPageWrapper;
 import com.oneself.user.mapper.UserMapper;
 import com.oneself.user.model.pojo.User;
 import com.oneself.utils.AssertUtils;
@@ -135,8 +136,9 @@ public class DeptServiceImpl implements DeptService {
                 .orderByAsc(Dept::getSequence); // 排序
 
         Page<Dept> deptPage = deptMapper.selectPage(pageRequest, wrapper);
+        MyBatisPageWrapper<Dept> pageWrapper = new MyBatisPageWrapper<>(deptPage);
         // 5. 转换分页数据
-        return PageVO.convertMybatis(deptPage, dept -> {
+        return PageVO.convert(pageWrapper, dept -> {
             DeptVO deptVO = new DeptVO();
             BeanCopyUtils.copy(dept, deptVO);
             return deptVO;
