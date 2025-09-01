@@ -1,6 +1,5 @@
-package com.oneself.common.pagination;
+package com.oneself.pagination;
 
-import com.oneself.pagination.PageWrapper;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

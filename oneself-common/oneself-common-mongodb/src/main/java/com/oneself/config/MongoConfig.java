@@ -1,4 +1,4 @@
-package com.oneself.common.config;
+package com.oneself.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,16 +34,11 @@ public class MongoConfig {
 
     /**
      * AuditorAware 实现类
-     * 返回当前登录用户或系统默认用户
      */
     static class AuditorAwareImpl implements AuditorAware<String> {
-
         @Override
         public Optional<String> getCurrentAuditor() {
             // TODO: 替换为实际获取当前登录用户名
-            // 例如使用 Spring Security：
-            // Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            // return Optional.ofNullable(auth != null ? auth.getName() : "admin");
             return Optional.of("admin");
         }
     }
