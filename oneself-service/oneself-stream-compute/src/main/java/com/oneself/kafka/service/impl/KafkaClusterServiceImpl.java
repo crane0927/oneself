@@ -89,7 +89,7 @@ public class KafkaClusterServiceImpl implements KafkaClusterService {
                 .eq(Optional.ofNullable(condition.getSecurityProtocol()).isPresent(), KafkaCluster::getSecurityProtocol, condition.getSecurityProtocol());
 
         Page<KafkaCluster> kafkaClusterPage = kafkaClusterMapper.selectPage(pageRequest, wrapper);
-        return PageVO.convert(kafkaClusterPage, kafkaCluster -> {
+        return PageVO.convertMybatis(kafkaClusterPage, kafkaCluster -> {
             KafkaClusterVO kafkaClusterVO = new KafkaClusterVO();
             BeanCopyUtils.copy(kafkaCluster, kafkaClusterVO);
             return kafkaClusterVO;

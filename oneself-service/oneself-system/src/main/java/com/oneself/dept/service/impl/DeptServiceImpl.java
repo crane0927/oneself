@@ -136,7 +136,7 @@ public class DeptServiceImpl implements DeptService {
 
         Page<Dept> deptPage = deptMapper.selectPage(pageRequest, wrapper);
         // 5. 转换分页数据
-        return PageVO.convert(deptPage, dept -> {
+        return PageVO.convertMybatis(deptPage, dept -> {
             DeptVO deptVO = new DeptVO();
             BeanCopyUtils.copy(dept, deptVO);
             return deptVO;
