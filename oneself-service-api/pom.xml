@@ -29,11 +29,6 @@
     <dependencies>
         <dependency>
             <groupId>com.oneself</groupId>
-            <artifactId>oneself-common-jdbc</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.oneself</groupId>
             <artifactId>oneself-common-utils</artifactId>
             <version>1.0.0</version>
         </dependency>
