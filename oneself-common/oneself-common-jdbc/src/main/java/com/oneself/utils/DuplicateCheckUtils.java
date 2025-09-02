@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.oneself.exception.OneselfException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.Predicate;
 import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.function.Function;
@@ -115,49 +116,52 @@ public class DuplicateCheckUtils {
      *
      * @param <T> 实体类型
      */
+    /**
+     * 字段条件封装类，表示一个字段的查询条件（字段名、值、比较类型、是否生效判断）。
+     * 用于组合字段条件查询时传参，例如唯一性校验。
+     *
+     * @param <T> 实体类型
+     */
     public record FieldCondition<T>(
             SFunction<T, ?> fieldGetter,
             Function<T, ?> valueSupplier,
-            ConditionType conditionType
+            ConditionType conditionType,
+            Predicate<Object> effectiveChecker
     ) {
 
         /**
-         * 全参数构造：指定字段、值获取方式与比较类型。
-         *
-         * @param fieldGetter   字段 getter（用于生成 SQL 字段名）
-         * @param valueSupplier 值获取函数（用于从对象中取值）
-         * @param conditionType 条件类型（如 EQ, NE, LIKE 等）
-         * @param <T>           实体类型
-         * @return FieldCondition 实例
+         * 全参数构造：指定字段、值获取方式、比较类型、有效性检查。
+         */
+        public static <T> FieldCondition<T> of(SFunction<T, ?> fieldGetter,
+                                               Function<T, ?> valueSupplier,
+                                               ConditionType conditionType,
+                                               Predicate<Object> effectiveChecker) {
+            return new FieldCondition<>(fieldGetter, valueSupplier, conditionType, effectiveChecker);
+        }
+
+        /**
+         * 简化构造：默认有效性检查（null 或空字符串会被忽略）。
          */
         public static <T> FieldCondition<T> of(SFunction<T, ?> fieldGetter,
                                                Function<T, ?> valueSupplier,
                                                ConditionType conditionType) {
-            return new FieldCondition<>(fieldGetter, valueSupplier, conditionType);
+            return new FieldCondition<>(fieldGetter, valueSupplier, conditionType,
+                    v -> !(v == null || (v instanceof String s && org.apache.commons.lang3.StringUtils.isBlank(s))));
         }
 
         /**
-         * 简化构造：字段 getter 与值来源一致，默认使用 EQ 比较。
-         *
-         * @param fieldGetter 字段 getter
-         * @param <T>         实体类型
-         * @return FieldCondition 实例
+         * 简化构造：字段 getter 与值来源一致，默认 EQ 比较，默认有效性检查。
          */
         public static <T> FieldCondition<T> of(SFunction<T, ?> fieldGetter) {
-            return new FieldCondition<>(fieldGetter, fieldGetter, ConditionType.EQ);
+            return of(fieldGetter, fieldGetter, ConditionType.EQ);
         }
 
         /**
-         * 简化构造：字段 getter 与值来源一致，指定比较类型。
-         *
-         * @param fieldGetter   字段 getter
-         * @param conditionType 条件类型
-         * @param <T>           实体类型
-         * @return FieldCondition 实例
+         * 简化构造：字段 getter 与值来源一致，指定比较类型，默认有效性检查。
          */
         public static <T> FieldCondition<T> of(SFunction<T, ?> fieldGetter,
                                                ConditionType conditionType) {
-            return new FieldCondition<>(fieldGetter, fieldGetter, conditionType);
+            return of(fieldGetter, fieldGetter, conditionType);
         }
     }
 }
