@@ -16,7 +16,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -55,13 +54,13 @@ public class DeptController {
 
     @Operation(summary = "根据 ID 查询部门")
     @GetMapping("/{id}")
-    public ResponseVO<DeptVO> get(@PathVariable("id") @Valid @NotNull @Positive UUID id) {
+    public ResponseVO<DeptVO> get(@PathVariable("id") @Valid @NotNull UUID id) {
         return ResponseVO.success(deptService.get(id));
     }
 
     @Operation(summary = "修改部门")
     @PutMapping("/{id}")
-    public ResponseVO<Boolean> update(@PathVariable("id") @Valid @NotNull @Positive UUID id, @RequestBody @Valid DeptDTO dto) {
+    public ResponseVO<Boolean> update(@PathVariable("id") @Valid @NotNull UUID id, @RequestBody @Valid DeptDTO dto) {
         return ResponseVO.success(deptService.update(id, dto));
     }
 

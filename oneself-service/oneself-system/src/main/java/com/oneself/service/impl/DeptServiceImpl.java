@@ -52,6 +52,7 @@ public class DeptServiceImpl implements DeptService {
         // 1. dto 转换为部门对象
         Dept dept = Dept.builder().build();
         BeanCopyUtils.copy(dto, dept);
+        dept.setId(UUID.randomUUID());
         // 2. 校验部门名称是否重复
         DuplicateCheckUtils.checkDuplicateMultiFields(
                 dept,
@@ -61,7 +62,6 @@ public class DeptServiceImpl implements DeptService {
                 DuplicateCheckUtils.FieldCondition.of(Dept::getParentId, Dept::getParentId, DuplicateCheckUtils.ConditionType.EQ),
                 DuplicateCheckUtils.FieldCondition.of(Dept::getName, Dept::getName, DuplicateCheckUtils.ConditionType.EQ)
         );
-
 
         // 3. 插入数据库
         int result = deptMapper.insert(dept);
@@ -100,13 +100,7 @@ public class DeptServiceImpl implements DeptService {
                 DuplicateCheckUtils.FieldCondition.of(Dept::getParentId, Dept::getParentId, DuplicateCheckUtils.ConditionType.EQ),
                 DuplicateCheckUtils.FieldCondition.of(Dept::getName, Dept::getName, DuplicateCheckUtils.ConditionType.EQ)
         );
-        UUID parentId = dept.getParentId();
-        if (parentId == null) {
-            // 3. 校验上级部门是否存在
-            Dept parentDept = deptMapper.selectById(parentId);
-            AssertUtils.notNull(parentDept, "上级部门不存在");
-        }
-        // 4. 更新部门
+        // 3. 更新部门
         return deptMapper.updateById(dept) > 0;
     }
 
@@ -221,14 +215,14 @@ public class DeptServiceImpl implements DeptService {
         List<DeptTreeVO> treeVOS = deptList.stream().map(DeptTreeVO::new).toList();
 
         // 3. 构建 id 与 TreeVO 的映射
-        Map<Long, DeptTreeVO> idToTreeVOMap = new HashMap<>();
+        Map<UUID, DeptTreeVO> idToTreeVOMap = new HashMap<>();
         treeVOS.forEach(vo -> idToTreeVOMap.put(vo.getId(), vo));
 
         // 4. 构建树结构
         List<DeptTreeVO> rootNodes = new ArrayList<>();
         // 遍历所有 TreeVO，组装树结构
         for (DeptTreeVO vo : treeVOS) {
-            if (vo.getParentId() == null || vo.getParentId() == 0) {
+            if (vo.getParentId() == null) {
                 // 没有父节点的为顶级节点
                 rootNodes.add(vo);
             } else {

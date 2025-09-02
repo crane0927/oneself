@@ -62,6 +62,8 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true # 驼峰命名
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 控制台打印完整带参数 SQL 语句
+    default-enum-type-handler: org.apache.ibatis.type.EnumOrdinalTypeHandler
+  type-handlers-package: com.oneself.handler  # 创建自定义类型处理器包
 
 
 oneself:
