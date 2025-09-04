@@ -20,7 +20,7 @@ import java.util.UUID;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("permission")
+@TableName("sys_permission")
 public class Permission extends BasePojo {
 
     @TableId(value = "id", type = IdType.ASSIGN_UUID)

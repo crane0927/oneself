@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.oneself.model.enums.StatusEnum;
 import lombok.*;
-import org.apache.ibatis.type.JdbcType;
 
 import java.io.Serial;
 import java.util.UUID;
@@ -24,7 +23,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@TableName("dept")
+@TableName("sys_dept")
 public class Dept extends BasePojo {
     @Serial
     private static final long serialVersionUID = 1L;

@@ -19,7 +19,7 @@ import java.util.UUID;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("user_role")
+@TableName("sys_user_role")
 public class UserRole extends BasePojo {
 
     @TableId(value = "id", type = IdType.ASSIGN_UUID)

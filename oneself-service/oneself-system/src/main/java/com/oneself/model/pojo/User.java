@@ -24,7 +24,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@TableName("`user`")
+@TableName("sys_user")
 public class User extends BasePojo {
 
     @TableId(value = "id", type = IdType.ASSIGN_UUID)
