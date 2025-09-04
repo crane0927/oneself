@@ -8,8 +8,6 @@ import com.oneself.model.enums.StatusEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.UUID;
-
 /**
  * @author liuhuan
  * date 2025/9/2
@@ -24,7 +22,7 @@ import java.util.UUID;
 public class Permission extends BasePojo {
 
     @TableId(value = "id", type = IdType.ASSIGN_UUID)
-    private UUID id;
+    private String id;
 
     /**
      * 权限编码
@@ -60,7 +58,7 @@ public class Permission extends BasePojo {
      * 父权限ID
      */
     @TableField("parent_id")
-    private UUID parentId;
+    private String parentId;
 
     /**
      * 排序序号

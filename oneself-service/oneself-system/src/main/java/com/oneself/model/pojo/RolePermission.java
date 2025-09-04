@@ -7,8 +7,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.UUID;
-
 /**
  * @author liuhuan
  * date 2025/9/2
@@ -23,17 +21,17 @@ import java.util.UUID;
 public class RolePermission extends BasePojo {
 
     @TableId(value = "id", type = IdType.ASSIGN_UUID)
-    private UUID id;
+    private String id;
 
     /**
      * 角色ID
      */
     @TableField("role_id")
-    private UUID roleId;
+    private String roleId;
 
     /**
      * 权限ID
      */
     @TableField("perm_id")
-    private UUID permId;
+    private String permId;
 }

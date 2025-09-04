@@ -26,7 +26,7 @@ public class UserDTO implements Serializable {
     @Schema(description = "部门 ID", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "部门 ID 不能为空")
     @Positive(message = "部门 ID 必须是正数")
-    private Long deptId;
+    private String deptId;
 
     @Schema(description = "登录名称", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "登录名称不能为空")

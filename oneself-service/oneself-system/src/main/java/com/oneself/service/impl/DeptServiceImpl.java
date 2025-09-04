@@ -48,11 +48,11 @@ public class DeptServiceImpl implements DeptService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public UUID add(DeptDTO dto) {
+    public String add(DeptDTO dto) {
         // 1. dto 转换为部门对象
         Dept dept = Dept.builder().build();
         BeanCopyUtils.copy(dto, dept);
-        dept.setId(UUID.randomUUID());
+//        dept.setId(UUID.randomUUID());
         // 2. 校验部门名称是否重复
         DuplicateCheckUtils.checkDuplicateMultiFields(
                 dept,
@@ -77,7 +77,7 @@ public class DeptServiceImpl implements DeptService {
     }
 
     @Override
-    public DeptVO get(UUID id) {
+    public DeptVO get(String id) {
         Dept dept = deptMapper.selectById(id);
         AssertUtils.notNull(dept, "部门不存在");
         DeptVO deptVO = new DeptVO();
@@ -87,7 +87,7 @@ public class DeptServiceImpl implements DeptService {
 
     @Override
     @Transactional
-    public boolean update(UUID id, DeptDTO dto) {
+    public boolean update(String id, DeptDTO dto) {
         // 1. 构建部门对象
         Dept dept = Dept.builder().id(id).build();
         BeanCopyUtils.copy(dto, dept);
@@ -106,9 +106,9 @@ public class DeptServiceImpl implements DeptService {
 
     @Override
     @Transactional
-    public boolean delete(List<UUID> ids) {
+    public boolean delete(List<String> ids) {
         // 1. 获取当前部门 ID 和所有子部门 ID
-        List<UUID> allChildDeptIds = getAllChildDeptIds(ids);
+        List<String> allChildDeptIds = getAllChildDeptIds(ids);
 
         AssertUtils.isFalse(CollectionUtils.isEmpty(allChildDeptIds), "删除失败，该部门不存在");
         // 2. 删除部门下所有的用户
@@ -145,9 +145,9 @@ public class DeptServiceImpl implements DeptService {
 
     @Override
     @Transactional
-    public boolean updateStatus(List<UUID> ids, StatusEnum status) {
+    public boolean updateStatus(List<String> ids, StatusEnum status) {
         // 1. 获取当前部门 ID 和所有子部门 ID
-        List<UUID> allChildDeptIds = getAllChildDeptIds(ids);
+        List<String> allChildDeptIds = getAllChildDeptIds(ids);
 
         // 2. 更新用户状态
         userMapper.update(User.builder().status(status).build(),
@@ -166,8 +166,8 @@ public class DeptServiceImpl implements DeptService {
      * @param ids 父部门 ID 列表
      * @return 所有子部门的 ID 列表
      */
-    private List<UUID> getAllChildDeptIds(List<UUID> ids) {
-        List<UUID> result = new ArrayList<>(ids);
+    private List<String> getAllChildDeptIds(List<String> ids) {
+        List<String> result = new ArrayList<>(ids);
         // 递归查询子部门
         findChildDeptIds(ids, result);
         return result;
@@ -179,14 +179,14 @@ public class DeptServiceImpl implements DeptService {
      * @param ids    父部门 ID 列表
      * @param result 保存结果的列表
      */
-    private void findChildDeptIds(List<UUID> ids, List<UUID> result) {
+    private void findChildDeptIds(List<String> ids, List<String> result) {
         // 如果传入的父部门 ID 列表为空，直接结束递归
         if (ids == null || ids.isEmpty()) {
             return;
         }
 
         // 查询当前父部门的子部门
-        List<UUID> childIds = deptMapper.selectList(
+        List<String> childIds = deptMapper.selectList(
                         new LambdaQueryWrapper<Dept>().in(Dept::getParentId, ids))
                 .stream()
                 .map(Dept::getId)
@@ -215,7 +215,7 @@ public class DeptServiceImpl implements DeptService {
         List<DeptTreeVO> treeVOS = deptList.stream().map(DeptTreeVO::new).toList();
 
         // 3. 构建 id 与 TreeVO 的映射
-        Map<UUID, DeptTreeVO> idToTreeVOMap = new HashMap<>();
+        Map<String, DeptTreeVO> idToTreeVOMap = new HashMap<>();
         treeVOS.forEach(vo -> idToTreeVOMap.put(vo.getId(), vo));
 
         // 4. 构建树结构

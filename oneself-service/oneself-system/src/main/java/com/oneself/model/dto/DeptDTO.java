@@ -2,12 +2,12 @@ package com.oneself.model.dto;
 
 import com.oneself.model.enums.StatusEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.UUID;
 
 @Data
 public class DeptDTO implements Serializable {
@@ -20,7 +20,7 @@ public class DeptDTO implements Serializable {
     private String name;
 
     @Schema(description = "父节点 ID", requiredMode = Schema.RequiredMode.REQUIRED)
-    private UUID parentId;
+    private String parentId;
 
     @Schema(description = "排序", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "排序不能为空")

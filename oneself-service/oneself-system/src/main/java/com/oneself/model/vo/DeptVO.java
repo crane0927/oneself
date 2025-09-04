@@ -7,7 +7,6 @@ import lombok.Data;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 /**
  * @author liuhuan
@@ -23,13 +22,15 @@ public class DeptVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     @Schema(description = "部门 ID")
-    private UUID id;
+    private String id;
     @Schema(description = "部门名称")
     private String name;
     @Schema(description = "父节点 ID")
-    private UUID parentId;
+    private String parentId;
     @Schema(description = "部门状态")
     private StatusEnum status;
+    @Schema(description = "排序")
+    private Integer sortOrder;
     @Schema(description = "创建人")
     private String createBy;
     @Schema(description = "创建时间")

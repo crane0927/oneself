@@ -30,12 +30,12 @@ public class UserServiceImpl implements UserService {
     private final DeptMapper deptMapper;
 
     @Override
-    public Integer add(UserDTO dto) {
+    public String add(UserDTO dto) {
        return null;
     }
 
     @Override
-    public UserVO get(Long id) {
+    public UserVO get(String id) {
         User user = userMapper.selectById(id);
         if (ObjectUtils.isEmpty(user)) {
             throw new OneselfException("用户不存在");

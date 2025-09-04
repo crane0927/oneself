@@ -9,8 +9,6 @@ import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.enums.TypeEnum;
 import lombok.*;
 
-import java.util.UUID;
-
 /**
  * @author liuhuan
  * date 2025/1/17
@@ -28,7 +26,7 @@ import java.util.UUID;
 public class User extends BasePojo {
 
     @TableId(value = "id", type = IdType.ASSIGN_UUID)
-    private UUID id;
+    private String id;
 
     /**
      * 用户名
@@ -76,7 +74,7 @@ public class User extends BasePojo {
      * 所属部门ID
      */
     @TableField("dept_id")
-    private UUID deptId;
+    private String deptId;
 
     /**
      * 状态(0-禁用,1-启用)

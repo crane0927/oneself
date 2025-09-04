@@ -8,8 +8,6 @@ import com.oneself.model.enums.StatusEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.UUID;
-
 /**
  * @author liuhuan
  * date 2025/9/2
@@ -24,7 +22,7 @@ import java.util.UUID;
 public class Role extends BasePojo {
 
     @TableId(value = "id", type = IdType.ASSIGN_UUID)
-    private UUID id;
+    private String id;
 
     /**
      * 角色编码

@@ -1,5 +1,6 @@
 package com.oneself.model.vo;
 
+import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.pojo.Dept;
 import com.oneself.utils.BeanCopyUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -10,7 +11,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @author liuhuan
@@ -26,11 +26,15 @@ public class DeptTreeVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Schema(description = "部门 ID")
-    private UUID id;
+    private String id;
     @Schema(description = "部门名称")
     private String name;
     @Schema(description = "父节点 ID")
-    private UUID parentId;
+    private String parentId;
+    @Schema(description = "部门状态")
+    private StatusEnum status;
+    @Schema(description = "排序")
+    private Integer sortOrder;
     @Schema(description = "创建人")
     private String createBy;
     @Schema(description = "创建时间")

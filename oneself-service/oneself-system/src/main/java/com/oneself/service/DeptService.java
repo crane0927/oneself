@@ -9,7 +9,6 @@ import com.oneself.model.vo.DeptVO;
 import com.oneself.model.vo.PageVO;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @author liuhuan
@@ -20,17 +19,17 @@ import java.util.UUID;
  * version 1.0
  */
 public interface DeptService {
-    UUID add(DeptDTO dto);
+    String add(DeptDTO dto);
 
-    DeptVO get(UUID id);
+    DeptVO get(String id);
 
-    boolean update(UUID id, DeptDTO dto);
+    boolean update(String id, DeptDTO dto);
 
-    boolean delete(List<UUID> ids);
+    boolean delete(List<String> ids);
 
     PageVO<DeptVO> page(PageDTO<PageDeptDTO> dto);
 
-    boolean updateStatus(List<UUID> ids, StatusEnum status);
+    boolean updateStatus(List<String> ids, StatusEnum status);
 
     List<DeptTreeVO> tree();
 }

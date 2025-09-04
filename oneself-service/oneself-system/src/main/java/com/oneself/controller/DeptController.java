@@ -18,11 +18,9 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @author liuhuan
@@ -44,35 +42,31 @@ public class DeptController {
 
     @Operation(summary = "新增部门")
     @PostMapping
-    public ResponseVO<Boolean> add(@RequestBody @Valid DeptDTO dto) {
-        UUID size = deptService.add(dto);
-        if (ObjectUtils.isEmpty(size)) {
-            return ResponseVO.failure("新增部门失败");
-        }
-        return ResponseVO.success(Boolean.TRUE);
+    public ResponseVO<String> add(@RequestBody @Valid DeptDTO dto) {
+        return ResponseVO.success(deptService.add(dto));
     }
 
     @Operation(summary = "根据 ID 查询部门")
     @GetMapping("/{id}")
-    public ResponseVO<DeptVO> get(@PathVariable("id") @Valid @NotNull UUID id) {
+    public ResponseVO<DeptVO> get(@PathVariable("id") @Valid @NotNull String id) {
         return ResponseVO.success(deptService.get(id));
     }
 
     @Operation(summary = "修改部门")
     @PutMapping("/{id}")
-    public ResponseVO<Boolean> update(@PathVariable("id") @Valid @NotNull UUID id, @RequestBody @Valid DeptDTO dto) {
+    public ResponseVO<Boolean> update(@PathVariable("id") @Valid @NotNull String id, @RequestBody @Valid DeptDTO dto) {
         return ResponseVO.success(deptService.update(id, dto));
     }
 
     @Operation(summary = "删除部门")
     @DeleteMapping
-    public ResponseVO<Boolean> delete(@RequestBody @Valid @NotEmpty List<@NotNull UUID> ids) {
+    public ResponseVO<Boolean> delete(@RequestBody @Valid @NotEmpty List<@NotNull String> ids) {
         return ResponseVO.success(deptService.delete(ids));
     }
 
     @Operation(summary = "更新部门状态")
     @PutMapping("/status/{status}")
-    public ResponseVO<Boolean> updateStatus(@RequestBody @Valid @NotEmpty List<@NotNull UUID> ids, @PathVariable("status") @Valid @NotNull StatusEnum status) {
+    public ResponseVO<Boolean> updateStatus(@RequestBody @Valid @NotEmpty List<@NotNull String> ids, @PathVariable("status") @Valid @NotNull StatusEnum status) {
         return ResponseVO.success(deptService.updateStatus(ids, status));
     }
 

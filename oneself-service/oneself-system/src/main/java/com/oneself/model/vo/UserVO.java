@@ -24,9 +24,9 @@ public class UserVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     @Schema(description = "用户 ID")
-    private Long id;
+    private String id;
     @Schema(description = "部门 ID")
-    private Long deptId;
+    private String deptId;
     @Schema(description = "用户登录名")
     private String loginName;
     @Schema(description = "用户名")

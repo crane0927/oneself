@@ -8,7 +8,6 @@ import com.oneself.model.enums.StatusEnum;
 import lombok.*;
 
 import java.io.Serial;
-import java.util.UUID;
 
 /**
  * @author liuhuan
@@ -29,7 +28,7 @@ public class Dept extends BasePojo {
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.ASSIGN_UUID)
-    private UUID id;
+    private String id;
 
     /**
      * 部门名称
@@ -41,7 +40,7 @@ public class Dept extends BasePojo {
      * 父部门ID
      */
     @TableField("parent_id")
-    private UUID parentId;
+    private String parentId;
 
     /**
      * 排序序号
