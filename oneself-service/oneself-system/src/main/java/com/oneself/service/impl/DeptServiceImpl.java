@@ -8,7 +8,7 @@ import com.oneself.mapper.DeptMapper;
 import com.oneself.mapper.UserMapper;
 import com.oneself.model.dto.DeptDTO;
 import com.oneself.model.dto.PageDTO;
-import com.oneself.model.dto.PageDeptDTO;
+import com.oneself.model.dto.QueryDTO;
 import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.pojo.Dept;
 import com.oneself.model.pojo.User;
@@ -120,9 +120,9 @@ public class DeptServiceImpl implements DeptService {
     }
 
     @Override
-    public PageVO<DeptVO> page(PageDTO<PageDeptDTO> dto) {
+    public PageVO<DeptVO> page(PageDTO<QueryDTO> dto) {
         // 1. 构建查询条件
-        PageDeptDTO condition = dto.getCondition();
+        QueryDTO condition = dto.getCondition();
         // 2. 分页参数
         PageDTO.Pagination pagination = dto.getPagination();
         // 3. 构建分页参数

@@ -16,11 +16,11 @@ import java.io.Serializable;
  * version 1.0
  */
 @Data
-public class PageDeptDTO implements Serializable {
+public class QueryDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-    @Schema(description = "部门名称")
-    private String deptName;
-    @Schema(description = "部门状态")
+    @Schema(description = "名称")
+    private String name;
+    @Schema(description = "状态")
     private StatusEnum status;
 }
