@@ -18,6 +18,7 @@ import java.io.Serializable;
  * version 1.0
  */
 @Data
+@Schema(name = "UserDTO", description = "新增用户 DTO")
 public class UserDTO implements Serializable {
 
     @Serial

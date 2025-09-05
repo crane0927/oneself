@@ -10,6 +10,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 @Data
+@Schema(name = "DeptDTO", description = "部门数据传输对象")
 public class DeptDTO implements Serializable {
 
     @Serial

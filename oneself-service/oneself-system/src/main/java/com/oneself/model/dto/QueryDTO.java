@@ -16,6 +16,7 @@ import java.io.Serializable;
  * version 1.0
  */
 @Data
+@Schema(name = "QueryDTO", description = "分页查询部分信息 DTO")
 public class QueryDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

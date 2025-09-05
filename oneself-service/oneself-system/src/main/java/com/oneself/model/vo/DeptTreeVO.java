@@ -21,6 +21,7 @@ import java.util.List;
  * version 1.0
  */
 @Data
+@Schema(name = "DeptTreeVO", description = "部门信息树结果 VO")
 public class DeptTreeVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

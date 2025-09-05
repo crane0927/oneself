@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
  * version 1.0
  */
 @Data
+@Schema(description = "用户信息 VO")
 public class UserVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

@@ -1,5 +1,6 @@
 package com.oneself.model.enums;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 /**
@@ -11,9 +12,13 @@ import lombok.Getter;
  * version 1.0
  */
 @Getter
+@Schema(name = "SexEnum", description = "性别枚举")
 public enum SexEnum {
+    @Schema(description = "未知")
     UNKNOWN(0, "未知"),
+    @Schema(description = "男")
     MALE(1, "男"),
+    @Schema(description = "女")
     FEMALE(2, "女");
 
     private final Integer code;
