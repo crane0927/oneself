@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.oneself.model.enums.ResourceTypeEnum;
 import com.oneself.model.enums.StatusEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -46,7 +47,7 @@ public class Permission extends BasePojo {
      * 资源类型(menu-菜单,button-按钮,api-接口)
      */
     @TableField("resource_type")
-    private String resourceType;
+    private ResourceTypeEnum resourceType;
 
     /**
      * 资源路径

@@ -33,8 +33,8 @@ public class Dept extends BasePojo {
     /**
      * 部门名称
      */
-    @TableField("name")
-    private String name;
+    @TableField("dept_name")
+    private String deptName;
 
     /**
      * 父部门ID

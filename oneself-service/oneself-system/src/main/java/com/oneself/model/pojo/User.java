@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.oneself.model.enums.SexEnum;
 import com.oneself.model.enums.StatusEnum;
-import com.oneself.model.enums.TypeEnum;
+import com.oneself.model.enums.UserTypeEnum;
 import lombok.*;
 
 /**
@@ -68,7 +68,7 @@ public class User extends BasePojo {
      * 用户类型(0-管理员,1-普通用户)
      */
     @TableField("type")
-    private TypeEnum type;
+    private UserTypeEnum type;
 
     /**
      * 所属部门ID

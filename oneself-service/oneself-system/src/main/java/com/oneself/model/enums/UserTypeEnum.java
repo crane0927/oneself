@@ -7,13 +7,13 @@ import lombok.Getter;
  * @author liuhuan
  * date 2025/1/17
  * packageName com.oneself.user.model.enums
- * enumName TypeEnum
+ * enumName UserTypeEnum
  * description 用户类型枚举
  * version 1.0
  */
 @Getter
-@Schema(name = "TypeEnum", description = "用户类型枚举")
-public enum TypeEnum {
+@Schema(name = "UserTypeEnum", description = "用户类型枚举")
+public enum UserTypeEnum {
     @Schema(description = "管理员")
     ADMIN(0, "管理员"),
     @Schema(description = "普通用户")
@@ -22,7 +22,7 @@ public enum TypeEnum {
     private final Integer code;
     private final String desc;
 
-    TypeEnum(Integer code, String desc) {
+    UserTypeEnum(Integer code, String desc) {
         this.code = code;
         this.desc = desc;
     }

@@ -8,7 +8,7 @@ import com.oneself.mapper.DeptMapper;
 import com.oneself.mapper.UserMapper;
 import com.oneself.model.dto.DeptDTO;
 import com.oneself.model.dto.PageDTO;
-import com.oneself.model.dto.QueryDTO;
+import com.oneself.model.dto.DeptQueryDTO;
 import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.pojo.Dept;
 import com.oneself.model.pojo.User;
@@ -60,7 +60,7 @@ public class DeptServiceImpl implements DeptService {
                 deptMapper::selectCount,
                 "部门名称已存在",
                 DuplicateCheckUtils.FieldCondition.of(Dept::getParentId, Dept::getParentId, DuplicateCheckUtils.ConditionType.EQ),
-                DuplicateCheckUtils.FieldCondition.of(Dept::getName, Dept::getName, DuplicateCheckUtils.ConditionType.EQ)
+                DuplicateCheckUtils.FieldCondition.of(Dept::getDeptName, Dept::getDeptName, DuplicateCheckUtils.ConditionType.EQ)
         );
 
         // 3. 插入数据库
@@ -98,7 +98,7 @@ public class DeptServiceImpl implements DeptService {
                 deptMapper::selectCount,
                 "部门名称已存在",
                 DuplicateCheckUtils.FieldCondition.of(Dept::getParentId, Dept::getParentId, DuplicateCheckUtils.ConditionType.EQ),
-                DuplicateCheckUtils.FieldCondition.of(Dept::getName, Dept::getName, DuplicateCheckUtils.ConditionType.EQ)
+                DuplicateCheckUtils.FieldCondition.of(Dept::getDeptName, Dept::getDeptName, DuplicateCheckUtils.ConditionType.EQ)
         );
         // 3. 更新部门
         return deptMapper.updateById(dept) > 0;
@@ -120,16 +120,16 @@ public class DeptServiceImpl implements DeptService {
     }
 
     @Override
-    public PageVO<DeptVO> page(PageDTO<QueryDTO> dto) {
+    public PageVO<DeptVO> page(PageDTO<DeptQueryDTO> dto) {
         // 1. 构建查询条件
-        QueryDTO condition = dto.getCondition();
+        DeptQueryDTO condition = dto.getCondition();
         // 2. 分页参数
         PageDTO.Pagination pagination = dto.getPagination();
         // 3. 构建分页参数
         Page<Dept> pageRequest = new Page<>(pagination.getPageNum(), pagination.getPageSize());
         // 4. 查询
         LambdaQueryWrapper<Dept> wrapper = new LambdaQueryWrapper<Dept>()
-                .like(StringUtils.isNoneBlank(condition.getDeptName()), Dept::getName, condition.getDeptName()) // 部门名称模糊查询
+                .like(StringUtils.isNoneBlank(condition.getDeptName()), Dept::getDeptName, condition.getDeptName()) // 部门名称模糊查询
                 .eq(Optional.ofNullable(condition.getStatus()).isPresent(), Dept::getStatus, condition.getStatus()) // 部门状态查询
                 .orderByAsc(Dept::getSortOrder); // 排序
 

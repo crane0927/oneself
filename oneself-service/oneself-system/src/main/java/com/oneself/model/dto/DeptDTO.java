@@ -18,7 +18,7 @@ public class DeptDTO implements Serializable {
 
     @Schema(description = "部门名称", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "部门名称不能为空")
-    private String name;
+    private String deptName;
 
     @Schema(description = "父节点 ID", requiredMode = Schema.RequiredMode.REQUIRED)
     private String parentId;

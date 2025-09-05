@@ -11,17 +11,17 @@ import java.io.Serializable;
  * @author liuhuan
  * date 2025/1/18
  * packageName com.oneself.dept.model.dto
- * className PageDeptDTO
- * description 分页查询部分信息 DTO
+ * className DeptQueryDTO
+ * description 部门分页查询部分信息 DTO
  * version 1.0
  */
 @Data
-@Schema(name = "QueryDTO", description = "分页查询部分信息 DTO")
-public class QueryDTO implements Serializable {
+@Schema(name = "DeptQueryDTO", description = "部门分页查询部分信息 DTO")
+public class DeptQueryDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-    @Schema(description = "名称")
-    private String name;
+    @Schema(description = "部门名称")
+    private String deptName;
     @Schema(description = "状态")
     private StatusEnum status;
 }

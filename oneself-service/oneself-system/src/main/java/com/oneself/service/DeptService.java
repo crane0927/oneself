@@ -2,7 +2,7 @@ package com.oneself.service;
 
 import com.oneself.model.dto.DeptDTO;
 import com.oneself.model.dto.PageDTO;
-import com.oneself.model.dto.QueryDTO;
+import com.oneself.model.dto.DeptQueryDTO;
 import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.vo.DeptTreeVO;
 import com.oneself.model.vo.DeptVO;
@@ -33,7 +33,7 @@ public interface DeptService {
 
     boolean updateStatus(@Valid @NotEmpty List<String> ids, @Valid @NotBlank StatusEnum status);
 
-    PageVO<DeptVO> page(@Valid PageDTO<QueryDTO> dto);
+    PageVO<DeptVO> page(@Valid PageDTO<DeptQueryDTO> dto);
 
     List<DeptTreeVO> tree();
 }

@@ -4,7 +4,7 @@ import com.oneself.annotation.RequestLogging;
 import com.oneself.annotation.RequireLogin;
 import com.oneself.model.dto.DeptDTO;
 import com.oneself.model.dto.PageDTO;
-import com.oneself.model.dto.QueryDTO;
+import com.oneself.model.dto.DeptQueryDTO;
 import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.vo.DeptTreeVO;
 import com.oneself.model.vo.DeptVO;
@@ -72,7 +72,7 @@ public class DeptController {
 
     @Operation(summary = "查询列表")
     @PostMapping("/page")
-    public PageVO<DeptVO> page(@RequestBody @Valid PageDTO<QueryDTO> dto) {
+    public PageVO<DeptVO> page(@RequestBody @Valid PageDTO<DeptQueryDTO> dto) {
         return deptService.page(dto);
     }
 

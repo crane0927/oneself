@@ -24,7 +24,7 @@ public class DeptVO implements Serializable {
     @Schema(description = "部门 ID")
     private String id;
     @Schema(description = "部门名称")
-    private String name;
+    private String deptName;
     @Schema(description = "父节点 ID")
     private String parentId;
     @Schema(description = "部门状态")

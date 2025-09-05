@@ -4,7 +4,7 @@
 -------------------------------
 CREATE TABLE sys_dept (
                           id VARCHAR(32) PRIMARY KEY DEFAULT REPLACE(gen_random_uuid()::text, '-', ''), -- 主键ID
-                          name VARCHAR(100) NOT NULL,                             -- 部门名称
+                          dept_name VARCHAR(100) NOT NULL,                        -- 部门名称
                           parent_id VARCHAR(32),                                  -- 父部门ID
                           sort_order INTEGER DEFAULT 0,                           -- 排序序号
                           status INTEGER DEFAULT 0,                               -- 状态(0-禁用,1-启用)
@@ -17,7 +17,7 @@ CREATE TABLE sys_dept (
 
 COMMENT ON TABLE sys_dept IS '部门表';
 COMMENT ON COLUMN sys_dept.id IS '主键ID';
-COMMENT ON COLUMN sys_dept.name IS '部门名称';
+COMMENT ON COLUMN sys_dept.dept_name IS '部门名称';
 COMMENT ON COLUMN sys_dept.parent_id IS '父部门ID';
 COMMENT ON COLUMN sys_dept.sort_order IS '排序序号';
 COMMENT ON COLUMN sys_dept.status IS '状态(0-禁用,1-启用)';
