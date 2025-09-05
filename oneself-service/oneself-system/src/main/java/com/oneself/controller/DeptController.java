@@ -6,10 +6,7 @@ import com.oneself.model.dto.DeptDTO;
 import com.oneself.model.dto.PageDTO;
 import com.oneself.model.dto.DeptQueryDTO;
 import com.oneself.model.enums.StatusEnum;
-import com.oneself.model.vo.DeptTreeVO;
-import com.oneself.model.vo.DeptVO;
-import com.oneself.model.vo.PageVO;
-import com.oneself.model.vo.ResponseVO;
+import com.oneself.model.vo.*;
 import com.oneself.service.DeptService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -80,5 +77,11 @@ public class DeptController {
     @GetMapping("/tree")
     public ResponseVO<List<DeptTreeVO>> tree() {
         return ResponseVO.success(deptService.tree());
+    }
+
+    @Operation(summary = "查询所有部门列表")
+    @GetMapping("/list/all")
+    public ResponseVO<List<DeptVO>> listAll() {
+        return ResponseVO.success(deptService.listAll());
     }
 }

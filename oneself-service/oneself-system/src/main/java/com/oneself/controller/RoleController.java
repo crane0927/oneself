@@ -79,7 +79,7 @@ public class RoleController {
     }
 
     @Operation(summary = "查询所有角色列表")
-    @GetMapping("/listAll")
+    @GetMapping("/list/all")
     public ResponseVO<List<RoleVO>> listAll() {
         return ResponseVO.success(roleService.listAll());
     }

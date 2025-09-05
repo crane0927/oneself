@@ -82,4 +82,12 @@ public interface DeptService {
      * @return 部门树列表
      */
     List<DeptTreeVO> tree();
+
+
+    /**
+     * 查询所有部门列表
+     *
+     * @return 所有部门信息列表
+     */
+    List<DeptVO> listAll();
 }

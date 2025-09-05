@@ -15,10 +15,10 @@ import lombok.Getter;
 @Getter
 @Schema(name = "StatusEnum", description = "状态枚举")
 public enum StatusEnum {
-    @Schema(description = "禁用")
-    NORMAL(0, "禁用"),
-    @Schema(description = "启用")
-    LOCKED(1, "启用");
+    @Schema(description = "正常")
+    NORMAL(0, "正常"),
+    @Schema(description = "锁定")
+    LOCKED(1, "锁定");
 
     private final Integer code;
     private final String desc;

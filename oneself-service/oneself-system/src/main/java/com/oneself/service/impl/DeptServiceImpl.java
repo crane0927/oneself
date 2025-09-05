@@ -283,4 +283,24 @@ public class DeptServiceImpl implements DeptService {
         return rootNodes;
     }
 
+    /**
+     * 查询所有部门列表
+     *
+     * @return 所有部门信息列表
+     */
+    @Override
+    public List<DeptVO> listAll() {
+        List<Dept> depts = deptMapper.selectList(new LambdaQueryWrapper<Dept>()
+                .eq(Dept::getStatus, StatusEnum.NORMAL)
+                .orderByAsc(Dept::getSortOrder));
+        if (CollectionUtils.isEmpty(depts)) {
+            return List.of();
+        }
+        return depts.stream().map(dept -> {
+            DeptVO deptVO = new DeptVO();
+            BeanCopyUtils.copy(dept, deptVO);
+            return deptVO;
+        }).toList();
+    }
+
 }
