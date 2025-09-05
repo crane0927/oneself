@@ -8,17 +8,15 @@ import java.io.Serializable;
 
 /**
  * @author liuhuan
- * date 2025/1/17
- * packageName com.oneself.user.model.dto
- * className UserDTO
- * description 新增用户 DTO
+ * date 2025/9/5
+ * packageName com.oneself.model.dto
+ * className PermissionDTO
+ * description 
  * version 1.0
  */
 @Data
-@Schema(name = "UserDTO", description = "新增用户 DTO")
-public class UserDTO implements Serializable {
+@Schema(name = "PermissionDTO", description = "权限数据传输对象")
+public class PermissionDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-
-
 }

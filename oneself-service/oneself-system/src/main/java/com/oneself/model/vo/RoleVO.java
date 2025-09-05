@@ -8,16 +8,15 @@ import java.io.Serializable;
 
 /**
  * @author liuhuan
- * date 2025/1/18
- * packageName com.oneself.user.model.vo
- * className UserVO
- * description 用户信息
+ * date 2025/9/5
+ * packageName com.oneself.model.vo
+ * className RoleVO
+ * description
  * version 1.0
  */
 @Data
-@Schema(name = "UserVO", description = "用户信息 VO")
-public class UserVO implements Serializable {
+@Schema(name = "PermissionTreeVO", description = "权限树形数据传输对象")
+public class RoleVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-
 }

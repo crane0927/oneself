@@ -46,13 +46,18 @@ public class DeptServiceImpl implements DeptService {
     private final DeptMapper deptMapper;
     private final UserMapper userMapper;
 
+    /**
+     * 新增部门
+     *
+     * @param dto 部门信息 DTO，包含部门名称、父部门ID、排序序号等
+     * @return 新增部门的ID
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String add(DeptDTO dto) {
         // 1. dto 转换为部门对象
         Dept dept = Dept.builder().build();
         BeanCopyUtils.copy(dto, dept);
-//        dept.setId(UUID.randomUUID());
         // 2. 校验部门名称是否重复
         DuplicateCheckUtils.checkDuplicateMultiFields(
                 dept,
@@ -76,6 +81,12 @@ public class DeptServiceImpl implements DeptService {
         return dept.getId();
     }
 
+    /**
+     * 根据ID查询部门信息
+     *
+     * @param id 部门ID
+     * @return 部门信息 VO
+     */
     @Override
     public DeptVO get(String id) {
         Dept dept = deptMapper.selectById(id);
@@ -85,6 +96,13 @@ public class DeptServiceImpl implements DeptService {
         return deptVO;
     }
 
+    /**
+     * 更新部门信息
+     *
+     * @param id  部门ID
+     * @param dto 部门信息 DTO，包含更新后的部门名称、父部门ID、排序序号等
+     * @return 更新是否成功
+     */
     @Override
     @Transactional
     public boolean update(String id, DeptDTO dto) {
@@ -104,6 +122,12 @@ public class DeptServiceImpl implements DeptService {
         return deptMapper.updateById(dept) > 0;
     }
 
+    /**
+     * 批量删除部门（逻辑删除）
+     *
+     * @param ids 部门ID列表
+     * @return 删除是否成功
+     */
     @Override
     @Transactional
     public boolean delete(List<String> ids) {
@@ -119,6 +143,36 @@ public class DeptServiceImpl implements DeptService {
         return deptMapper.deleteByIds(allChildDeptIds) > 0;
     }
 
+    /**
+     * 批量更新部门状态
+     *
+     * @param ids    部门ID列表
+     * @param status 部门状态（启用/禁用）
+     * @return 状态更新是否成功
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updateStatus(List<String> ids, StatusEnum status) {
+        // 1. 获取当前部门 ID 和所有子部门 ID
+        List<String> allChildDeptIds = getAllChildDeptIds(ids);
+
+        // 2. 更新用户状态
+        userMapper.update(User.builder().status(status).build(),
+                new LambdaUpdateWrapper<User>().in(User::getDeptId, allChildDeptIds));
+
+        // 3. 更新部门及子部门状态
+        LambdaUpdateWrapper<Dept> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.in(Dept::getId, allChildDeptIds)
+                .set(Dept::getStatus, status.getCode());
+        return deptMapper.update(null, wrapper) > 0;
+    }
+
+    /**
+     * 分页查询部门
+     *
+     * @param dto 分页查询 DTO，包含页码、每页大小及查询条件
+     * @return 分页结果 PageVO<DeptVO>
+     */
     @Override
     public PageVO<DeptVO> page(PageDTO<DeptQueryDTO> dto) {
         // 1. 构建查询条件
@@ -143,22 +197,6 @@ public class DeptServiceImpl implements DeptService {
         });
     }
 
-    @Override
-    @Transactional
-    public boolean updateStatus(List<String> ids, StatusEnum status) {
-        // 1. 获取当前部门 ID 和所有子部门 ID
-        List<String> allChildDeptIds = getAllChildDeptIds(ids);
-
-        // 2. 更新用户状态
-        userMapper.update(User.builder().status(status).build(),
-                new LambdaUpdateWrapper<User>().in(User::getDeptId, allChildDeptIds));
-
-        // 3. 更新部门及子部门状态
-        LambdaUpdateWrapper<Dept> wrapper = new LambdaUpdateWrapper<>();
-        wrapper.in(Dept::getId, allChildDeptIds)
-                .set(Dept::getStatus, status.getCode());
-        return deptMapper.update(null, wrapper) > 0;
-    }
 
     /**
      * 递归查询所有子部门的 ID
@@ -204,6 +242,14 @@ public class DeptServiceImpl implements DeptService {
         findChildDeptIds(childIds, result);
     }
 
+    /**
+     * 查询部门树形结构
+     * <p>
+     * 用于前端展示层级结构的部门树
+     * </p>
+     *
+     * @return 部门树列表
+     */
     @Override
     public List<DeptTreeVO> tree() {
         // 1. 查询全部
