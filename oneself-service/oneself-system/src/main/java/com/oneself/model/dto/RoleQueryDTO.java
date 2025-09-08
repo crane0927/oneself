@@ -1,5 +1,6 @@
 package com.oneself.model.dto;
 
+import com.oneself.model.enums.StatusEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -15,8 +16,17 @@ import java.io.Serializable;
  * version 1.0
  */
 @Data
-@Schema(name = "PermissionDTO", description = "权限数据传输对象")
+@Schema(name = "RoleQueryDTO", description = "角色查询条件对象")
 public class RoleQueryDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
+
+    @Schema(description = "角色编码（模糊查询）")
+    private String roleCode;
+
+    @Schema(description = "角色名称（模糊查询）")
+    private String roleName;
+
+    @Schema(description = "状态")
+    private StatusEnum status;
 }

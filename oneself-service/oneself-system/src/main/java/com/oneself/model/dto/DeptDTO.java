@@ -9,6 +9,14 @@ import lombok.Data;
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * @author liuhuan
+ * date 2025/1/18
+ * packageName com.oneself.dept.model.dto
+ * className DeptDTO
+ * description 部门数据传输对象 DTO
+ * version 1.0
+ */
 @Data
 @Schema(name = "DeptDTO", description = "部门数据传输对象")
 public class DeptDTO implements Serializable {
