@@ -30,32 +30,32 @@ import java.util.List;
 @RequestLogging
 @RequireLogin
 @RestController
-@RequestMapping("/rolePermission")
+@RequestMapping("/roles")
 public class RolePermissionController {
 
     private final RolePermissionService rolePermissionService;
 
     @Operation(summary = "给角色分配权限")
-    @PostMapping("/assign")
-    public ResponseVO<Boolean> assignPermissions(@RequestParam @Valid @NotBlank String roleId,
+    @PostMapping("/{roleId}/permissions")
+    public ResponseVO<Boolean> assignPermissions(@PathVariable("roleId") @Valid @NotBlank String roleId,
                                                  @RequestBody @Valid @NotEmpty List<@NotBlank String> permIds) {
         return ResponseVO.success(rolePermissionService.assignPermissions(roleId, permIds));
     }
 
     @Operation(summary = "根据角色ID查询权限列表")
-    @GetMapping("/listByRole/{roleId}")
+    @GetMapping("/{roleId}/permissions")
     public ResponseVO<List<PermissionVO>> listPermissionsByRoleId(@PathVariable("roleId") @Valid @NotBlank String roleId) {
         return ResponseVO.success(rolePermissionService.listPermissionsByRoleId(roleId));
     }
 
     @Operation(summary = "删除角色所有权限关联")
-    @DeleteMapping("/deleteByRole/{roleId}")
+    @DeleteMapping("/{roleId}/permissions")
     public ResponseVO<Boolean> deleteByRoleId(@PathVariable("roleId") @Valid @NotBlank String roleId) {
         return ResponseVO.success(rolePermissionService.deleteByRoleId(roleId));
     }
 
     @Operation(summary = "删除角色指定权限关联")
-    @DeleteMapping("/deleteByRoleAndPerms/{roleId}")
+    @DeleteMapping("/{roleId}/permissions/batch")
     public ResponseVO<Boolean> deleteByRoleIdAndPermIds(@PathVariable("roleId") @Valid @NotBlank String roleId,
                                                         @RequestBody @Valid @NotEmpty List<@NotBlank String> permIds) {
         return ResponseVO.success(rolePermissionService.deleteByRoleIdAndPermIds(roleId, permIds));

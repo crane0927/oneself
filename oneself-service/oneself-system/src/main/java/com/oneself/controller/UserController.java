@@ -79,7 +79,7 @@ public class UserController {
     }
 
     @Operation(summary = "根据部门ID查询用户")
-    @GetMapping("/listByDept/{deptId}")
+    @GetMapping("/list/by/dept/{deptId}")
     public ResponseVO<List<UserVO>> listByDeptId(@PathVariable("deptId") @Valid @NotBlank String deptId) {
         return ResponseVO.success(userService.listByDeptId(deptId));
     }
