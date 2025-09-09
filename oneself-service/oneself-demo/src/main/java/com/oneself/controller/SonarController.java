@@ -1,6 +1,6 @@
 package com.oneself.controller;
 
-import com.oneself.annotation.RequestLogging;
+import com.oneself.annotation.ApiLog;
 import com.oneself.model.vo.LanguageVO;
 import com.oneself.model.vo.ResponseVO;
 import com.oneself.utils.JacksonUtils;
@@ -58,7 +58,7 @@ public class SonarController {
         wsClient = WsClientFactories.getDefault().newClient(httpConnector);
     }
 
-    @RequestLogging(logRequest = false, logResponse = false)
+    @ApiLog(logRequest = false, logResponse = false)
     @Operation(summary = "获取项目列表")
     @GetMapping("/projects")
     public ResponseVO<List<String>> getProjects() {
@@ -82,7 +82,7 @@ public class SonarController {
     }
 
 
-    @RequestLogging(logRequest = false, logResponse = false)
+    @ApiLog(logRequest = false, logResponse = false)
     @Operation(summary = "获取支持的语言")
     @GetMapping("/languages")
     public ResponseVO<List<LanguageVO.Language>> getLanguages() {
@@ -99,7 +99,7 @@ public class SonarController {
         return ResponseVO.failure(null);
     }
 
-    @RequestLogging(logRequest = false, logResponse = false)
+    @ApiLog(logRequest = false, logResponse = false)
     @Operation(summary = "获取对应语言的规则")
     @GetMapping("/rules")
     public ResponseVO<List<String>> getRules() {
@@ -120,7 +120,7 @@ public class SonarController {
     }
 
 
-    @RequestLogging(logRequest = false, logResponse = false)
+    @ApiLog(logRequest = false, logResponse = false)
     @Operation(summary = "获取项目的所有问题列表")
     @GetMapping("/issues")
     public void getProjectIssues() {
@@ -149,7 +149,7 @@ public class SonarController {
 
     }
 
-    @RequestLogging(logRequest = false, logResponse = false)
+    @ApiLog(logRequest = false, logResponse = false)
     @Operation(summary = "根据规则 key 获取规则的详细信息")
     @GetMapping("/rules/{key}")
     public void getRuleDetails(@PathVariable String key) {
@@ -174,7 +174,7 @@ public class SonarController {
         log.info("规则类型: {}", showResponse.getRule().getType());
     }
 
-    @RequestLogging(logRequest = false, logResponse = false)
+    @ApiLog(logRequest = false, logResponse = false)
     @Operation(summary = "生成用户 Token")
     @PostMapping("/tokens")
     public void getUserToken() {

@@ -1,12 +1,15 @@
 package com.oneself.controller;
 
-import com.oneself.annotation.RequestLogging;
+import com.oneself.annotation.ApiLog;
 import com.oneself.annotation.RequireLogin;
 import com.oneself.model.dto.DeptDTO;
-import com.oneself.model.dto.PageDTO;
 import com.oneself.model.dto.DeptQueryDTO;
+import com.oneself.model.dto.PageDTO;
 import com.oneself.model.enums.StatusEnum;
-import com.oneself.model.vo.*;
+import com.oneself.model.vo.DeptTreeVO;
+import com.oneself.model.vo.DeptVO;
+import com.oneself.model.vo.PageVO;
+import com.oneself.model.vo.ResponseVO;
 import com.oneself.service.DeptService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,7 +33,7 @@ import java.util.List;
 @Tag(name = "部门信息")
 @Slf4j
 @RequiredArgsConstructor
-@RequestLogging
+@ApiLog
 @RequireLogin
 @RestController
 @RequestMapping({"/dept"})

@@ -1,6 +1,6 @@
 package com.oneself.script.controller;
 
-import com.oneself.annotation.RequestLogging;
+import com.oneself.annotation.ApiLog;
 import com.oneself.annotation.RequireLogin;
 import com.oneself.model.dto.PageDTO;
 import com.oneself.model.vo.PageVO;
@@ -34,7 +34,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RequireLogin
-@RequestLogging
+@ApiLog
 @RestController
 @RefreshScope
 @RequestMapping({"/scripts"})

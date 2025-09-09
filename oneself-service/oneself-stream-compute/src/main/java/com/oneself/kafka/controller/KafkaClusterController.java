@@ -1,6 +1,6 @@
 package com.oneself.kafka.controller;
 
-import com.oneself.annotation.RequestLogging;
+import com.oneself.annotation.ApiLog;
 import com.oneself.annotation.RequireLogin;
 import com.oneself.kafka.model.dto.KafkaClusterDTO;
 import com.oneself.kafka.model.dto.PageKafkaClusterDTO;
@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequiredArgsConstructor
 @RequireLogin
-@RequestLogging
+@ApiLog
 @RestController
 @RequestMapping("/kafka/cluster")
 public class KafkaClusterController {

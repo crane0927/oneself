@@ -1,6 +1,6 @@
 package com.oneself.controller;
 
-import com.oneself.annotation.RequestLogging;
+import com.oneself.annotation.ApiLog;
 import com.oneself.annotation.RequireLogin;
 import com.oneself.model.vo.ResponseVO;
 import com.oneself.model.vo.RoleVO;
@@ -27,7 +27,7 @@ import java.util.List;
 @Tag(name = "用户角色关联")
 @Slf4j
 @RequiredArgsConstructor
-@RequestLogging
+@ApiLog
 @RequireLogin
 @RestController
 @RequestMapping("/userRole")

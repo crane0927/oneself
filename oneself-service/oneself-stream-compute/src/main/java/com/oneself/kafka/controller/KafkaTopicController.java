@@ -1,6 +1,6 @@
 package com.oneself.kafka.controller;
 
-import com.oneself.annotation.RequestLogging;
+import com.oneself.annotation.ApiLog;
 import com.oneself.annotation.RequireLogin;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 @RequireLogin
-@RequestLogging
+@ApiLog
 @RestController
 @RequestMapping("/kafka/topic")
 public class KafkaTopicController {

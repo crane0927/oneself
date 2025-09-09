@@ -2,7 +2,7 @@ package com.oneself.controller;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.InfoResponse;
-import com.oneself.annotation.RequestLogging;
+import com.oneself.annotation.ApiLog;
 import com.oneself.annotation.RequireLogin;
 import com.oneself.model.dto.DemoDTO;
 import com.oneself.model.vo.DemoVO;
@@ -38,7 +38,7 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 @RequireLogin
-//@RequestLogging
+@ApiLog
 @RestController
 @RefreshScope
 @RequestMapping({"/demo"})
@@ -51,7 +51,7 @@ public class DemoController {
 
     private final OneselfService oneselfService;
 
-    @RequestLogging
+    @ApiLog
     @Operation(summary = "你好 xxx")
     @PostMapping("/hello")
     public ResponseVO<DemoVO> sayHello(@RequestBody @Valid DemoDTO dto) {
@@ -88,7 +88,7 @@ public class DemoController {
         return ResponseVO.success(oneselfService.doSomething());
     }
 
-    @RequestLogging(logRequest = false, logResponse = false)
+    @ApiLog(logRequest = false, logResponse = false)
     @Operation(summary = "导出文件")
     @GetMapping("/export")
     public void export(HttpServletResponse response) {
