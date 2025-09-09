@@ -1,6 +1,7 @@
 package com.oneself.model.dto;
 
 import com.oneself.annotation.Sensitive;
+import com.oneself.model.enums.DesensitizedTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -21,7 +22,7 @@ public class DemoDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @Sensitive
+    @Sensitive(DesensitizedTypeEnum.CHINESE_NAME)
     @Schema(description = "姓名", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "姓名不能为空")
     private String name;

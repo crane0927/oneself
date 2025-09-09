@@ -1,6 +1,5 @@
 package com.oneself.model.vo;
 
-import com.oneself.annotation.Sensitive;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -19,7 +18,6 @@ import java.io.Serializable;
 public class DemoVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-    @Sensitive
     @Schema(description = "信息")
     private String info;
 

@@ -1,6 +1,7 @@
 package com.oneself.script.model.bo;
 
 import com.oneself.annotation.Sensitive;
+import com.oneself.model.enums.DesensitizedTypeEnum;
 import com.oneself.script.model.enums.ExecuteModeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
@@ -32,7 +33,8 @@ public class CredentialBO implements Serializable {
     @Schema(description = "密码", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "密码不能为空")
     @Size(max = 100, message = "密码长度不能超过 100 个字符")
-    @Sensitive // 避免日志打印/序列化明文
+    // 避免日志打印/序列化明文
+    @Sensitive(DesensitizedTypeEnum.PASSWORD)
     private String password;
 
     @Schema(description = "超时时间（秒）", example = "30")

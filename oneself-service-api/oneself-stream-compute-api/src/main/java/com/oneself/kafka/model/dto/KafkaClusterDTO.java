@@ -3,6 +3,7 @@ package com.oneself.kafka.model.dto;
 import com.oneself.annotation.Sensitive;
 import com.oneself.kafka.model.enums.KafkaClusterStatusEnum;
 import com.oneself.kafka.model.enums.KafkaSecurityProtocolEnum;
+import com.oneself.model.enums.DesensitizedTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -50,7 +51,7 @@ public class KafkaClusterDTO implements Serializable {
     @Schema(description = "认证用户名")
     private String username;
 
-    @Sensitive
+    @Sensitive(DesensitizedTypeEnum.PASSWORD)
     @Schema(description = "认证密码")
     private String password;
 

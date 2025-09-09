@@ -3,6 +3,7 @@ package com.oneself.kafka.model.vo;
 import com.oneself.annotation.Sensitive;
 import com.oneself.kafka.model.enums.KafkaClusterStatusEnum;
 import com.oneself.kafka.model.enums.KafkaSecurityProtocolEnum;
+import com.oneself.model.enums.DesensitizedTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -40,7 +41,7 @@ public class KafkaClusterVO implements Serializable {
     @Schema(description = "认证用户名")
     private String username;
 
-    @Sensitive
+    @Sensitive(DesensitizedTypeEnum.PASSWORD)
     @Schema(description = "认证密码")
     private String password;
 
