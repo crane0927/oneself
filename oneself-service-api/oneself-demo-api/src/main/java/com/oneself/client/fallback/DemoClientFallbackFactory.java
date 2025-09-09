@@ -1,7 +1,7 @@
 package com.oneself.client.fallback;
 
 import com.oneself.client.DemoClient;
-import com.oneself.model.dto.DemoDTO;
+import com.oneself.model.dto.SensitiveDTO;
 import com.oneself.model.vo.DemoVO;
 import com.oneself.model.vo.ResponseVO;
 import feign.FeignException;
@@ -28,7 +28,7 @@ public class DemoClientFallbackFactory implements FallbackFactory<DemoClient> {
         return new DemoClient() {
 
             @Override
-            public ResponseVO<DemoVO> sayHello(DemoDTO dto) {
+            public ResponseVO<DemoVO> sensitive(SensitiveDTO dto) {
                 if (cause instanceof FeignException.NotFound) {
                     return ResponseVO.failure("服务不存在", HttpStatus.NOT_FOUND);
                 } else if (cause instanceof TimeoutException) {

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import com.oneself.annotation.Sensitive;
 import com.oneself.model.enums.DesensitizedTypeEnum;
+import com.oneself.utils.UserPermissionUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -33,10 +34,10 @@ public class SensitiveJsonSerializer extends JsonSerializer<String> implements C
     @Override
     public void serialize(String originalValue, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         // 1. 先判断是否需要脱敏（管理员不脱敏）
-        /*if (!desensitization()) {
+        if (UserPermissionUtils.isAdmin()) {
             gen.writeString(originalValue);
             return;
-        }*/
+        }
 
         // 2. 处理空值：避免空指针异常
         if (originalValue == null) {
@@ -69,19 +70,4 @@ public class SensitiveJsonSerializer extends JsonSerializer<String> implements C
         return serializer;
     }
 
-    /**
-     * 判断是否需要脱敏：管理员不脱敏，其他用户/异常场景默认脱敏
-     */
-    /*private boolean desensitization() {
-        try {
-            // 从安全上下文获取用户ID（需确保SecurityContextHolder中正确存储了用户信息）
-            Long userId = SecurityContextHolder.getUserId();
-            // 调用用户常量类判断是否为管理员（非管理员则需要脱敏）
-            return !UserConstants.isAdmin(userId);
-        } catch (Exception e) {
-            // 异常场景（如未登录、上下文获取失败）默认脱敏，避免敏感信息泄露
-            log.warn("获取用户信息异常，默认执行脱敏处理", e);
-            return true;
-        }
-    }*/
 }

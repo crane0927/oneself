@@ -4,7 +4,7 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.InfoResponse;
 import com.oneself.annotation.ApiLog;
 import com.oneself.annotation.RequireLogin;
-import com.oneself.model.dto.DemoDTO;
+import com.oneself.model.dto.SensitiveDTO;
 import com.oneself.model.vo.DemoVO;
 import com.oneself.model.vo.ResponseVO;
 import com.oneself.service.OneselfService;
@@ -52,11 +52,29 @@ public class DemoController {
     private final OneselfService oneselfService;
 
     @ApiLog
-    @Operation(summary = "你好 xxx")
-    @PostMapping("/hello")
-    public ResponseVO<DemoVO> sayHello(@RequestBody @Valid DemoDTO dto) {
+    @Operation(summary = "数据脱敏验证")
+    @PostMapping("/sensitive")
+    public ResponseVO<DemoVO> sensitive(@RequestBody @Valid SensitiveDTO dto) {
+        String realName = dto.getRealName();
+        log.info(realName);
+        String mobilePhone = dto.getMobilePhone();
+        log.info(mobilePhone);
+        String idCard = dto.getIdCard();
+        log.info(idCard);
+        String email = dto.getEmail();
+        log.info(email);
+        String address = dto.getAddress();
+        log.info(address);
+        String bankCard = dto.getBankCard();
+        log.info(bankCard);
+        String fixedPhone = dto.getFixedPhone();
+        log.info(fixedPhone);
+        String password = dto.getPassword();
+        log.info(password);
+        String username = dto.getUsername();
+        log.info(username);
         DemoVO demoVO = new DemoVO();
-        demoVO.setInfo("hello " + dto.getName());
+        demoVO.setInfo(realName);
         return ResponseVO.success(demoVO);
     }
 

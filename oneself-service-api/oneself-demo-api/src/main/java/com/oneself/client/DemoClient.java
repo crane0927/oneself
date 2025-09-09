@@ -1,7 +1,7 @@
 package com.oneself.client;
 
 import com.oneself.client.fallback.DemoClientFallbackFactory;
-import com.oneself.model.dto.DemoDTO;
+import com.oneself.model.dto.SensitiveDTO;
 import com.oneself.model.vo.DemoVO;
 import com.oneself.model.vo.ResponseVO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface DemoClient {
 
 
-    @Operation(summary = "你好 xxx")
-    @PostMapping("/hello")
-    ResponseVO<DemoVO> sayHello(@RequestBody @Valid DemoDTO dto);
+    @Operation(summary = "数据脱敏验证")
+    @PostMapping("/sensitive")
+    ResponseVO<DemoVO> sensitive(@RequestBody @Valid SensitiveDTO dto);
 }
