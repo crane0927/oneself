@@ -3,6 +3,7 @@ package com.oneself.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oneself.annotation.Sensitive;
 import com.oneself.exception.OneselfException;
+import com.oneself.model.enums.DesensitizeSceneEnum;
 import com.oneself.model.enums.DesensitizedTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 
@@ -157,9 +158,14 @@ public class SensitiveDataUtils {
             Object fieldValue = field.get(obj);
             // 情况 1：字段标注 @Sensitive → 执行脱敏
             if (field.isAnnotationPresent(Sensitive.class)) {
+                Sensitive sensitive = field.getAnnotation(Sensitive.class);
+                // 关键：日志仅处理“日志专用”或“两者都脱敏”的场景
+                if (sensitive.scene() != DesensitizeSceneEnum.LOG_ONLY && sensitive.scene() != DesensitizeSceneEnum.BOTH) {
+                    continue; // 仅前端脱敏的字段，日志不处理
+                }
+
                 if (!UserPermissionUtils.isAdmin()) {
-                    Sensitive sensitiveAnno = field.getAnnotation(Sensitive.class);
-                    DesensitizedTypeEnum desensitizeType = sensitiveAnno.value();
+                    DesensitizedTypeEnum desensitizeType = sensitive.value();
                     if (desensitizeType != DesensitizedTypeEnum.NONE && fieldValue != null) {
                         String originalValue = String.valueOf(fieldValue);
                         String desensitizedValue = desensitizeType.desensitize(originalValue);
@@ -170,7 +176,7 @@ public class SensitiveDataUtils {
                 continue;
             }
 
-            // 情况2：未标注 @Sensitive → 递归处理嵌套对象（但先判断是否为自定义类）
+            // 情况 2：未标注 @Sensitive → 递归处理嵌套对象（但先判断是否为自定义类）
             if (fieldValue != null && !isNonCustomClass(fieldValue.getClass())) {
                 desensitizeObject(fieldValue);
             }

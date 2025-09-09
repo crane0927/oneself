@@ -2,6 +2,7 @@ package com.oneself.annotation;
 
 import com.fasterxml.jackson.annotation.JacksonAnnotationsInside;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.oneself.model.enums.DesensitizeSceneEnum;
 import com.oneself.model.enums.DesensitizedTypeEnum;
 import com.oneself.serializer.SensitiveJsonSerializer;
 
@@ -24,5 +25,7 @@ import java.lang.annotation.Target;
 @JsonSerialize(using = SensitiveJsonSerializer.class)
 public @interface Sensitive {
     DesensitizedTypeEnum value() default DesensitizedTypeEnum.NONE;
+
+    DesensitizeSceneEnum scene() default DesensitizeSceneEnum.LOG_ONLY;
 }
 
