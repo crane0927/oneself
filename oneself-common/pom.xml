@@ -15,6 +15,7 @@
 
     <modules>
         <module>oneself-common-core</module>
+        <module>oneself-common-elasticsearch</module>
         <module>oneself-common-jdbc</module>
         <module>oneself-common-mongodb</module>
         <module>oneself-common-redis</module>

@@ -1,13 +1,5 @@
 package com.oneself.utils;
 
-/**
- * @author liuhuan
- * date 2025/1/2
- * packageName com.oneself.utils
- * className ElasticsearchUtils
- * description Elasticsearch 工具类
- * version 1.0
- */
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
@@ -24,6 +16,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.atomic.AtomicReference;
+
+/**
+ * @author liuhuan
+ * date 2025/1/2
+ * packageName com.oneself.utils
+ * className ElasticsearchUtils
+ * description Elasticsearch 工具类
+ * version 1.0
+ */
 
 @Slf4j
 @Component
