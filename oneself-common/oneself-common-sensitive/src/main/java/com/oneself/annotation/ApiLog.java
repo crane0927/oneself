@@ -13,7 +13,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Documented
-public @interface RequestLogging {
+public @interface ApiLog {
     /**
      * 是否打印请求参数，默认打印
      */

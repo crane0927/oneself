@@ -1,6 +1,9 @@
 package com.oneself.annotation;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JacksonAnnotationsInside;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.oneself.model.enums.DesensitizedTypeEnum;
+import com.oneself.serializer.SensitiveJsonSerializer;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -15,8 +18,11 @@ import java.lang.annotation.Target;
  * description 标记敏感字段
  * version 1.0
  */
-@Target(ElementType.FIELD) // 用于字段
 @Retention(RetentionPolicy.RUNTIME)
-@JsonIgnore
+@Target(ElementType.FIELD)
+@JacksonAnnotationsInside
+@JsonSerialize(using = SensitiveJsonSerializer.class)
 public @interface Sensitive {
+    DesensitizedTypeEnum value() default DesensitizedTypeEnum.NONE;
 }
+

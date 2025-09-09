@@ -1,6 +1,7 @@
 package com.oneself.aspect;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oneself.annotation.ApiLog;
 import com.oneself.exception.OneselfException;
 import com.oneself.utils.JacksonUtils;
 import com.oneself.utils.SensitiveDataUtils;
@@ -23,11 +24,11 @@ import java.lang.reflect.Method;
 @Slf4j
 @Aspect
 @Component
-public class RequestLoggingAspect {
+public class ApiLogAspect {
 
     private final ObjectMapper objectMapper = JacksonUtils.getObjectMapper();
 
-    @Around("@within(com.oneself.annotation.RequestLogging) || @annotation(com.oneself.annotation.RequestLogging)")
+    @Around("@within(com.oneself.annotation.ApiLog) || @annotation(com.oneself.annotation.ApiLog)")
     public Object logDetails(ProceedingJoinPoint joinPoint) throws OneselfException {
 
         // 获取方法级别的 @RequestLogging 注解，优先使用方法级别注解
@@ -37,15 +38,15 @@ public class RequestLoggingAspect {
         // 获取目标方法
         Method method = ((org.aspectj.lang.reflect.MethodSignature) joinPoint.getSignature()).getMethod();
         // 如果方法级别有 @Loggable 注解，优先使用方法级别的设置
-        if (method.isAnnotationPresent(com.oneself.annotation.RequestLogging.class)) {
-            com.oneself.annotation.RequestLogging requestLogging = method.getAnnotation(com.oneself.annotation.RequestLogging.class);
-            logRequest = requestLogging.logRequest();
-            logResponse = requestLogging.logResponse();
-        } else if (joinPoint.getTarget().getClass().isAnnotationPresent(com.oneself.annotation.RequestLogging.class)) {
+        if (method.isAnnotationPresent(ApiLog.class)) {
+            ApiLog apiLog = method.getAnnotation(ApiLog.class);
+            logRequest = apiLog.logRequest();
+            logResponse = apiLog.logResponse();
+        } else if (joinPoint.getTarget().getClass().isAnnotationPresent(ApiLog.class)) {
             // 如果方法级别没有注解，再检查类级别的 @Loggable 注解
-            com.oneself.annotation.RequestLogging requestLogging = joinPoint.getTarget().getClass().getAnnotation(com.oneself.annotation.RequestLogging.class);
-            logRequest = requestLogging.logRequest();
-            logResponse = requestLogging.logResponse();
+            ApiLog apiLog = joinPoint.getTarget().getClass().getAnnotation(ApiLog.class);
+            logRequest = apiLog.logRequest();
+            logResponse = apiLog.logResponse();
         }
 
         // 记录请求参数（如果 logRequest 为 true）
