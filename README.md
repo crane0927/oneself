@@ -10,7 +10,8 @@
 - ~~mybatis-plus-boot-starter 3.5.3.1~~ -> ~~mybatis-plus-spring-boot3-starter 3.5.5~~ -> mybatis-plus-spring-boot3-starter 3.5.8
 - Nacos 2.4.3
 - MySQL 8.0.39
-- Maven 3.9.9
+- PostgreSQL 14.15
+- Maven 3.9.11
 ---
 ## 2 项目结构
 ```text
