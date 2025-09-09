@@ -9,7 +9,6 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<artifactId>oneself-ai</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>oneself-ai</name>
 	<description>oneself-ai</description>
 
@@ -41,7 +40,7 @@
 
 		<dependency>
 			<groupId>com.oneself</groupId>
-			<artifactId>oneself-common</artifactId>
+			<artifactId>oneself-common-core</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 

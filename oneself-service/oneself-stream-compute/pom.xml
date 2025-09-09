@@ -8,7 +8,6 @@
         <version>1.0.0</version>
     </parent>
     <artifactId>oneself-stream-compute</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>oneself-stream-compute</name>
     <description>oneself-stream-compute</description>
 
