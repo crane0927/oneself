@@ -1,5 +1,6 @@
 package com.oneself.model.vo;
 
+import com.oneself.annotation.Sensitive;
 import com.oneself.model.enums.SexEnum;
 import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.enums.UserTypeEnum;
@@ -29,6 +30,10 @@ public class UserVO implements Serializable {
 
     @Schema(description = "用户名")
     private String username;
+
+    @Sensitive
+    @Schema(description = "密码")
+    private String password;
 
     @Schema(description = "邮箱")
     private String email;

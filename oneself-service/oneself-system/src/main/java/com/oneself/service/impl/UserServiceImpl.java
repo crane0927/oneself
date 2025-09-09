@@ -1,15 +1,22 @@
 package com.oneself.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.oneself.exception.OneselfException;
 import com.oneself.mapper.UserMapper;
+import com.oneself.model.dto.LoginUserDTO;
 import com.oneself.model.dto.PageDTO;
 import com.oneself.model.dto.UserDTO;
 import com.oneself.model.dto.UserQueryDTO;
 import com.oneself.model.enums.StatusEnum;
+import com.oneself.model.pojo.User;
 import com.oneself.model.vo.PageVO;
 import com.oneself.model.vo.UserVO;
 import com.oneself.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -50,6 +57,32 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserVO get(String id) {
         return null;
+    }
+
+    /**
+     * 查询登录用户
+     *
+     * @param dto 登录用户 DTO
+     * @return 用户信息 VO
+     */
+    @Override
+    public UserVO getLoginUser(@Valid LoginUserDTO dto) {
+        String username = dto.getUsername();
+        String password = dto.getPassword();
+
+        if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
+            throw new OneselfException("用户名或密码不能为空");
+        }
+        UserVO userVO = new UserVO();
+        User user = userMapper.selectOne(new LambdaQueryWrapper<User>()
+                .eq(User::getUsername, username)
+                .eq(User::getPassword, password)
+                .eq(User::getStatus, StatusEnum.NORMAL));
+        if (user == null) {
+            throw new OneselfException("用户名或密码错误");
+        }
+        BeanUtils.copyProperties(user, userVO);
+        return userVO;
     }
 
     /**

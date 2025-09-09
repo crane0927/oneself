@@ -2,6 +2,7 @@ package com.oneself.controller;
 
 import com.oneself.annotation.ApiLog;
 import com.oneself.annotation.RequireLogin;
+import com.oneself.model.dto.LoginUserDTO;
 import com.oneself.model.dto.PageDTO;
 import com.oneself.model.dto.UserDTO;
 import com.oneself.model.dto.UserQueryDTO;
@@ -50,6 +51,12 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseVO<UserVO> get(@PathVariable("id") @Valid @NotBlank String id) {
         return ResponseVO.success(userService.get(id));
+    }
+
+    @Operation(summary = "查询登录用户")
+    @PostMapping("/get/login/user")
+    public ResponseVO<UserVO> getLoginUser(@RequestBody @Valid LoginUserDTO dto) {
+        return ResponseVO.success(userService.getLoginUser(dto));
     }
 
     @Operation(summary = "修改用户")
