@@ -6,11 +6,12 @@
         <groupId>com.oneself</groupId>
         <artifactId>oneself</artifactId>
         <version>1.0.0</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>oneself-auth</artifactId>
     <name>oneself-auth</name>
     <description>系统认证模块</description>
+
 
 
     <properties>
@@ -19,12 +20,7 @@
     <dependencies>
         <dependency>
             <groupId>com.oneself</groupId>
-            <artifactId>oneself-common-swagger</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.oneself</groupId>
-            <artifactId>oneself-common-jdbc</artifactId>
+            <artifactId>oneself-system-api</artifactId>
             <version>1.0.0</version>
         </dependency>
 
@@ -44,13 +40,14 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.13.0</version>
         </dependency>
     </dependencies>
 

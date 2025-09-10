@@ -11,6 +11,9 @@ spring:
     import:
       - nacos:${spring.application.name}-${spring.profiles.active}.yaml?refreshEnabled=true
   cloud:
+    sentinel:
+      transport:
+        dashboard: 127.0.0.1:8090
     nacos:
       server-addr: 127.0.0.1:8848
       config:
@@ -22,22 +25,7 @@ spring:
         namespace: dev
       discovery:
         cluster-name: dev
-        namespace:
-  datasource:
-    dynamic:
-      primary: postgres
-      strict: false
-      datasource:
-        mysql:
-          driver-class-name: com.mysql.cj.jdbc.Driver
-          url: jdbc:mysql://127.0.0.1:3306/oneself_auth?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai&useSSL=false
-          username: liuhuan
-          password: Z6eQaNaitK5vSX
-        postgres:
-          driver-class-name: org.postgresql.Driver
-          url: jdbc:postgresql://127.0.0.1:5432/oneself?currentSchema=oneself_auth&useUnicode=true&characterEncoding=utf-8
-          username: admin
-          password: PK3uK7pUIwUTi1
+        namespace: dev
   data:
     redis:
       host: localhost
