@@ -1,5 +1,6 @@
 package com.oneself;
 
+import com.oneself.client.DemoClient;
 import com.oneself.utils.ApplicationStartupUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,7 +18,6 @@ import org.springframework.validation.annotation.Validated;
  * version 1.0
  */
 @EnableFeignClients(basePackages = "com.oneself.client")
-//@EnableFeignClients(clients = DemoClient.class)
 @EnableDiscoveryClient
 @SpringBootApplication
 @Validated

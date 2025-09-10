@@ -1,6 +1,5 @@
 package com.oneself.service;
 
-import com.oneself.model.dto.LoginUserDTO;
 import com.oneself.model.dto.PageDTO;
 import com.oneself.model.dto.UserDTO;
 import com.oneself.model.dto.UserQueryDTO;
@@ -42,10 +41,10 @@ public interface UserService {
     /**
      * 查询登录用户
      *
-     * @param dto 登录用户 DTO
+     * @param name 用户名
      * @return 用户信息 VO
      */
-    UserVO getLoginUser(@Valid LoginUserDTO dto);
+    UserVO getLoginUserByName(@Valid @NotBlank String name);
 
     /**
      * 更新用户信息
@@ -88,6 +87,5 @@ public interface UserService {
      * @return 用户列表
      */
     List<UserVO> listByDeptId(@Valid @NotBlank String deptId);
-
 
 }

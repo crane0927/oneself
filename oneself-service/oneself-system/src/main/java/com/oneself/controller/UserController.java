@@ -1,8 +1,6 @@
 package com.oneself.controller;
 
 import com.oneself.annotation.ApiLog;
-import com.oneself.annotation.RequireLogin;
-import com.oneself.model.dto.LoginUserDTO;
 import com.oneself.model.dto.PageDTO;
 import com.oneself.model.dto.UserDTO;
 import com.oneself.model.dto.UserQueryDTO;
@@ -34,7 +32,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @ApiLog
-@RequireLogin
+//@RequireLogin
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -53,10 +51,10 @@ public class UserController {
         return ResponseVO.success(userService.get(id));
     }
 
-    @Operation(summary = "查询登录用户")
-    @PostMapping("/get/login/user")
-    public ResponseVO<UserVO> getLoginUser(@RequestBody @Valid LoginUserDTO dto) {
-        return ResponseVO.success(userService.getLoginUser(dto));
+    @Operation(summary = "根据用户名查询登录用户信息")
+    @GetMapping("/get/login/user/by/{name}")
+    public ResponseVO<UserVO> getLoginUserByName(@PathVariable("name") @Valid @NotBlank String name) {
+        return ResponseVO.success(userService.getLoginUserByName(name));
     }
 
     @Operation(summary = "修改用户")

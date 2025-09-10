@@ -3,7 +3,6 @@ package com.oneself.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.oneself.exception.OneselfException;
 import com.oneself.mapper.UserMapper;
-import com.oneself.model.dto.LoginUserDTO;
 import com.oneself.model.dto.PageDTO;
 import com.oneself.model.dto.UserDTO;
 import com.oneself.model.dto.UserQueryDTO;
@@ -12,12 +11,13 @@ import com.oneself.model.pojo.User;
 import com.oneself.model.vo.PageVO;
 import com.oneself.model.vo.UserVO;
 import com.oneself.service.UserService;
-import jakarta.validation.Valid;
+import com.oneself.utils.DuplicateCheckUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -43,9 +43,24 @@ public class UserServiceImpl implements UserService {
      * @param dto 用户信息 DTO
      * @return 新增用户ID
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public String add(UserDTO dto) {
-        return "";
+        User user = User.builder().build();
+        BeanUtils.copyProperties(dto, user);
+        DuplicateCheckUtils.checkDuplicateMultiFields(
+                user,
+                User::getId,
+                userMapper::selectCount,
+                "用户名已存在",
+                DuplicateCheckUtils.FieldCondition.of(User::getUsername, User::getUsername, DuplicateCheckUtils.ConditionType.EQ)
+        );
+        int insert = userMapper.insert(user);
+        if (insert <= 0) {
+            throw new OneselfException("新增用户失败");
+        }
+
+        return user.getId();
     }
 
     /**
@@ -62,28 +77,25 @@ public class UserServiceImpl implements UserService {
     /**
      * 查询登录用户
      *
-     * @param dto 登录用户 DTO
+     * @param name 用户名
      * @return 用户信息 VO
      */
     @Override
-    public UserVO getLoginUser(@Valid LoginUserDTO dto) {
-        String username = dto.getUsername();
-        String password = dto.getPassword();
+    public UserVO getLoginUserByName(String name) {
 
-        if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
-            throw new OneselfException("用户名或密码不能为空");
+        if (StringUtils.isBlank(name)) {
+            throw new OneselfException("用户名不能为空");
         }
         UserVO userVO = new UserVO();
         User user = userMapper.selectOne(new LambdaQueryWrapper<User>()
-                .eq(User::getUsername, username)
-                .eq(User::getPassword, password)
-                .eq(User::getStatus, StatusEnum.NORMAL));
+                .eq(User::getUsername, name));
         if (user == null) {
-            throw new OneselfException("用户名或密码错误");
+            throw new OneselfException("用户不存在");
         }
         BeanUtils.copyProperties(user, userVO);
         return userVO;
     }
+
 
     /**
      * 更新用户信息

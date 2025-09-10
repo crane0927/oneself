@@ -1,5 +1,7 @@
 package com.oneself.model.dto;
 
+import com.oneself.annotation.Sensitive;
+import com.oneself.model.enums.DesensitizedTypeEnum;
 import com.oneself.model.enums.SexEnum;
 import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.enums.UserTypeEnum;
@@ -31,18 +33,22 @@ public class UserDTO implements Serializable {
     @NotBlank(message = "用户名不能为空")
     private String username;
 
+    @Sensitive(DesensitizedTypeEnum.PASSWORD)
     @Schema(description = "密码", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "密码不能为空")
     private String password;
 
+    @Sensitive(DesensitizedTypeEnum.EMAIL)
     @Schema(description = "邮箱")
     @Email(message = "邮箱格式不正确")
     private String email;
 
+    @Sensitive(DesensitizedTypeEnum.MOBILE_PHONE)
     @Schema(description = "手机号")
     @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式不正确")
     private String phone;
 
+    @Sensitive(DesensitizedTypeEnum.CHINESE_NAME)
     @Schema(description = "真实姓名")
     private String realName;
 
