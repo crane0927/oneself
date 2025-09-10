@@ -70,7 +70,7 @@ public class KafkaClusterServiceImpl implements KafkaClusterService {
                         .eq(KafkaCluster::getName, dto.getName())
                         .ne(KafkaCluster::getId, id)
         );
-        AssertUtils.isTrue(count == 0, "集群名称已存在");
+        AssertUtils.isTrue(count == 1, "集群名称已存在");
 
         KafkaCluster updatedCluster = KafkaCluster.builder().id(id).build();
         BeanCopyUtils.copy(dto, updatedCluster);

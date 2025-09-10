@@ -21,7 +21,7 @@ public class AssertUtils {
 
 
     public static void isTrue(boolean expression, String message) {
-        if (!expression) {
+        if (expression) {
             throw new OneselfException(message);
         }
     }
