@@ -33,10 +33,10 @@ public class UserDTO implements Serializable {
     @NotBlank(message = "用户名不能为空")
     private String username;
 
-    @Sensitive(DesensitizedTypeEnum.PASSWORD)
+    /*@Sensitive(DesensitizedTypeEnum.PASSWORD)
     @Schema(description = "密码", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "密码不能为空")
-    private String password;
+    private String password;*/
 
     @Sensitive(DesensitizedTypeEnum.EMAIL)
     @Schema(description = "邮箱")

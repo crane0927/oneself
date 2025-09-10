@@ -3,12 +3,11 @@ package com.oneself.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.oneself.exception.OneselfException;
 import com.oneself.mapper.DeptMapper;
 import com.oneself.mapper.UserMapper;
 import com.oneself.model.dto.DeptDTO;
-import com.oneself.model.dto.PageDTO;
 import com.oneself.model.dto.DeptQueryDTO;
+import com.oneself.model.dto.PageDTO;
 import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.pojo.Dept;
 import com.oneself.model.pojo.User;
@@ -69,14 +68,10 @@ public class DeptServiceImpl implements DeptService {
         );
 
         // 3. 插入数据库
-        int result = deptMapper.insert(dept);
+        int insert = deptMapper.insert(dept);
 
         // 4. 检查插入结果
-        if (result == 0) {
-            log.error("部门添加失败: {}", dto);
-            throw new OneselfException("部门添加失败");
-        }
-
+        AssertUtils.isTrue(insert < 1, "部门添加失败");
         log.info("部门添加成功, ID: {}", dept.getId());
         return dept.getId();
     }
