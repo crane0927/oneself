@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.oneself.exception.OneselfException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
@@ -36,12 +37,6 @@ public class JacksonUtils {
         OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         // 可选：忽略未知字段（避免 JSON 中有多余字段时反序列化失败）
         OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        // 开启类型信息，但用 PROPERTY 方式
-        OBJECT_MAPPER.activateDefaultTyping(
-                OBJECT_MAPPER.getPolymorphicTypeValidator(),
-                ObjectMapper.DefaultTyping.NON_FINAL,
-                com.fasterxml.jackson.annotation.JsonTypeInfo.As.PROPERTY
-        );
     }
 
     /**
@@ -194,16 +189,4 @@ public class JacksonUtils {
         }
     }
 
-    /**
-     * 自定义异常：统一JSON处理相关的异常类型（便于全局捕获）
-     */
-    public static class OneselfException extends RuntimeException {
-        public OneselfException(String message) {
-            super(message);
-        }
-
-        public OneselfException(String message, Throwable cause) {
-            super(message, cause);
-        }
-    }
 }
