@@ -66,7 +66,7 @@ public class DeptController {
 
     @Operation(summary = "更新状态")
     @PutMapping("/status/{status}")
-    public ResponseVO<Boolean> updateStatus(@RequestBody @Valid @NotEmpty List<@NotBlank String> ids, @PathVariable("status") @Valid @NotBlank StatusEnum status) {
+    public ResponseVO<Boolean> updateStatus(@RequestBody @Valid @NotEmpty List<@NotBlank String> ids, @PathVariable("status") @Valid StatusEnum status) {
         return ResponseVO.success(deptService.updateStatus(ids, status));
     }
 

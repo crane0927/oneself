@@ -13,6 +13,16 @@
     <description>公共 Redis 模块</description>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.oneself</groupId>
+            <artifactId>oneself-common-core</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>

@@ -1,0 +1,74 @@
+package com.oneself.config;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oneself.utils.JacksonUtils;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
+
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
+/**
+ * @author liuhuan
+ * date 2025/9/11
+ * packageName com.oneself.config
+ * className CacheConfig
+ * description
+ * version 1.0
+ */
+@Configuration
+@EnableCaching
+public class CacheConfig {
+
+    private static final Random RANDOM = new Random();
+
+    /**
+     * 构建 RedisCacheManager Bean
+     *
+     * @param redisConnectionFactory Redis 连接工厂（Spring Boot 自动配置）
+     * @return RedisCacheManager 管理器
+     */
+    @Bean
+    public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
+        // ========== 1. 全局默认配置 ==========
+        ObjectMapper mapper = JacksonUtils.getObjectMapper();
+        RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofMinutes(10))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(
+                        new GenericJackson2JsonRedisSerializer(mapper)
+                ))
+                .computePrefixWith(cacheName -> "oneself::" + cacheName + "::")
+                .disableCachingNullValues();
+
+        // ========== 2. 针对不同 cacheName 单独配置 ==========
+        Map<String, RedisCacheConfiguration> cacheConfigs = new HashMap<>();
+
+        // 用户缓存：5~10 分钟随机 TTL
+        cacheConfigs.put("sysUser",
+                defaultConfig.entryTtl(Duration.ofMinutes(5 + RANDOM.nextInt(6))));
+
+        // 部门缓存：30~40 分钟随机 TTL
+        cacheConfigs.put("sysDept",
+                defaultConfig.entryTtl(Duration.ofMinutes(30 + RANDOM.nextInt(11))));
+
+        // 系统配置缓存：1~2 小时随机 TTL
+        cacheConfigs.put("sysConfiguration",
+                defaultConfig.entryTtl(Duration.ofHours(1).plusMinutes(RANDOM.nextInt(60))));
+
+        // ========== 3. 构建 RedisCacheManager ==========
+        return RedisCacheManager.builder(redisConnectionFactory)
+                // 设置全局默认配置
+                .cacheDefaults(defaultConfig)
+                // 初始化时应用不同 cacheName 的个性化配置
+                .withInitialCacheConfigurations(cacheConfigs)
+                .build();
+    }
+}

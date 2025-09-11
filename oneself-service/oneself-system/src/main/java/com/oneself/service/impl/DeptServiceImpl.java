@@ -24,8 +24,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.*;
 
@@ -44,6 +50,9 @@ public class DeptServiceImpl implements DeptService {
 
     private final DeptMapper deptMapper;
     private final UserMapper userMapper;
+
+    private final CacheManager cacheManager;
+
 
     /**
      * 新增部门
@@ -83,6 +92,7 @@ public class DeptServiceImpl implements DeptService {
      * @return 部门信息 VO
      */
     @Override
+    @Cacheable(value = "sysDept", key = "#id")
     public DeptVO get(String id) {
         Dept dept = deptMapper.selectById(id);
         AssertUtils.notNull(dept, "部门不存在");
@@ -99,7 +109,8 @@ public class DeptServiceImpl implements DeptService {
      * @return 更新是否成功
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = "sysDept", key = "#id")
     public boolean update(String id, DeptDTO dto) {
         // 1. 构建部门对象
         Dept dept = Dept.builder().id(id).build();
@@ -124,18 +135,35 @@ public class DeptServiceImpl implements DeptService {
      * @return 删除是否成功
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean delete(List<String> ids) {
         // 1. 获取当前部门 ID 和所有子部门 ID
         List<String> allChildDeptIds = getAllChildDeptIds(ids);
-
         AssertUtils.isFalse(CollectionUtils.isEmpty(allChildDeptIds), "删除失败，该部门不存在");
+
         // 2. 删除部门下所有的用户
-        List<User> users = userMapper.selectList(new LambdaQueryWrapper<User>()
-                .in(User::getDeptId, allChildDeptIds));
-        userMapper.deleteByIds(users);
+        List<User> users = userMapper.selectList(
+                new LambdaQueryWrapper<User>().in(User::getDeptId, allChildDeptIds)
+        );
+        if (!users.isEmpty()) {
+            userMapper.deleteByIds(users.stream().map(User::getId).toList());
+        }
+
         // 3. 删除部门
-        return deptMapper.deleteByIds(allChildDeptIds) > 0;
+        int deleted = deptMapper.deleteByIds(allChildDeptIds);
+
+        // 4. 事务提交后清理缓存
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                Cache deptCache = cacheManager.getCache("sysDept");
+                if (deptCache != null) {
+                    allChildDeptIds.forEach(deptCache::evict);
+                }
+            }
+        });
+
+        return deleted > 0;
     }
 
     /**
@@ -148,18 +176,33 @@ public class DeptServiceImpl implements DeptService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean updateStatus(List<String> ids, StatusEnum status) {
-        // 1. 获取当前部门 ID 和所有子部门 ID
+        // 1. 获取传入部门及所有子部门 ID
         List<String> allChildDeptIds = getAllChildDeptIds(ids);
 
-        // 2. 更新用户状态
-        userMapper.update(User.builder().status(status).build(),
-                new LambdaUpdateWrapper<User>().in(User::getDeptId, allChildDeptIds));
+        // 2. 更新用户状态（所有这些部门下的用户）
+        userMapper.update(
+                User.builder().status(status).build(),
+                new LambdaUpdateWrapper<User>().in(User::getDeptId, allChildDeptIds)
+        );
 
         // 3. 更新部门及子部门状态
         LambdaUpdateWrapper<Dept> wrapper = new LambdaUpdateWrapper<>();
         wrapper.in(Dept::getId, allChildDeptIds)
                 .set(Dept::getStatus, status.getCode());
-        return deptMapper.update(null, wrapper) > 0;
+        int updated = deptMapper.update(null, wrapper);
+
+        // 4. 事务提交后清理缓存（避免回滚导致数据不一致）
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                Cache deptCache = cacheManager.getCache("sysDept");
+                if (deptCache != null) {
+                    allChildDeptIds.forEach(deptCache::evict);
+                }
+            }
+        });
+
+        return updated > 0;
     }
 
     /**
@@ -246,6 +289,7 @@ public class DeptServiceImpl implements DeptService {
      * @return 部门树列表
      */
     @Override
+    @Cacheable(value = "sysDept", key = "'tree'")
     public List<DeptTreeVO> tree() {
         // 1. 查询全部
         List<Dept> deptList = deptMapper.selectList(null);

@@ -63,7 +63,7 @@ public interface DeptService {
      * @param status 部门状态（启用/禁用）
      * @return 状态更新是否成功
      */
-    boolean updateStatus(@Valid @NotEmpty List<String> ids, @Valid @NotBlank StatusEnum status);
+    boolean updateStatus(@Valid @NotEmpty List<String> ids, @Valid StatusEnum status);
 
     /**
      * 分页查询部门
