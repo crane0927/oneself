@@ -30,7 +30,7 @@ public class JwtUtils {
     public static final Long JWT_DEFAULT_TTL = 60 * 60 * 1000L;
 
     /**
-     * 安全密钥（⚠️ 生产环境需替换为 ≥32个 字符的随机字符串，建议从 application.yml 注入）
+     * 安全密钥（生产环境需替换为 ≥32个 字符的随机字符串，建议从 application.yml 注入）
      * 示例：通过 openssl rand -hex 32 生成安全密钥
      */
     public static final String JWT_SECRET = "oneself-token-32-chars-safe-key-12345678";
@@ -195,14 +195,14 @@ public class JwtUtils {
      */
     public static void main(String[] args) throws Exception {
         // 1. 准备主题数据（建议JSON格式，存放用户ID、角色等核心信息）
-        String subject = "{\"userId\":123,\"username\":\"admin\",\"role\":\"ADMIN\"}";
-
-        // 2. 生成JWT（自定义有效期2小时）
-        String jwt = createJWT(subject, 2 * 60 * 60 * 1000L);
-        log.info("生成的JWT：\n{}", jwt);
+//        String subject = "{\"userId\":123,\"username\":\"admin\",\"role\":\"ADMIN\"}";
+//
+//        // 2. 生成JWT（自定义有效期2小时）
+//        String jwt = createJWT(subject, 2 * 60 * 60 * 1000L);
+//        log.info("生成的JWT：\n{}", jwt);
 
         // 3. 解析JWT
-        Claims claims = parseJWT(jwt);
+        Claims claims = parseJWT("eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI0OWVjZTgxNDBlZjI0MWJkOGM2MmU5ZWRlZTdlMjI5ZSIsInN1YiI6IntcIkBjbGFzc1wiOlwiY29tLm9uZXNlbGYubW9kZWwuYm8uTG9naW5Vc2VyU2Vzc2lvbkJPXCIsXCJ1c2VySWRcIjpcImM4YjNjNTcwMjU4MGQwYzNmYjIyZTIxYjE5ZDk4ZWRlXCIsXCJ1c2VybmFtZVwiOlwiY3JhbmVcIixcImlwXCI6XCIxMjcuMC4wLjFcIixcImRldmljZVwiOlwiT3RoZXJcIixcImJyb3dzZXJcIjpcIk90aGVyXCIsXCJzZXNzaW9uSWRcIjpcIjIyOTViZjFlXCIsXCJsb2dpblRpbWVcIjpcIlRodSBTZXAgMTEgMjE6MDU6NTkgQ1NUIDIwMjVcIn0iLCJpc3MiOiJvbmVzZWxmIiwiaWF0IjoxNzU3NTk1OTU5LCJleHAiOjE3NTc1OTk1NTl9.bUzBTklNRAdruJd2D43SLFD9JNYQ3vfQv2Wyfx0jcWg");
         log.info("\n解析JWT结果：");
         log.info("唯一ID（jti）：{}", claims.getId());
         log.info("主题（sub）：{}", claims.getSubject());

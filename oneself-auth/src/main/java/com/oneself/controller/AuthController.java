@@ -2,6 +2,7 @@ package com.oneself.controller;
 
 import com.oneself.model.dto.LoginDTO;
 import com.oneself.model.vo.ResponseVO;
+import com.oneself.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,19 +27,19 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping({"/auth"})
 public class AuthController {
 
+    private final AuthService authService;
+
     @Operation(summary = "登录")
     @PostMapping("/login")
-    public ResponseVO<String> login(@RequestBody LoginDTO dto) {
-        // 1. 验证用户名密码
-        // 2. 生成 Token，存入 Redis
-        // 3. 返回 Token
-        return ResponseVO.success(null);
+    public ResponseVO<String> login(@RequestBody LoginDTO dto, HttpServletRequest request) {
+
+        return ResponseVO.success(authService.login(dto, request));
     }
 
     @Operation(summary = "登出")
     @DeleteMapping("/logout")
     public ResponseVO<Boolean> logout(HttpServletRequest request) {
-        return ResponseVO.success(null);
+        return ResponseVO.success(authService.logout(request));
     }
 
     @Operation(summary = "刷新 Token")

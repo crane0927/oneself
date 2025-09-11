@@ -29,11 +29,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        // 调用远程服务获取用户信息
         ResponseVO<LoginUserVO> vo = userClient.getLoginUserByName(username);
         LoginUserVO userVO = vo.getData();
+
+        // 用户不存在
         if (userVO == null) {
             throw new UsernameNotFoundException("用户不存在");
         }
+
+        // 使用继承方式封装 LoginUserBO 返回给 Spring Security
         return new LoginUserBO(userVO);
     }
 

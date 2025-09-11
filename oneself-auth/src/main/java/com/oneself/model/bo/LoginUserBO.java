@@ -2,8 +2,10 @@ package com.oneself.model.bo;
 
 import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.vo.LoginUserVO;
+import com.oneself.utils.BeanCopyUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,26 +21,19 @@ import java.util.List;
  * description
  * version 1.0
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-public class LoginUserBO implements UserDetails {
+public class LoginUserBO extends LoginUserVO implements UserDetails {
 
-    private LoginUserVO user;
+    public LoginUserBO(LoginUserVO user) {
+        BeanCopyUtils.copy(user, this);
+    }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
-    }
-
-    @Override
-    public String getPassword() {
-        return user.getPassword();
-    }
-
-    @Override
-    public String getUsername() {
-        return user.getUsername();
+        return List.of(); // 或根据角色返回权限
     }
 
     @Override
@@ -48,7 +43,7 @@ public class LoginUserBO implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return StatusEnum.NORMAL.equals(user.getStatus());
+        return StatusEnum.NORMAL.equals(getStatus());
     }
 
     @Override
@@ -58,6 +53,6 @@ public class LoginUserBO implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return StatusEnum.NORMAL.equals(user.getStatus());
+        return StatusEnum.NORMAL.equals(getStatus());
     }
 }
