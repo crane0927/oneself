@@ -1,7 +1,10 @@
 package com.oneself.config;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.oneself.utils.JacksonUtils;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.oneself.model.enums.RedisKeyPrefixEnum;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +33,22 @@ public class CacheConfig {
 
     private static final Random RANDOM = new Random();
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+    static {
+        OBJECT_MAPPER.registerModule(new JavaTimeModule());
+        // 禁用时间戳格式（默认会把时间转为毫秒数，禁用后输出 "2025-09-12T10:00:00" 格式）
+        OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        // 可选：忽略未知字段（避免 JSON 中有多余字段时反序列化失败）
+        OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        // 开启类型信息，但用 PROPERTY 方式
+        OBJECT_MAPPER.activateDefaultTyping(
+                OBJECT_MAPPER.getPolymorphicTypeValidator(),
+                ObjectMapper.DefaultTyping.NON_FINAL,
+                com.fasterxml.jackson.annotation.JsonTypeInfo.As.PROPERTY
+        );
+    }
+
     /**
      * 构建 RedisCacheManager Bean
      *
@@ -39,13 +58,12 @@ public class CacheConfig {
     @Bean
     public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
         // ========== 1. 全局默认配置 ==========
-        ObjectMapper mapper = JacksonUtils.getObjectMapper();
         RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofMinutes(10))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(
-                        new GenericJackson2JsonRedisSerializer(mapper)
+                        new GenericJackson2JsonRedisSerializer(OBJECT_MAPPER)
                 ))
-                .computePrefixWith(cacheName -> "oneself::" + cacheName + "::")
+                .computePrefixWith(cacheName -> RedisKeyPrefixEnum.SYSTEM_NAME.getPrefix() + cacheName + ":")
                 .disableCachingNullValues();
 
         // ========== 2. 针对不同 cacheName 单独配置 ==========
