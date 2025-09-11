@@ -1,7 +1,7 @@
 package com.oneself.model.bo;
 
 import com.oneself.model.enums.StatusEnum;
-import com.oneself.model.vo.UserVO;
+import com.oneself.model.vo.LoginUserVO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,7 +24,7 @@ import java.util.List;
 @AllArgsConstructor
 public class LoginUserBO implements UserDetails {
 
-    private UserVO user;
+    private LoginUserVO user;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

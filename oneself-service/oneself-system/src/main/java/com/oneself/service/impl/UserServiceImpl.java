@@ -3,14 +3,19 @@ package com.oneself.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.oneself.exception.OneselfException;
 import com.oneself.mapper.ConfigurationMapper;
+import com.oneself.mapper.RolePermissionMapper;
 import com.oneself.mapper.UserMapper;
+import com.oneself.mapper.UserRoleMapper;
 import com.oneself.model.dto.PageDTO;
 import com.oneself.model.dto.UserDTO;
 import com.oneself.model.dto.UserQueryDTO;
 import com.oneself.model.enums.ConfigurationTypeEnum;
 import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.pojo.Configuration;
+import com.oneself.model.pojo.RolePermission;
 import com.oneself.model.pojo.User;
+import com.oneself.model.pojo.UserRole;
+import com.oneself.model.vo.LoginUserVO;
 import com.oneself.model.vo.PageVO;
 import com.oneself.model.vo.UserVO;
 import com.oneself.service.UserService;
@@ -26,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author liuhuan
@@ -41,6 +47,8 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
+    private final UserRoleMapper userRoleMapper;
+    private final RolePermissionMapper rolePermissionMapper;
     private final ConfigurationMapper configurationMapper;
 
 
@@ -109,22 +117,31 @@ public class UserServiceImpl implements UserService {
      * 查询登录用户
      *
      * @param name 用户名
-     * @return 用户信息 VO
+     * @return 登录用户信息 VO
      */
     @Override
-    public UserVO getLoginUserByName(String name) {
+    public LoginUserVO getLoginUserByName(String name) {
+        AssertUtils.isFalse(StringUtils.isBlank(name), "用户名不能为空");
 
-        if (StringUtils.isBlank(name)) {
-            throw new OneselfException("用户名不能为空");
+        User user = Optional.ofNullable(
+                userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, name))
+        ).orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+
+        LoginUserVO vo = new LoginUserVO();
+        BeanUtils.copyProperties(user, vo);
+
+        List<String> roleIds = userRoleMapper.selectList(new LambdaQueryWrapper<UserRole>().eq(UserRole::getUserId,
+                        user.getId()))
+                .stream().map(UserRole::getRoleId).toList();
+        if (!roleIds.isEmpty()) {
+            vo.setRoleIds(roleIds);
+            vo.setPermissionIds(rolePermissionMapper.selectList(new LambdaQueryWrapper<RolePermission>()
+                            .in(RolePermission::getRoleId, roleIds))
+                    .stream()
+                    .map(RolePermission::getPermId).toList());
         }
-        UserVO userVO = new UserVO();
-        User user = userMapper.selectOne(new LambdaQueryWrapper<User>()
-                .eq(User::getUsername, name));
-        if (user == null) {
-            throw new OneselfException("用户不存在");
-        }
-        BeanUtils.copyProperties(user, userVO);
-        return userVO;
+
+        return vo;
     }
 
 

@@ -1,8 +1,8 @@
 package com.oneself.client.fallback;
 
 import com.oneself.client.UserClient;
+import com.oneself.model.vo.LoginUserVO;
 import com.oneself.model.vo.ResponseVO;
-import com.oneself.model.vo.UserVO;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
@@ -26,7 +26,7 @@ public class UserClientFallbackFactory implements FallbackFactory<UserClient> {
     public UserClient create(Throwable cause) {
         return new UserClient() {
             @Override
-            public ResponseVO<UserVO> getLoginUserByName(String username) {
+            public ResponseVO<LoginUserVO> getLoginUserByName(String username) {
                 if (cause instanceof FeignException.NotFound) {
                     return ResponseVO.failure("服务不存在", HttpStatus.NOT_FOUND);
                 } else if (cause instanceof TimeoutException) {

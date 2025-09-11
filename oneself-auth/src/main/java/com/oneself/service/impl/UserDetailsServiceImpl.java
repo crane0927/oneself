@@ -3,8 +3,8 @@ package com.oneself.service.impl;
 
 import com.oneself.client.UserClient;
 import com.oneself.model.bo.LoginUserBO;
+import com.oneself.model.vo.LoginUserVO;
 import com.oneself.model.vo.ResponseVO;
-import com.oneself.model.vo.UserVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,8 +29,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        ResponseVO<UserVO> vo = userClient.getLoginUserByName(username);
-        UserVO userVO = vo.getData();
+        ResponseVO<LoginUserVO> vo = userClient.getLoginUserByName(username);
+        LoginUserVO userVO = vo.getData();
         if (userVO == null) {
             throw new UsernameNotFoundException("用户不存在");
         }

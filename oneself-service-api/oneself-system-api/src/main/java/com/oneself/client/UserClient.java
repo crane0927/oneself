@@ -1,8 +1,8 @@
 package com.oneself.client;
 
 import com.oneself.client.fallback.UserClientFallbackFactory;
+import com.oneself.model.vo.LoginUserVO;
 import com.oneself.model.vo.ResponseVO;
-import com.oneself.model.vo.UserVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -27,5 +27,5 @@ public interface UserClient {
 
     @Operation(summary = "根据用户名查询登录用户信息")
     @GetMapping("/get/login/user/by/{name}")
-    ResponseVO<UserVO> getLoginUserByName(@PathVariable("name") @Valid @NotBlank String name);
+    ResponseVO<LoginUserVO> getLoginUserByName(@PathVariable("name") @Valid @NotBlank String name);
 }
