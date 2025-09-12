@@ -3,7 +3,6 @@ package com.oneself.model.bo;
 import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.vo.LoginUserVO;
 import com.oneself.utils.BeanCopyUtils;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

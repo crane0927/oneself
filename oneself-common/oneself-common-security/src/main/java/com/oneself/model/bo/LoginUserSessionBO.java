@@ -24,24 +24,38 @@ public class LoginUserSessionBO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 用户ID */
+    /**
+     * 用户ID
+     */
     private String userId;
 
-    /** 用户名 */
+    /**
+     * 用户名
+     */
     private String username;
 
-    /** 登录IP */
+    /**
+     * 登录IP
+     */
     private String ip;
 
-    /** 设备类型 */
+    /**
+     * 设备类型
+     */
     private String device;
 
-    /** 浏览器类型 */
+    /**
+     * 浏览器类型
+     */
     private String browser;
 
-    /** sessionId，短唯一ID，作为Redis key */
+    /**
+     * sessionId，短唯一ID，作为Redis key
+     */
     private String sessionId;
 
-    /** 登录时间 */
+    /**
+     * 登录时间
+     */
     private String loginTime;
 }
