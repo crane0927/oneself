@@ -44,9 +44,6 @@ public class LoginUserSessionBO implements Serializable {
     @Schema(description = "会话 ID，短唯 一ID，作为 Redis key")
     private String sessionId;
 
-    @Schema(description = "登录时间")
-    private String loginTime;
-
-    @Schema(description = "过期时间")
-    private String expireTime;
+    @Schema(description = "登录时间，毫秒时间戳")
+    private Long loginTime;
 }

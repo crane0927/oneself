@@ -5,8 +5,7 @@ import com.oneself.model.bo.LoginUserBO;
 import com.oneself.model.bo.LoginUserSessionBO;
 import com.oneself.model.enums.RedisKeyPrefixEnum;
 import com.oneself.utils.JacksonUtils;
-import com.oneself.utils.JwtUtils;
-import io.jsonwebtoken.Claims;
+import com.oneself.utils.SecurityUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,51 +36,31 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
     private final RedisTemplate<String, String> redisTemplate;
 
+    private final SecurityUtils securityUtils;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        String token = request.getHeader("Authorization");
-
-        if (StringUtils.isBlank(token)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        if (token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        }
+        String token = securityUtils.resolveToken();
 
         if (StringUtils.isNotBlank(token)) {
             try {
-                // 1. 解析 JWT
-                Claims claims = JwtUtils.parseJWT(token);
-                String subject = claims.getSubject();
-                LoginUserSessionBO sessionBO = JacksonUtils.fromJson(subject, LoginUserSessionBO.class);
+                // 使用 SecurityUtils 解析 token 并校验 Redis（含滑动+绝对过期）
+                LoginUserSessionBO sessionBO = securityUtils.parseAndValidateToken(token);
 
-                String sessionId = sessionBO.getSessionId();
-                String userId = sessionBO.getUserId();
+                if (sessionBO != null) {
+                    // 从 Redis 中获取完整用户信息，设置 Spring Security 上下文
+                    String redisKey = RedisKeyPrefixEnum.LOGIN_SESSION.getPrefix() + sessionBO.getSessionId();
+                    String sessionJson = redisTemplate.opsForValue().get(redisKey);
 
-                // 2. 校验 Redis String 会话
-                String redisKey = RedisKeyPrefixEnum.LOGIN_SESSION.getPrefix() + sessionId;
-                String sessionJson = redisTemplate.opsForValue().get(redisKey);
-
-                // 3. 清理用户 SortedSet 中过期 sessionId
-                String userKey = RedisKeyPrefixEnum.LOGIN_USER.getPrefix() + userId;
-                redisTemplate.opsForZSet().removeRangeByScore(userKey, 0, System.currentTimeMillis());
-
-                // 4. 如果当前 session 已过期，顺手删除 SortedSet 中的 sessionId
-                if (StringUtils.isBlank(sessionJson)) {
-                    redisTemplate.opsForZSet().remove(userKey, sessionId);
-                    throw new OneselfException("登录已过期或 sessionId 无效");
+                    if (StringUtils.isNotBlank(sessionJson)) {
+                        LoginUserBO loginUser = JacksonUtils.fromJson(sessionJson, LoginUserBO.class);
+                        UsernamePasswordAuthenticationToken authentication =
+                                new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
                 }
-
-                // 5. 反序列化 Redis 中的用户信息，设置 Spring Security 上下文
-                LoginUserBO loginUser = JacksonUtils.fromJson(sessionJson, LoginUserBO.class);
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-
             } catch (Exception e) {
                 log.error("Token 鉴权失败", e);
                 throw new OneselfException("token 无效或解析失败", e);
