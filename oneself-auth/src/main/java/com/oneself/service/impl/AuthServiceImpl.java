@@ -88,17 +88,20 @@ public class AuthServiceImpl implements AuthService {
         // 6. 生成 JWT token
         String token = JwtUtils.createJWT(subjectJson);
 
-        // 7. 存 Redis 会话
+        // 7. 存 Redis 会话 (String + TTL)
         String redisKey = buildLoginKey(sessionId);
-        redisTemplate.opsForValue().set(redisKey, JacksonUtils.toJsonString(bo));
-        redisTemplate.expire(redisKey, 1, TimeUnit.HOURS);
+        long ttlSeconds = 3600; // 1小时
+        redisTemplate.opsForValue().set(redisKey, JacksonUtils.toJsonString(bo), ttlSeconds, TimeUnit.SECONDS);
 
-        // 8. 用户维度存储 sessionId（支持多设备）
+        // 8. 用户维度存储 sessionId（SortedSet + expireAt）
         String userKey = buildUserSessionsKey(userId);
-        redisTemplate.opsForSet().add(userKey, sessionId);
+        long expireAt = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(ttlSeconds);
+        redisTemplate.opsForZSet().add(userKey, sessionId, expireAt);
+
+        // 9. 可选：清理过期 sessionId
+        redisTemplate.opsForZSet().removeRangeByScore(userKey, 0, System.currentTimeMillis());
 
         log.info("用户 {} 登录成功，sessionId={}", username, sessionId);
-
         return token;
     }
 
@@ -125,8 +128,9 @@ public class AuthServiceImpl implements AuthService {
             // 删除 Redis 会话
             redisTemplate.delete(buildLoginKey(sessionId));
 
-            // 删除用户维度的 sessionId
-            redisTemplate.opsForSet().remove(buildUserSessionsKey(userId), sessionId);
+            // 删除 SortedSet 中的 sessionId
+            String userKey = buildUserSessionsKey(userId);
+            redisTemplate.opsForZSet().remove(userKey, sessionId);
 
             // 清理 SecurityContext
             SecurityContextHolder.clearContext();

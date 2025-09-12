@@ -51,15 +51,27 @@ public class SecurityUtils {
             String subject = claims.getSubject();
             LoginUserSessionBO sessionBO = JacksonUtils.fromJson(subject, LoginUserSessionBO.class);
 
-            String redisKey = RedisKeyPrefixEnum.LOGIN_SESSION.getPrefix() + sessionBO.getSessionId();
+            String sessionId = sessionBO.getSessionId();
+            String userId = sessionBO.getUserId();
+            String redisKey = RedisKeyPrefixEnum.LOGIN_SESSION.getPrefix() + sessionId;
+            String userKey = RedisKeyPrefixEnum.LOGIN_USER.getPrefix() + userId;
 
+            // 1. 清理过期 sessionId
+            redisTemplate.opsForZSet().removeRangeByScore(userKey, 0, System.currentTimeMillis());
+
+            // 2. 检查当前 session 是否有效
             if (Boolean.TRUE.equals(redisTemplate.hasKey(redisKey))) {
                 USER_HOLDER.set(sessionBO); // 保存到 ThreadLocal
                 return sessionBO;
+            } else {
+                // 顺手删除 SortedSet 中的 sessionId
+                redisTemplate.opsForZSet().remove(userKey, sessionId);
             }
+
         } catch (Exception ignored) {
             // token 无效或者解析失败
         }
+
         return null;
     }
 
