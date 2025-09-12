@@ -33,7 +33,6 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @ApiLog
-//@RequireLogin
 @RestController
 @RequestMapping("/user")
 public class UserController {

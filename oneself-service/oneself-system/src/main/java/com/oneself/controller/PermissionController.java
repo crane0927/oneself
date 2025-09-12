@@ -34,7 +34,6 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @ApiLog
-@RequireLogin
 @RestController
 @RequestMapping("/permission")
 public class PermissionController {

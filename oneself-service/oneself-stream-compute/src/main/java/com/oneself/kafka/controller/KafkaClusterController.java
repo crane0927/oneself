@@ -1,7 +1,6 @@
 package com.oneself.kafka.controller;
 
 import com.oneself.annotation.ApiLog;
-import com.oneself.annotation.RequireLogin;
 import com.oneself.kafka.model.dto.KafkaClusterDTO;
 import com.oneself.kafka.model.dto.PageKafkaClusterDTO;
 import com.oneself.kafka.model.vo.KafkaClusterVO;
@@ -29,7 +28,6 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Kafka 集群")
 @Slf4j
 @RequiredArgsConstructor
-@RequireLogin
 @ApiLog
 @RestController
 @RequestMapping("/kafka/cluster")

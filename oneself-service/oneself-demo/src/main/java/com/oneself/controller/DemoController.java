@@ -3,7 +3,6 @@ package com.oneself.controller;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.InfoResponse;
 import com.oneself.annotation.ApiLog;
-import com.oneself.annotation.RequireLogin;
 import com.oneself.model.dto.SensitiveDTO;
 import com.oneself.model.vo.DemoVO;
 import com.oneself.model.vo.ResponseVO;
@@ -37,7 +36,6 @@ import java.util.Map;
 @Tag(name = "接口样例")
 @Slf4j
 @RequiredArgsConstructor
-@RequireLogin
 @ApiLog
 @RestController
 @RefreshScope

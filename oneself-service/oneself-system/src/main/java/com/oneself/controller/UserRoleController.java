@@ -28,7 +28,6 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @ApiLog
-@RequireLogin
 @RestController
 @RequestMapping("/userRole")
 public class UserRoleController {

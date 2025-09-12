@@ -1,7 +1,6 @@
 package com.oneself.script.controller;
 
 import com.oneself.annotation.ApiLog;
-import com.oneself.annotation.RequireLogin;
 import com.oneself.model.dto.PageDTO;
 import com.oneself.model.vo.PageVO;
 import com.oneself.model.vo.ResponseVO;
@@ -33,7 +32,6 @@ import java.util.List;
 @Tag(name = "脚本管理")
 @Slf4j
 @RequiredArgsConstructor
-@RequireLogin
 @ApiLog
 @RestController
 @RefreshScope
