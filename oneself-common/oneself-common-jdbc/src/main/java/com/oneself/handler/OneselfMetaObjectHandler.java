@@ -1,6 +1,8 @@
 package com.oneself.handler;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.oneself.utils.SecurityUtils;
+import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +17,10 @@ import java.time.LocalDateTime;
  * version 1.0
  */
 @Component
+@RequiredArgsConstructor
 public class OneselfMetaObjectHandler implements MetaObjectHandler {
+
+    private final SecurityUtils securityUtils;
 
     /**
      * 在插入实体时，自动填充 `createTime` 和 `updateTime` 字段为当前时间戳。
@@ -24,6 +29,9 @@ public class OneselfMetaObjectHandler implements MetaObjectHandler {
      */
     @Override
     public void insertFill(MetaObject metaObject) {
+        // TODO 根据实际情况修改创建用户和更新用户的获取方式
+        this.setFieldValByName("createBy", securityUtils.getCurrentUsername(), metaObject);
+        this.setFieldValByName("updateBy", securityUtils.getCurrentUsername(), metaObject);
         this.setFieldValByName("createTime", LocalDateTime.now(), metaObject);
         this.setFieldValByName("updateTime", LocalDateTime.now(), metaObject);
     }
@@ -35,6 +43,8 @@ public class OneselfMetaObjectHandler implements MetaObjectHandler {
      */
     @Override
     public void updateFill(MetaObject metaObject) {
+        // TODO 根据实际情况修改创建用户和更新用户的获取方式
+        this.setFieldValByName("updateBy", securityUtils.getCurrentUsername(), metaObject);
         this.setFieldValByName("updateTime", LocalDateTime.now(), metaObject);
     }
 }
