@@ -1,15 +1,14 @@
 package com.oneself.service.impl;
 
+import com.oneself.config.RsaKeyConfig;
 import com.oneself.exception.OneselfException;
 import com.oneself.model.bo.LoginUserBO;
 import com.oneself.model.bo.LoginUserSessionBO;
 import com.oneself.model.dto.LoginDTO;
 import com.oneself.model.enums.RedisKeyPrefixEnum;
 import com.oneself.service.AuthService;
-import com.oneself.utils.AssertUtils;
 import com.oneself.utils.JacksonUtils;
 import com.oneself.utils.JwtUtils;
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,39 +39,41 @@ public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final RedisTemplate<String, String> redisTemplate;
+    private final RsaKeyConfig rsaKeyConfig;
 
-    /**
-     * 用户登录
-     *
-     * @param dto     登录信息（用户名+密码）
-     * @param request HttpServletRequest，用于获取IP和User-Agent
-     * @return JWT token
-     */
     @Override
     public String login(LoginDTO dto, HttpServletRequest request) {
-        // 验证用户名密码
+        // 1. RSA 私钥解密
+        String password;
+        try {
+            password = rsaKeyConfig.decrypt(dto.getPassword());
+        } catch (Exception e) {
+            log.error("用户 {} 密码解密失败", dto.getUsername(), e);
+            throw new RuntimeException("密码解密失败");
+        }
+
+        // 2. Spring Security 验证用户名密码
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword());
+                new UsernamePasswordAuthenticationToken(dto.getUsername(), password);
         Authentication authenticate = authenticationManager.authenticate(authenticationToken);
         if (Objects.isNull(authenticate)) {
             throw new RuntimeException("用户名或密码错误");
         }
 
-        // 获取登录用户信息
         LoginUserBO bo = (LoginUserBO) authenticate.getPrincipal();
         String userId = bo.getId();
         String username = bo.getUsername();
 
-        // 收集客户端信息
-        String ip = request.getRemoteAddr();
+        // 3. 收集客户端信息
+        String ip = getClientIp(request);
         String userAgent = request.getHeader("User-Agent");
         String device = parseDevice(userAgent);
         String browser = parseBrowser(userAgent);
 
-        // 生成短 sessionId（Redis key）
+        // 4. 生成 sessionId
         String sessionId = JwtUtils.getUUID().substring(0, 8);
 
-        // 封装 JWT subject（JSON 格式）
+        // 5. 构建 JWT subject
         LoginUserSessionBO loginUserSessionBO = LoginUserSessionBO.builder()
                 .userId(userId)
                 .username(username)
@@ -84,16 +85,16 @@ public class AuthServiceImpl implements AuthService {
                 .build();
         String subjectJson = JacksonUtils.toJsonString(loginUserSessionBO);
 
-        // 生成 JWT token
+        // 6. 生成 JWT token
         String token = JwtUtils.createJWT(subjectJson);
 
-        // 存 Redis 会话
-        String redisKey = RedisKeyPrefixEnum.SYSTEM_NAME.getPrefix() + RedisKeyPrefixEnum.LOGIN_SESSION.getPrefix() + sessionId;
+        // 7. 存 Redis 会话
+        String redisKey = buildLoginKey(sessionId);
         redisTemplate.opsForValue().set(redisKey, JacksonUtils.toJsonString(bo));
         redisTemplate.expire(redisKey, 1, TimeUnit.HOURS);
 
-        // 用户维度存储 sessionId（支持多设备）
-        String userKey = RedisKeyPrefixEnum.SYSTEM_NAME.getPrefix() + RedisKeyPrefixEnum.LOGIN_USER.getPrefix() + userId;
+        // 8. 用户维度存储 sessionId（支持多设备）
+        String userKey = buildUserSessionsKey(userId);
         redisTemplate.opsForSet().add(userKey, sessionId);
 
         log.info("用户 {} 登录成功，sessionId={}", username, sessionId);
@@ -103,38 +104,59 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Boolean logout(HttpServletRequest request) {
-        // 1. 获取请求头中的 token
+        // 获取 token
         String token = request.getHeader("Authorization");
-        AssertUtils.isTrue(StringUtils.isBlank(token), "未找到 token");
+        if (StringUtils.isBlank(token)) {
+            throw new OneselfException("未找到 token");
+        }
         if (token.startsWith("Bearer ")) {
             token = token.substring(7);
         }
+
         try {
-            // 2. 解析 JWT
-            Claims claims = JwtUtils.parseJWT(token);
+            // 解析 JWT
+            var claims = JwtUtils.parseJWT(token);
             String subject = claims.getSubject();
             LoginUserSessionBO bo = JacksonUtils.fromJson(subject, LoginUserSessionBO.class);
 
             String sessionId = bo.getSessionId();
             String userId = bo.getUserId();
 
-            // 3. 删除 Redis 中的会话
-            String redisKey = RedisKeyPrefixEnum.SYSTEM_NAME.getPrefix() + RedisKeyPrefixEnum.LOGIN_SESSION.getPrefix() + sessionId;
-            redisTemplate.delete(redisKey);
+            // 删除 Redis 会话
+            redisTemplate.delete(buildLoginKey(sessionId));
 
-            // 4. 删除用户维度的 sessionId
-            String userKey = RedisKeyPrefixEnum.SYSTEM_NAME.getPrefix() + RedisKeyPrefixEnum.LOGIN_USER.getPrefix() + userId;
-            redisTemplate.opsForSet().remove(userKey, sessionId);
+            // 删除用户维度的 sessionId
+            redisTemplate.opsForSet().remove(buildUserSessionsKey(userId), sessionId);
 
-            // 5. 清理 SecurityContext
+            // 清理 SecurityContext
             SecurityContextHolder.clearContext();
 
             log.info("用户 {} 登出成功，sessionId={}", bo.getUsername(), sessionId);
             return true;
         } catch (Exception e) {
-            log.error("登出失败，原因：{}", e.getMessage(), e);
+            log.error("登出失败", e);
             throw new OneselfException("登出失败，请重试");
         }
+    }
+
+    // ------------------------ 工具方法 ------------------------
+
+    private String buildLoginKey(String sessionId) {
+        return RedisKeyPrefixEnum.SYSTEM_NAME.getPrefix()
+                + RedisKeyPrefixEnum.LOGIN_SESSION.getPrefix() + sessionId;
+    }
+
+    private String buildUserSessionsKey(String userId) {
+        return RedisKeyPrefixEnum.SYSTEM_NAME.getPrefix()
+                + RedisKeyPrefixEnum.LOGIN_USER.getPrefix() + userId;
+    }
+
+    private String getClientIp(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.isEmpty()) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
     }
 
     /**

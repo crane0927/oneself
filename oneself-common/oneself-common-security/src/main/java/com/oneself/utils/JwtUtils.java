@@ -24,6 +24,11 @@ import java.util.UUID;
  */
 @Slf4j
 public class JwtUtils {
+
+    private JwtUtils() {
+        throw new AssertionError("此工具类不允许实例化");
+    }
+
     /**
      * 默认有效期：1小时（60*60*1000毫秒）
      */

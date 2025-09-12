@@ -32,7 +32,6 @@ public class AuthController {
     @Operation(summary = "登录")
     @PostMapping("/login")
     public ResponseVO<String> login(@RequestBody LoginDTO dto, HttpServletRequest request) {
-
         return ResponseVO.success(authService.login(dto, request));
     }
 
