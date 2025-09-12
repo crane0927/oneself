@@ -24,15 +24,26 @@ public class SecurityUtils {
     private final HttpServletRequest request;
     private final RedisTemplate<String, String> redisTemplate;
 
-    private static final String USER = "system";
+    private static final ThreadLocal<LoginUserSessionBO> USER_HOLDER = new ThreadLocal<>();
+    private static final String DEFAULT_USER = "system";
 
     /**
-     * 获取当前登录用户名
+     * 从请求头获取 token 并解析
      */
-    public String getCurrentUsername() {
+    public String resolveToken() {
         String token = request.getHeader("Authorization");
         if (StringUtils.isBlank(token)) {
-            return USER;
+            return null;
+        }
+        return token.startsWith("Bearer ") ? token.substring(7) : token;
+    }
+
+    /**
+     * 解析 token 并校验 Redis session
+     */
+    public LoginUserSessionBO parseAndValidateToken(String token) {
+        if (StringUtils.isBlank(token)) {
+            return null;
         }
 
         try {
@@ -40,16 +51,39 @@ public class SecurityUtils {
             String subject = claims.getSubject();
             LoginUserSessionBO sessionBO = JacksonUtils.fromJson(subject, LoginUserSessionBO.class);
 
-            // 校验 redis session 是否存在
-            String redisKey =
-                    RedisKeyPrefixEnum.SYSTEM_NAME.getPrefix() + RedisKeyPrefixEnum.LOGIN_SESSION.getPrefix() + sessionBO.getSessionId();
-            if (Boolean.FALSE.equals(redisTemplate.hasKey(redisKey))) {
-                return USER;
-            }
+            String redisKey = RedisKeyPrefixEnum.SYSTEM_NAME.getPrefix()
+                    + RedisKeyPrefixEnum.LOGIN_SESSION.getPrefix()
+                    + sessionBO.getSessionId();
 
-            return sessionBO.getUsername();
-        } catch (Exception e) {
-            return USER;
+            if (Boolean.TRUE.equals(redisTemplate.hasKey(redisKey))) {
+                USER_HOLDER.set(sessionBO); // 保存到 ThreadLocal
+                return sessionBO;
+            }
+        } catch (Exception ignored) {
+            // token 无效或者解析失败
         }
+        return null;
+    }
+
+    /**
+     * 获取当前登录用户
+     */
+    public LoginUserSessionBO getCurrentUser() {
+        return USER_HOLDER.get();
+    }
+
+    /**
+     * 获取当前登录用户名，失败返回默认用户
+     */
+    public String getCurrentUsername() {
+        LoginUserSessionBO user = getCurrentUser();
+        return user != null ? user.getUsername() : DEFAULT_USER;
+    }
+
+    /**
+     * 清理 ThreadLocal
+     */
+    public void clear() {
+        USER_HOLDER.remove();
     }
 }

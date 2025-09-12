@@ -3,19 +3,12 @@ package com.oneself.aspect;
 import com.oneself.annotation.RequireLogin;
 import com.oneself.exception.OneselfException;
 import com.oneself.model.bo.LoginUserSessionBO;
-import com.oneself.model.enums.RedisKeyPrefixEnum;
-import com.oneself.utils.JacksonUtils;
-import com.oneself.utils.JwtUtils;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import jakarta.servlet.http.HttpServletRequest;
+import com.oneself.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 
@@ -33,72 +26,28 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class RequireLoginAspect {
 
-    private final HttpServletRequest request;
-    private final RedisTemplate<String, String> redisTemplate;
+    private final SecurityUtils securityUtils;
 
-    /**
-     * 拦截所有标注了 @RequireLogin 的方法
-     */
     @Around("@annotation(requireLogin) || @within(requireLogin)")
     public Object checkLogin(ProceedingJoinPoint joinPoint, RequireLogin requireLogin) throws Throwable {
-        String token = request.getHeader("Authorization");
-
-        if (StringUtils.isBlank(token)) {
-            throw new OneselfException("缺少认证 token");
-        }
-
-        if (token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        }
-
         try {
-            Claims claims = JwtUtils.parseJWT(token);
-            String subject = claims.getSubject();
-            LoginUserSessionBO sessionBO = JacksonUtils.fromJson(subject, LoginUserSessionBO.class);
+            // 从请求头获取 token
+            String token = securityUtils.resolveToken();
+            LoginUserSessionBO user = securityUtils.parseAndValidateToken(token);
 
-            String sessionId = sessionBO.getSessionId();
-            String redisKey =
-                    RedisKeyPrefixEnum.SYSTEM_NAME.getPrefix() + RedisKeyPrefixEnum.LOGIN_SESSION.getPrefix() + sessionId;
-
-            String redisVal = redisTemplate.opsForValue().get(redisKey);
-            if (StringUtils.isBlank(redisVal)) {
-                throw new OneselfException("登录已过期，请重新登录");
-            }
-
-            // 保存用户信息到 ThreadLocal，方便业务方法里获取
-            LoginUserContext.set(sessionBO);
-
-            log.debug("用户 [{}] 已登录，sessionId={}", sessionBO.getUsername(), sessionId);
-
-        } catch (JwtException | IllegalArgumentException e) {
-            if (requireLogin.strict()) {
+            if (user == null && requireLogin.strict()) {
                 throw new OneselfException("token 无效或用户未登录");
-            } else {
-                log.warn("非严格模式下放行：{}", e.getMessage());
             }
-        }
 
-        try {
+            if (user != null) {
+                log.debug("用户 [{}] 已登录，sessionId={}", user.getUsername(), user.getSessionId());
+            } else {
+                log.warn("非严格模式下放行：未登录用户访问");
+            }
+
             return joinPoint.proceed();
         } finally {
-            // 防止内存泄漏
-            LoginUserContext.clear();
-        }
-    }
-
-    public static class LoginUserContext {
-        private static final ThreadLocal<LoginUserSessionBO> USER_HOLDER = new ThreadLocal<>();
-
-        public static void set(LoginUserSessionBO user) {
-            USER_HOLDER.set(user);
-        }
-
-        public static LoginUserSessionBO get() {
-            return USER_HOLDER.get();
-        }
-
-        public static void clear() {
-            USER_HOLDER.remove();
+            securityUtils.clear(); // 防止内存泄漏
         }
     }
 }
