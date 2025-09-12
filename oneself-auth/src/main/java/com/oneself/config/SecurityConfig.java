@@ -36,6 +36,8 @@ public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
     private final JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
+    private static final ResponseVO<String> UNAUTHORIZED = ResponseVO.failure("未认证，请登录", HttpStatus.UNAUTHORIZED);
+    private static final ResponseVO<String> FORBIDDEN = ResponseVO.failure("无权限访问", HttpStatus.FORBIDDEN);
 
     /**
      * 密码编码器
@@ -50,10 +52,6 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-        ResponseVO<String> unauthorized = ResponseVO.failure("未认证，请登录", HttpStatus.UNAUTHORIZED);
-        ResponseVO<String> forbidden = ResponseVO.failure("无权限访问", HttpStatus.FORBIDDEN);
-
         http
                 // 关闭 CSRF（无状态 JWT）
                 .csrf(AbstractHttpConfigurer::disable)
@@ -74,12 +72,12 @@ public class SecurityConfig {
                         .authenticationEntryPoint((req, res, e) -> {
                             res.setContentType("application/json;charset=UTF-8");
                             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                            res.getWriter().write(JacksonUtils.toJsonString(unauthorized));
+                            res.getWriter().write(JacksonUtils.toJsonString(UNAUTHORIZED));
                         })
                         .accessDeniedHandler((req, res, e) -> {
                             res.setContentType("application/json;charset=UTF-8");
                             res.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                            res.getWriter().write(JacksonUtils.toJsonString(forbidden));
+                            res.getWriter().write(JacksonUtils.toJsonString(FORBIDDEN));
                         })
                 )
 
