@@ -9,6 +9,9 @@ import com.oneself.model.enums.RedisKeyPrefixEnum;
 import com.oneself.service.AuthService;
 import com.oneself.utils.JacksonUtils;
 import com.oneself.utils.JwtUtils;
+import eu.bitwalker.useragentutils.Browser;
+import eu.bitwalker.useragentutils.OperatingSystem;
+import eu.bitwalker.useragentutils.UserAgent;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +42,8 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final RedisTemplate<String, String> redisTemplate;
     private final RsaKeyConfig rsaKeyConfig;
+    private final HttpServletRequest request;
+
 
     @Override
     public String login(LoginDTO dto, HttpServletRequest request) {
@@ -65,9 +70,8 @@ public class AuthServiceImpl implements AuthService {
 
         // 3. 收集客户端信息
         String ip = getClientIp(request);
-        String userAgent = request.getHeader("User-Agent");
-        String device = parseDevice(userAgent);
-        String browser = parseBrowser(userAgent);
+        String device = parseDevice();
+        String browser = parseBrowser();
 
         // 4. 生成 sessionId
         String sessionId = JwtUtils.getUUID().substring(0, 8);
@@ -161,32 +165,36 @@ public class AuthServiceImpl implements AuthService {
     }
 
     /**
+     * 获取当前请求的 User-Agent 对象
+     */
+    private UserAgent getUserAgent() {
+        String uaString = request.getHeader("User-Agent");
+        return uaString != null ? UserAgent.parseUserAgentString(uaString) : null;
+    }
+
+    /**
      * 解析设备类型
      *
-     * @param ua User-Agent 字符串
-     * @return 设备类型（Windows、Mac、iPhone、Android、Other）
+     * @return 设备类型（Desktop、Mobile、Tablet、Unknown）
      */
-    private String parseDevice(String ua) {
-        if (ua == null) return "Unknown";
-        if (ua.contains("Windows")) return "Windows";
-        if (ua.contains("Mac")) return "Mac";
-        if (ua.contains("iPhone")) return "iPhone";
-        if (ua.contains("Android")) return "Android";
-        return "Other";
+    public String parseDevice() {
+        UserAgent userAgent = getUserAgent();
+        if (userAgent == null) return "Unknown";
+
+        OperatingSystem os = userAgent.getOperatingSystem();
+        return os != null ? os.getDeviceType().getName() : "Unknown";
     }
 
     /**
      * 解析浏览器类型
      *
-     * @param ua User-Agent 字符串
      * @return 浏览器类型（Chrome、Firefox、Safari、Edge、Other）
      */
-    private String parseBrowser(String ua) {
-        if (ua == null) return "Unknown";
-        if (ua.contains("Chrome")) return "Chrome";
-        if (ua.contains("Firefox")) return "Firefox";
-        if (ua.contains("Safari") && !ua.contains("Chrome")) return "Safari";
-        if (ua.contains("Edge")) return "Edge";
-        return "Other";
+    public String parseBrowser() {
+        UserAgent userAgent = getUserAgent();
+        if (userAgent == null) return "Unknown";
+
+        Browser browser = userAgent.getBrowser();
+        return browser != null ? browser.getName() : "Other";
     }
 }
