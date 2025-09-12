@@ -51,9 +51,7 @@ public class SecurityUtils {
             String subject = claims.getSubject();
             LoginUserSessionBO sessionBO = JacksonUtils.fromJson(subject, LoginUserSessionBO.class);
 
-            String redisKey = RedisKeyPrefixEnum.SYSTEM_NAME.getPrefix()
-                    + RedisKeyPrefixEnum.LOGIN_SESSION.getPrefix()
-                    + sessionBO.getSessionId();
+            String redisKey = RedisKeyPrefixEnum.LOGIN_SESSION.getPrefix() + sessionBO.getSessionId();
 
             if (Boolean.TRUE.equals(redisTemplate.hasKey(redisKey))) {
                 USER_HOLDER.set(sessionBO); // 保存到 ThreadLocal

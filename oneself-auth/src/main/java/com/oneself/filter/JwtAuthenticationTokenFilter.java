@@ -63,8 +63,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 String userId = sessionBO.getUserId();
 
                 // 2. 校验 Redis 是否有此 session
-                String redisKey =
-                        RedisKeyPrefixEnum.SYSTEM_NAME.getPrefix() + RedisKeyPrefixEnum.LOGIN_SESSION.getPrefix() + sessionId;
+                String redisKey = RedisKeyPrefixEnum.LOGIN_SESSION.getPrefix() + sessionId;
                 String sessionJson = redisTemplate.opsForValue().get(redisKey);
 
                 if (StringUtils.isBlank(sessionJson)) {

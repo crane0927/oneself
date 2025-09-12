@@ -142,13 +142,11 @@ public class AuthServiceImpl implements AuthService {
     // ------------------------ 工具方法 ------------------------
 
     private String buildLoginKey(String sessionId) {
-        return RedisKeyPrefixEnum.SYSTEM_NAME.getPrefix()
-                + RedisKeyPrefixEnum.LOGIN_SESSION.getPrefix() + sessionId;
+        return RedisKeyPrefixEnum.LOGIN_SESSION.getPrefix() + sessionId;
     }
 
     private String buildUserSessionsKey(String userId) {
-        return RedisKeyPrefixEnum.SYSTEM_NAME.getPrefix()
-                + RedisKeyPrefixEnum.LOGIN_USER.getPrefix() + userId;
+        return RedisKeyPrefixEnum.LOGIN_USER.getPrefix() + userId;
     }
 
     private String getClientIp(HttpServletRequest request) {
