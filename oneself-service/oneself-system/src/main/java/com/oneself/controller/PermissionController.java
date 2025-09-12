@@ -1,7 +1,6 @@
 package com.oneself.controller;
 
 import com.oneself.annotation.ApiLog;
-import com.oneself.annotation.RequireLogin;
 import com.oneself.model.dto.PageDTO;
 import com.oneself.model.dto.PermissionDTO;
 import com.oneself.model.dto.PermissionQueryDTO;

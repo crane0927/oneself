@@ -1,7 +1,6 @@
 package com.oneself.controller;
 
 import com.oneself.annotation.ApiLog;
-import com.oneself.annotation.RequireLogin;
 import com.oneself.model.vo.PermissionVO;
 import com.oneself.model.vo.ResponseVO;
 import com.oneself.service.RolePermissionService;
