@@ -29,7 +29,6 @@ public class OneselfMetaObjectHandler implements MetaObjectHandler {
      */
     @Override
     public void insertFill(MetaObject metaObject) {
-        // TODO 根据实际情况修改创建用户和更新用户的获取方式
         this.setFieldValByName("createBy", securityUtils.getCurrentUsername(), metaObject);
         this.setFieldValByName("updateBy", securityUtils.getCurrentUsername(), metaObject);
         this.setFieldValByName("createTime", LocalDateTime.now(), metaObject);
@@ -43,7 +42,6 @@ public class OneselfMetaObjectHandler implements MetaObjectHandler {
      */
     @Override
     public void updateFill(MetaObject metaObject) {
-        // TODO 根据实际情况修改创建用户和更新用户的获取方式
         this.setFieldValByName("updateBy", securityUtils.getCurrentUsername(), metaObject);
         this.setFieldValByName("updateTime", LocalDateTime.now(), metaObject);
     }
