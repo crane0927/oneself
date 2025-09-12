@@ -7,6 +7,7 @@ import com.oneself.model.enums.RedisKeyPrefixEnum;
 import com.oneself.utils.JacksonUtils;
 import com.oneself.utils.JwtUtils;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,27 +42,35 @@ public class RequireLoginAspect {
     @Around("@annotation(requireLogin) || @within(requireLogin)")
     public Object checkLogin(ProceedingJoinPoint joinPoint, RequireLogin requireLogin) throws Throwable {
         String token = request.getHeader("Authorization");
+
         if (StringUtils.isBlank(token)) {
             throw new OneselfException("缺少认证 token");
         }
 
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
         try {
-            // 解析 token
             Claims claims = JwtUtils.parseJWT(token);
             String subject = claims.getSubject();
             LoginUserSessionBO sessionBO = JacksonUtils.fromJson(subject, LoginUserSessionBO.class);
 
             String sessionId = sessionBO.getSessionId();
-            String redisKey = RedisKeyPrefixEnum.LOGIN_SESSION.getPrefix() + sessionId;
+            String redisKey =
+                    RedisKeyPrefixEnum.SYSTEM_NAME.getPrefix() + RedisKeyPrefixEnum.LOGIN_SESSION.getPrefix() + sessionId;
 
             String redisVal = redisTemplate.opsForValue().get(redisKey);
-
             if (StringUtils.isBlank(redisVal)) {
                 throw new OneselfException("登录已过期，请重新登录");
             }
 
+            // 保存用户信息到 ThreadLocal，方便业务方法里获取
+            LoginUserContext.set(sessionBO);
+
             log.debug("用户 [{}] 已登录，sessionId={}", sessionBO.getUsername(), sessionId);
-        } catch (Exception e) {
+
+        } catch (JwtException | IllegalArgumentException e) {
             if (requireLogin.strict()) {
                 throw new OneselfException("token 无效或用户未登录");
             } else {
@@ -69,6 +78,27 @@ public class RequireLoginAspect {
             }
         }
 
-        return joinPoint.proceed();
+        try {
+            return joinPoint.proceed();
+        } finally {
+            // 防止内存泄漏
+            LoginUserContext.clear();
+        }
+    }
+
+    public static class LoginUserContext {
+        private static final ThreadLocal<LoginUserSessionBO> USER_HOLDER = new ThreadLocal<>();
+
+        public static void set(LoginUserSessionBO user) {
+            USER_HOLDER.set(user);
+        }
+
+        public static LoginUserSessionBO get() {
+            return USER_HOLDER.get();
+        }
+
+        public static void clear() {
+            USER_HOLDER.remove();
+        }
     }
 }

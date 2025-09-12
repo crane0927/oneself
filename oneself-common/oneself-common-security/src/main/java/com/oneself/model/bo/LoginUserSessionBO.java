@@ -1,5 +1,6 @@
 package com.oneself.model.bo;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,42 +21,32 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "登录用户会话信息 BO")
 public class LoginUserSessionBO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 用户ID
-     */
+    @Schema(description = "用户 ID")
     private String userId;
 
-    /**
-     * 用户名
-     */
+    @Schema(description = "用户名")
     private String username;
 
-    /**
-     * 登录IP
-     */
+    @Schema(description = "登录 IP")
     private String ip;
 
-    /**
-     * 设备类型
-     */
+    @Schema(description = "登录设备类型")
     private String device;
 
-    /**
-     * 浏览器类型
-     */
+    @Schema(description = "浏览器类型")
     private String browser;
 
-    /**
-     * sessionId，短唯一ID，作为Redis key
-     */
+    @Schema(description = "会话 ID，短唯 一ID，作为 Redis key")
     private String sessionId;
 
-    /**
-     * 登录时间
-     */
+    @Schema(description = "登录时间")
     private String loginTime;
+
+    @Schema(description = "过期时间")
+    private String expireTime;
 }
