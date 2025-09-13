@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.oneself.model.enums.RedisKeyPrefixEnum;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,37 +32,42 @@ import java.util.Random;
 @EnableCaching
 public class CacheConfig {
 
-    private static final Random RANDOM = new Random();
-
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-
-    static {
-        OBJECT_MAPPER.registerModule(new JavaTimeModule());
+    /**
+     * 创建ObjectMapper Bean用于Redis序列化
+     * @return 配置好的ObjectMapper实例
+     */
+    @Bean
+    public ObjectMapper redisObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
         // 禁用时间戳格式（默认会把时间转为毫秒数，禁用后输出 "2025-09-12T10:00:00" 格式）
-        OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        // 可选：忽略未知字段（避免 JSON 中有多余字段时反序列化失败）
-        OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        // 忽略未知字段（避免 JSON 中有多余字段时反序列化失败）
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         // 开启类型信息，但用 PROPERTY 方式
-        OBJECT_MAPPER.activateDefaultTyping(
-                OBJECT_MAPPER.getPolymorphicTypeValidator(),
+        objectMapper.activateDefaultTyping(
+                objectMapper.getPolymorphicTypeValidator(),
                 ObjectMapper.DefaultTyping.NON_FINAL,
                 com.fasterxml.jackson.annotation.JsonTypeInfo.As.PROPERTY
         );
+        return objectMapper;
     }
 
     /**
      * 构建 RedisCacheManager Bean
      *
      * @param redisConnectionFactory Redis 连接工厂（Spring Boot 自动配置）
+     * @param objectMapper           ObjectMapper实例
      * @return RedisCacheManager 管理器
      */
     @Bean
-    public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
+    public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory,
+                                               ObjectMapper objectMapper) {
         // ========== 1. 全局默认配置 ==========
         RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofMinutes(10))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(
-                        new GenericJackson2JsonRedisSerializer(OBJECT_MAPPER)
+                        new GenericJackson2JsonRedisSerializer(objectMapper)
                 ))
                 .computePrefixWith(cacheName -> RedisKeyPrefixEnum.SYSTEM_NAME.getPrefix() + cacheName + ":")
                 .disableCachingNullValues();
@@ -71,15 +77,15 @@ public class CacheConfig {
 
         // 用户缓存：5~10 分钟随机 TTL
         cacheConfigs.put("sysUser",
-                defaultConfig.entryTtl(Duration.ofMinutes(5 + RANDOM.nextInt(6))));
+                defaultConfig.entryTtl(Duration.ofMinutes(generateRandomTtl(5, 10))));
 
         // 部门缓存：30~40 分钟随机 TTL
         cacheConfigs.put("sysDept",
-                defaultConfig.entryTtl(Duration.ofMinutes(30 + RANDOM.nextInt(11))));
+                defaultConfig.entryTtl(Duration.ofMinutes(generateRandomTtl(30, 40))));
 
-        // 系统配置缓存：1~2 小时随机 TTL
+        // 系统配置缓存：60~120 分钟随机 TTL
         cacheConfigs.put("sysConfiguration",
-                defaultConfig.entryTtl(Duration.ofHours(1).plusMinutes(RANDOM.nextInt(60))));
+                defaultConfig.entryTtl(Duration.ofMinutes(generateRandomTtl(60, 120))));
 
         // ========== 3. 构建 RedisCacheManager ==========
         return RedisCacheManager.builder(redisConnectionFactory)
@@ -88,5 +94,16 @@ public class CacheConfig {
                 // 初始化时应用不同 cacheName 的个性化配置
                 .withInitialCacheConfigurations(cacheConfigs)
                 .build();
+    }
+
+    /**
+     * 生成随机TTL值
+     * @param min 最小分钟数
+     * @param max 最大分钟数
+     * @return 随机TTL值
+     */
+    private int generateRandomTtl(int min, int max) {
+        Random random = new Random();
+        return min + random.nextInt(max - min + 1);
     }
 }
