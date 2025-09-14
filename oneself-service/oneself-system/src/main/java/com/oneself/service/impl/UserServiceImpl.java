@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author liuhuan
@@ -131,7 +132,7 @@ public class UserServiceImpl implements UserService {
                 .stream().map(UserRole::getRoleId).toList();
         if (!roleIds.isEmpty()) {
             List<Role> roles = roleMapper.selectList(new LambdaQueryWrapper<Role>().in(Role::getId, roleIds));
-            vo.setRoleCodes(roles.stream().map(Role::getRoleCode).toList());
+            vo.setRoleCodes(roles.stream().map(Role::getRoleCode).collect(Collectors.toSet()));
 
             List<String> permissionIds = rolePermissionMapper.selectList(new LambdaQueryWrapper<RolePermission>()
                             .in(RolePermission::getRoleId, roleIds))
@@ -140,8 +141,7 @@ public class UserServiceImpl implements UserService {
             if (!permissionIds.isEmpty()) {
                 List<Permission> permissions = permissionMapper.selectList(new LambdaQueryWrapper<Permission>()
                         .in(Permission::getId, permissionIds));
-                List<String> permissionCodes = permissions.stream().map(Permission::getPermCode).toList();
-                vo.setPermissionCodes(permissionCodes);
+                vo.setPermissionCodes(permissions.stream().map(Permission::getPermCode).collect(Collectors.toSet()));
             }
         }
 

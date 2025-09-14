@@ -135,7 +135,7 @@ public class SecurityUtils {
 
         if (UserTypeEnum.ADMIN.equals(user.getType())) return; // 管理员直接放行
 
-        Set<String> userRoles = new HashSet<>(Optional.ofNullable(user.getRoleCodes()).orElse(Collections.emptyList()));
+        Set<String> userRoles = Optional.ofNullable(user.getRoleCodes()).orElse(Collections.emptySet());
         Set<String> needRoles = new HashSet<>(Arrays.asList(requiredRoles));
         if (Collections.disjoint(userRoles, needRoles) && strict) {
             throw new OneselfException("角色权限不足");
@@ -152,7 +152,7 @@ public class SecurityUtils {
 
         if (UserTypeEnum.ADMIN.equals(user.getType())) return; // 管理员直接放行
 
-        Set<String> userPerms = new HashSet<>(Optional.ofNullable(user.getPermissionCodes()).orElse(Collections.emptyList()));
+        Set<String> userPerms = Optional.ofNullable(user.getPermissionCodes()).orElse(Collections.emptySet());
         Set<String> needPerms = new HashSet<>(Arrays.asList(requiredPerms));
         if (Collections.disjoint(userPerms, needPerms) && strict) {
             throw new OneselfException("操作权限不足");

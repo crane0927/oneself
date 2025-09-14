@@ -10,8 +10,8 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author liuhuan
@@ -59,8 +59,8 @@ public class UserSessionVO implements Serializable {
     private StatusEnum status;
 
     @Schema(description = "角色 Code 列表")
-    private List<String> roleCodes = new ArrayList<>();
+    private Set<String> roleCodes = new HashSet<>();
 
     @Schema(description = "权限 Code 列表")
-    private List<String> permissionCodes = new ArrayList<>();
+    private Set<String> permissionCodes = new HashSet<>();
 }
