@@ -1,7 +1,10 @@
 package com.oneself.utils;
 
+import com.oneself.exception.OneselfException;
 import com.oneself.model.bo.LoginUserSessionBO;
 import com.oneself.model.enums.RedisKeyPrefixEnum;
+import com.oneself.model.enums.UserTypeEnum;
+import com.oneself.model.vo.LoginUserVO;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +13,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -28,46 +35,22 @@ public class SecurityUtils {
     private final HttpServletRequest request;
     private final RedisTemplate<String, String> redisTemplate;
 
-
     private static final ThreadLocal<LoginUserSessionBO> USER_HOLDER = new ThreadLocal<>();
     private static final String DEFAULT_USER = "system";
 
-    /**
-     * 默认续期时长（1 小时）
-     */
-    private static final long SESSION_TIMEOUT_HOURS = 1;
-    /**
-     * 触发续期的阈值（剩余 < 10 分钟才续期）
-     */
-    private static final long RENEW_THRESHOLD_MINUTES = 10;
-    /**
-     * 最大绝对时长（7 天，必须重新登录）
-     */
-    private static final long ABSOLUTE_EXPIRE_DAYS = 7;
+    private static final long SESSION_TIMEOUT_HOURS = 1; // 滑动过期时长
+    private static final long RENEW_THRESHOLD_MINUTES = 10; // 滑动续期阈值
+    private static final long ABSOLUTE_EXPIRE_DAYS = 7; // 最大绝对过期天数
 
-    /**
-     * 从请求头中解析 JWT token
-     */
+    // ================== JWT & Session ==================
     public String resolveToken() {
         String token = request.getHeader("Authorization");
-        if (StringUtils.isBlank(token)) {
-            return null;
-        }
+        if (StringUtils.isBlank(token)) return null;
         return token.startsWith("Bearer ") ? token.substring(7) : token;
     }
 
-    /**
-     * 解析 JWT token 并校验 Redis 中的会话信息，支持双时效：
-     * <ul>
-     *   <li>1 小时滑动过期</li>
-     *   <li>7 天绝对过期</li>
-     * </ul>
-     */
     public LoginUserSessionBO parseAndValidateToken(String token) {
-        if (StringUtils.isBlank(token)) {
-            return null;
-        }
-
+        if (StringUtils.isBlank(token)) return null;
         try {
             Claims claims = JwtUtils.parseJWT(token);
             String subject = claims.getSubject();
@@ -78,54 +61,41 @@ public class SecurityUtils {
             String redisKey = RedisKeyPrefixEnum.LOGIN_SESSION.getPrefix() + sessionId;
             String userKey = RedisKeyPrefixEnum.LOGIN_USER.getPrefix() + userId;
 
-            // 1. 清理已过期的 sessionId
+            // 清理已过期 session
             redisTemplate.opsForZSet().removeRangeByScore(userKey, 0, System.currentTimeMillis());
 
-            // 2. 校验 Redis 是否存在
             Long expire = redisTemplate.getExpire(redisKey, TimeUnit.MILLISECONDS);
             if (expire > 0) {
-                // 3. 检查绝对过期时间
-                long loginTimeMillis = sessionBO.getLoginTime();
                 long absoluteExpireMillis = TimeUnit.DAYS.toMillis(ABSOLUTE_EXPIRE_DAYS);
-                if (System.currentTimeMillis() - loginTimeMillis > absoluteExpireMillis) {
-                    // 超过绝对时效 -> 强制下线
+                if (System.currentTimeMillis() - sessionBO.getLoginTime() > absoluteExpireMillis) {
                     redisTemplate.delete(redisKey);
                     redisTemplate.opsForZSet().remove(userKey, sessionId);
                     log.warn("用户 [{}] 的 session [{}] 已超过 {} 天，强制过期", userId, sessionId, ABSOLUTE_EXPIRE_DAYS);
                     return null;
                 }
 
-                // 4. 检查是否需要续期（滑动过期）
                 refreshSessionIfNecessary(userId, sessionId, redisKey, userKey);
 
                 USER_HOLDER.set(sessionBO);
                 return sessionBO;
             } else {
-                // session 已过期，清理
                 redisTemplate.opsForZSet().remove(userKey, sessionId);
             }
 
         } catch (Exception e) {
             log.warn("token 解析失败", e);
         }
-
         return null;
     }
 
-    /**
-     * 滑动续期：如果 TTL 小于阈值，则重置 TTL。
-     */
     private void refreshSessionIfNecessary(String userId, String sessionId, String redisKey, String userKey) {
         long ttlMinutes = redisTemplate.getExpire(redisKey, TimeUnit.MINUTES);
-
         if (ttlMinutes > 0 && ttlMinutes < RENEW_THRESHOLD_MINUTES) {
-            // 续期 1 小时
             redisTemplate.expire(redisKey, SESSION_TIMEOUT_HOURS, TimeUnit.HOURS);
             redisTemplate.expire(userKey, SESSION_TIMEOUT_HOURS, TimeUnit.HOURS);
 
             long newExpireAt = System.currentTimeMillis() + TimeUnit.HOURS.toMillis(SESSION_TIMEOUT_HOURS);
             redisTemplate.opsForZSet().add(userKey, sessionId, newExpireAt);
-
             log.debug("用户 [{}] 的 session [{}] 已滑动续期 {} 小时", userId, sessionId, SESSION_TIMEOUT_HOURS);
         }
     }
@@ -141,5 +111,43 @@ public class SecurityUtils {
 
     public void clear() {
         USER_HOLDER.remove();
+    }
+
+    // ================== 登录 / 角色 / 权限校验 ==================
+    public void checkLogin() {
+        LoginUserSessionBO user = getCurrentUser();
+        if (user == null) {
+            throw new OneselfException("用户未登录或 token 无效");
+        }
+    }
+
+    public void checkRole(String... requiredRoles) {
+        checkLogin();
+        LoginUserVO user = loadUserFromRedis(getCurrentUser().getUserId());
+        if (UserTypeEnum.ADMIN.equals(user.getType())) return; // 管理员直接放行
+
+        Set<String> userRoles = new HashSet<>(user.getRoleCodes());
+        Set<String> needRoles = new HashSet<>(Arrays.asList(requiredRoles));
+        if (Collections.disjoint(userRoles, needRoles)) {
+            throw new OneselfException("角色权限不足");
+        }
+    }
+
+    public void checkPermission(String... requiredPerms) {
+        checkLogin();
+        LoginUserVO user = loadUserFromRedis(getCurrentUser().getUserId());
+        if (UserTypeEnum.ADMIN.equals(user.getType())) return; // 管理员直接放行
+
+        Set<String> userPerms = new HashSet<>(user.getPermissionCodes());
+        Set<String> needPerms = new HashSet<>(Arrays.asList(requiredPerms));
+        if (Collections.disjoint(userPerms, needPerms)) {
+            throw new OneselfException("操作权限不足");
+        }
+    }
+
+    private LoginUserVO loadUserFromRedis(String userId) {
+        String userKey = RedisKeyPrefixEnum.LOGIN_USER.getPrefix() + userId;
+        String json = redisTemplate.opsForValue().get(userKey);
+        return JacksonUtils.fromJson(json, LoginUserVO.class);
     }
 }

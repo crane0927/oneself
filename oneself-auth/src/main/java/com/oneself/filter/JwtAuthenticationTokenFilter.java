@@ -63,7 +63,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 }
             } catch (Exception e) {
                 log.error("Token 鉴权失败", e);
-                throw new OneselfException("token 无效或解析失败", e);
+                throw new OneselfException("Token 无效或解析失败", e);
             }
         }
 
