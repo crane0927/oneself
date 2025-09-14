@@ -10,6 +10,7 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,7 +35,7 @@ public class UserSessionVO implements Serializable {
 
     @Sensitive(value = DesensitizedTypeEnum.PASSWORD)
     @Schema(description = "密码")
-    private transient String password;
+    private String password;
 
     @Schema(description = "邮箱")
     private String email;
@@ -58,8 +59,8 @@ public class UserSessionVO implements Serializable {
     private StatusEnum status;
 
     @Schema(description = "角色 Code 列表")
-    private List<String> roleCodes;
+    private List<String> roleCodes = new ArrayList<>();
 
     @Schema(description = "权限 Code 列表")
-    private List<String> permissionCodes;
+    private List<String> permissionCodes = new ArrayList<>();
 }

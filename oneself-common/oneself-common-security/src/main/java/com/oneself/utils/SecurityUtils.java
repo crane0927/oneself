@@ -13,10 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -25,6 +22,10 @@ import java.util.concurrent.TimeUnit;
  * packageName com.oneself.utils
  * className SecurityUtils
  * description
+ * Security 工具类，提供：
+ * - JWT 解析 / 会话管理
+ * - ThreadLocal 缓存当前用户
+ * - 角色 / 权限校验
  * version 1.0
  */
 @Slf4j
@@ -104,6 +105,10 @@ public class SecurityUtils {
         return USER_HOLDER.get();
     }
 
+    public void setCurrentUser(LoginUserSessionBO user) {
+        USER_HOLDER.set(user);
+    }
+
     public String getCurrentUsername() {
         LoginUserSessionBO user = getCurrentUser();
         return user != null ? user.getUsername() : DEFAULT_USER;
@@ -115,39 +120,48 @@ public class SecurityUtils {
 
     // ================== 登录 / 角色 / 权限校验 ==================
     public void checkLogin() {
-        LoginUserSessionBO user = getCurrentUser();
-        if (user == null) {
+        if (getCurrentUser() == null) {
             throw new OneselfException("用户未登录或 token 无效");
         }
     }
 
-    public void checkRole(String... requiredRoles) {
+    public void checkRole(String[] requiredRoles, boolean strict) {
         checkLogin();
-        UserSessionVO user = loadUserFromRedis(getCurrentUser().getUserId());
+        UserSessionVO user = loadUserFromRedis(getCurrentUser().getSessionId());
+        if (user == null) {
+            if (strict) throw new OneselfException("用户信息不存在");
+            return;
+        }
+
         if (UserTypeEnum.ADMIN.equals(user.getType())) return; // 管理员直接放行
 
-        Set<String> userRoles = new HashSet<>(user.getRoleCodes());
+        Set<String> userRoles = new HashSet<>(Optional.ofNullable(user.getRoleCodes()).orElse(Collections.emptyList()));
         Set<String> needRoles = new HashSet<>(Arrays.asList(requiredRoles));
-        if (Collections.disjoint(userRoles, needRoles)) {
+        if (Collections.disjoint(userRoles, needRoles) && strict) {
             throw new OneselfException("角色权限不足");
         }
     }
 
-    public void checkPermission(String... requiredPerms) {
+    public void checkPermission(String[] requiredPerms, boolean strict) {
         checkLogin();
-        UserSessionVO user = loadUserFromRedis(getCurrentUser().getUserId());
+        UserSessionVO user = loadUserFromRedis(getCurrentUser().getSessionId());
+        if (user == null) {
+            if (strict) throw new OneselfException("用户信息不存在");
+            return;
+        }
+
         if (UserTypeEnum.ADMIN.equals(user.getType())) return; // 管理员直接放行
 
-        Set<String> userPerms = new HashSet<>(user.getPermissionCodes());
+        Set<String> userPerms = new HashSet<>(Optional.ofNullable(user.getPermissionCodes()).orElse(Collections.emptyList()));
         Set<String> needPerms = new HashSet<>(Arrays.asList(requiredPerms));
-        if (Collections.disjoint(userPerms, needPerms)) {
+        if (Collections.disjoint(userPerms, needPerms) && strict) {
             throw new OneselfException("操作权限不足");
         }
     }
 
     private UserSessionVO loadUserFromRedis(String userId) {
-        String userKey = RedisKeyPrefixEnum.LOGIN_USER.getPrefix() + userId;
-        String json = redisTemplate.opsForValue().get(userKey);
+        String sessionKey = RedisKeyPrefixEnum.LOGIN_SESSION.getPrefix() + userId;
+        String json = redisTemplate.opsForValue().get(sessionKey);
         return JacksonUtils.fromJson(json, UserSessionVO.class);
     }
 }

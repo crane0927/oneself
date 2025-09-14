@@ -2,6 +2,8 @@ package com.oneself.controller;
 
 import com.oneself.annotation.ApiLog;
 import com.oneself.annotation.RequireLogin;
+import com.oneself.annotation.RequirePermission;
+import com.oneself.annotation.RequireRoles;
 import com.oneself.model.dto.DeptDTO;
 import com.oneself.model.dto.DeptQueryDTO;
 import com.oneself.model.dto.PageDTO;
@@ -46,6 +48,8 @@ public class DeptController {
         return ResponseVO.success(deptService.add(dto));
     }
 
+    @RequirePermission(value = {"sys:dept:get"})
+    @RequireRoles(value = {"admin"})
     @Operation(summary = "根据 ID 查询")
     @GetMapping("/{id}")
     public ResponseVO<DeptVO> get(@PathVariable("id") @Valid @NotBlank String id) {
