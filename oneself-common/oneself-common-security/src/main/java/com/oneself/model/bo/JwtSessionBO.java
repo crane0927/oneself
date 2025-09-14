@@ -13,7 +13,7 @@ import java.io.Serializable;
  * @author liuhuan
  * date 2025/9/11
  * packageName com.oneself.model.bo
- * className LoginUserSessionBO
+ * className JwtSessionBO
  * description
  * version 1.0
  */
@@ -21,8 +21,8 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "登录用户会话信息 BO")
-public class LoginUserSessionBO implements Serializable {
+@Schema(description = "jwt 会话信息 BO")
+public class JwtSessionBO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 

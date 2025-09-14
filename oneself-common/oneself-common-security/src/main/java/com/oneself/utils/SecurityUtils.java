@@ -1,7 +1,7 @@
 package com.oneself.utils;
 
 import com.oneself.exception.OneselfException;
-import com.oneself.model.bo.LoginUserSessionBO;
+import com.oneself.model.bo.JwtSessionBO;
 import com.oneself.model.enums.RedisKeyPrefixEnum;
 import com.oneself.model.enums.UserTypeEnum;
 import com.oneself.model.vo.UserSessionVO;
@@ -36,7 +36,7 @@ public class SecurityUtils {
     private final HttpServletRequest request;
     private final RedisTemplate<String, String> redisTemplate;
 
-    private static final ThreadLocal<LoginUserSessionBO> USER_HOLDER = new ThreadLocal<>();
+    private static final ThreadLocal<JwtSessionBO> USER_HOLDER = new ThreadLocal<>();
     private static final String DEFAULT_USER = "system";
 
     private static final long SESSION_TIMEOUT_HOURS = 1; // 滑动过期时长
@@ -50,12 +50,12 @@ public class SecurityUtils {
         return token.startsWith("Bearer ") ? token.substring(7) : token;
     }
 
-    public LoginUserSessionBO parseAndValidateToken(String token) {
+    public JwtSessionBO parseAndValidateToken(String token) {
         if (StringUtils.isBlank(token)) return null;
         try {
             Claims claims = JwtUtils.parseJWT(token);
             String subject = claims.getSubject();
-            LoginUserSessionBO sessionBO = JacksonUtils.fromJson(subject, LoginUserSessionBO.class);
+            JwtSessionBO sessionBO = JacksonUtils.fromJson(subject, JwtSessionBO.class);
 
             String sessionId = sessionBO.getSessionId();
             String userId = sessionBO.getUserId();
@@ -101,16 +101,16 @@ public class SecurityUtils {
         }
     }
 
-    public LoginUserSessionBO getCurrentUser() {
+    public JwtSessionBO getCurrentUser() {
         return USER_HOLDER.get();
     }
 
-    public void setCurrentUser(LoginUserSessionBO user) {
+    public void setCurrentUser(JwtSessionBO user) {
         USER_HOLDER.set(user);
     }
 
     public String getCurrentUsername() {
-        LoginUserSessionBO user = getCurrentUser();
+        JwtSessionBO user = getCurrentUser();
         return user != null ? user.getUsername() : DEFAULT_USER;
     }
 

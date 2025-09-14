@@ -3,7 +3,7 @@ package com.oneself.service.impl;
 import com.oneself.config.RsaKeyConfig;
 import com.oneself.exception.OneselfException;
 import com.oneself.model.bo.UserSessionBO;
-import com.oneself.model.bo.LoginUserSessionBO;
+import com.oneself.model.bo.JwtSessionBO;
 import com.oneself.model.dto.LoginDTO;
 import com.oneself.model.enums.RedisKeyPrefixEnum;
 import com.oneself.service.AuthService;
@@ -77,7 +77,7 @@ public class AuthServiceImpl implements AuthService {
         String sessionId = JwtUtils.getUUID().substring(0, 8);
 
         // 5. 构建 JWT subject
-        LoginUserSessionBO loginUserSessionBO = LoginUserSessionBO.builder()
+        JwtSessionBO jwtSessionBO = JwtSessionBO.builder()
                 .userId(userId)
                 .username(username)
                 .ip(ip)
@@ -86,7 +86,7 @@ public class AuthServiceImpl implements AuthService {
                 .sessionId(sessionId)
                 .loginTime(System.currentTimeMillis())
                 .build();
-        String subjectJson = JacksonUtils.toJsonString(loginUserSessionBO);
+        String subjectJson = JacksonUtils.toJsonString(jwtSessionBO);
 
         // 6. 生成 JWT token
         String token = JwtUtils.createJWT(subjectJson);
@@ -123,7 +123,7 @@ public class AuthServiceImpl implements AuthService {
             // 解析 JWT
             var claims = JwtUtils.parseJWT(token);
             String subject = claims.getSubject();
-            LoginUserSessionBO bo = JacksonUtils.fromJson(subject, LoginUserSessionBO.class);
+            JwtSessionBO bo = JacksonUtils.fromJson(subject, JwtSessionBO.class);
 
             String sessionId = bo.getSessionId();
             String userId = bo.getUserId();

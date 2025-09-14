@@ -2,7 +2,7 @@ package com.oneself.filter;
 
 import com.oneself.exception.OneselfException;
 import com.oneself.model.bo.UserSessionBO;
-import com.oneself.model.bo.LoginUserSessionBO;
+import com.oneself.model.bo.JwtSessionBO;
 import com.oneself.model.enums.RedisKeyPrefixEnum;
 import com.oneself.utils.JacksonUtils;
 import com.oneself.utils.SecurityUtils;
@@ -47,7 +47,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         if (StringUtils.isNotBlank(token)) {
             try {
                 // 使用 SecurityUtils 解析 token 并校验 Redis（含滑动+绝对过期）
-                LoginUserSessionBO sessionBO = securityUtils.parseAndValidateToken(token);
+                JwtSessionBO sessionBO = securityUtils.parseAndValidateToken(token);
 
                 if (sessionBO != null) {
                     // 从 Redis 中获取完整用户信息，设置 Spring Security 上下文

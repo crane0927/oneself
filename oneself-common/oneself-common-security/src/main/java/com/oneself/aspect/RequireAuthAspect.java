@@ -4,7 +4,7 @@ import com.oneself.annotation.RequireLogin;
 import com.oneself.annotation.RequirePermission;
 import com.oneself.annotation.RequireRoles;
 import com.oneself.exception.OneselfException;
-import com.oneself.model.bo.LoginUserSessionBO;
+import com.oneself.model.bo.JwtSessionBO;
 import com.oneself.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +46,7 @@ public class RequireAuthAspect {
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         try {
             // 1. 尝试获取当前用户
-            LoginUserSessionBO user = securityUtils.getCurrentUser();
+            JwtSessionBO user = securityUtils.getCurrentUser();
 
             // 2. 如果 ThreadLocal 为空，则解析 token
             if (user == null) {
