@@ -2,20 +2,14 @@ package com.oneself.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.oneself.exception.OneselfException;
-import com.oneself.mapper.ConfigurationMapper;
-import com.oneself.mapper.RolePermissionMapper;
-import com.oneself.mapper.UserMapper;
-import com.oneself.mapper.UserRoleMapper;
+import com.oneself.mapper.*;
 import com.oneself.model.dto.PageDTO;
 import com.oneself.model.dto.UserDTO;
 import com.oneself.model.dto.UserQueryDTO;
 import com.oneself.model.enums.ConfigurationTypeEnum;
 import com.oneself.model.enums.StatusEnum;
-import com.oneself.model.pojo.Configuration;
-import com.oneself.model.pojo.RolePermission;
-import com.oneself.model.pojo.User;
-import com.oneself.model.pojo.UserRole;
-import com.oneself.model.vo.LoginUserVO;
+import com.oneself.model.pojo.*;
+import com.oneself.model.vo.UserSessionVO;
 import com.oneself.model.vo.PageVO;
 import com.oneself.model.vo.UserVO;
 import com.oneself.service.UserService;
@@ -32,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author liuhuan
@@ -48,7 +43,9 @@ public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
     private final UserRoleMapper userRoleMapper;
+    private final RoleMapper roleMapper;
     private final RolePermissionMapper rolePermissionMapper;
+    private final PermissionMapper permissionMapper;
     private final ConfigurationMapper configurationMapper;
 
 
@@ -120,25 +117,32 @@ public class UserServiceImpl implements UserService {
      * @return 登录用户信息 VO
      */
     @Override
-    public LoginUserVO getLoginUserByName(String name) {
+    public UserSessionVO getSessionByName(String name) {
         AssertUtils.isFalse(StringUtils.isBlank(name), "用户名不能为空");
 
         User user = Optional.ofNullable(
                 userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, name))
         ).orElseThrow(() -> new IllegalArgumentException("用户不存在"));
 
-        LoginUserVO vo = new LoginUserVO();
+        UserSessionVO vo = new UserSessionVO();
         BeanUtils.copyProperties(user, vo);
 
         List<String> roleIds = userRoleMapper.selectList(new LambdaQueryWrapper<UserRole>().eq(UserRole::getUserId,
                         user.getId()))
                 .stream().map(UserRole::getRoleId).toList();
         if (!roleIds.isEmpty()) {
-            vo.setRoleIds(roleIds);
-            vo.setPermissionIds(rolePermissionMapper.selectList(new LambdaQueryWrapper<RolePermission>()
+            List<Role> roles = roleMapper.selectList(new LambdaQueryWrapper<Role>().in(Role::getId, roleIds));
+            vo.setRoleCodes(roles.stream().map(Role::getRoleCode).collect(Collectors.toSet()));
+
+            List<String> permissionIds = rolePermissionMapper.selectList(new LambdaQueryWrapper<RolePermission>()
                             .in(RolePermission::getRoleId, roleIds))
                     .stream()
-                    .map(RolePermission::getPermId).toList());
+                    .map(RolePermission::getPermId).toList();
+            if (!permissionIds.isEmpty()) {
+                List<Permission> permissions = permissionMapper.selectList(new LambdaQueryWrapper<Permission>()
+                        .in(Permission::getId, permissionIds));
+                vo.setPermissionCodes(permissions.stream().map(Permission::getPermCode).collect(Collectors.toSet()));
+            }
         }
 
         return vo;

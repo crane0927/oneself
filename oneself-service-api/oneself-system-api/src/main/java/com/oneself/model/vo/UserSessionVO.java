@@ -1,6 +1,7 @@
 package com.oneself.model.vo;
 
 import com.oneself.annotation.Sensitive;
+import com.oneself.model.enums.DesensitizedTypeEnum;
 import com.oneself.model.enums.SexEnum;
 import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.enums.UserTypeEnum;
@@ -9,19 +10,20 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author liuhuan
  * date 2025/9/11
  * packageName com.oneself.model.vo
- * className LoginUserVO
+ * className UserSessionVO
  * description
  * version 1.0
  */
 @Data
-@Schema(name = "LoginUserVO", description = "登录用户信息数据传输对象")
-public class LoginUserVO implements Serializable {
+@Schema(name = "UserSessionVO", description = "登录用户信息数据传输对象")
+public class UserSessionVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -31,7 +33,7 @@ public class LoginUserVO implements Serializable {
     @Schema(description = "用户名")
     private String username;
 
-    @Sensitive
+    @Sensitive(value = DesensitizedTypeEnum.PASSWORD)
     @Schema(description = "密码")
     private String password;
 
@@ -56,9 +58,9 @@ public class LoginUserVO implements Serializable {
     @Schema(description = "状态")
     private StatusEnum status;
 
-    @Schema(description = "角色 ID 列表")
-    private List<String> roleIds;
+    @Schema(description = "角色 Code 列表")
+    private Set<String> roleCodes = new HashSet<>();
 
-    @Schema(description = "权限 ID 列表")
-    private List<String> permissionIds;
+    @Schema(description = "权限 Code 列表")
+    private Set<String> permissionCodes = new HashSet<>();
 }

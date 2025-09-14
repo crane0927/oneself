@@ -1,7 +1,7 @@
 package com.oneself.model.bo;
 
 import com.oneself.model.enums.StatusEnum;
-import com.oneself.model.vo.LoginUserVO;
+import com.oneself.model.vo.UserSessionVO;
 import com.oneself.utils.BeanCopyUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,9 +23,9 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-public class LoginUserBO extends LoginUserVO implements UserDetails {
+public class UserSessionBO extends UserSessionVO implements UserDetails {
 
-    public LoginUserBO(LoginUserVO user) {
+    public UserSessionBO(UserSessionVO user) {
         BeanCopyUtils.copy(user, this);
     }
 

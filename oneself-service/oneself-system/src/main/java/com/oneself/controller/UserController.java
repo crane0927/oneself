@@ -5,7 +5,7 @@ import com.oneself.model.dto.PageDTO;
 import com.oneself.model.dto.UserDTO;
 import com.oneself.model.dto.UserQueryDTO;
 import com.oneself.model.enums.StatusEnum;
-import com.oneself.model.vo.LoginUserVO;
+import com.oneself.model.vo.UserSessionVO;
 import com.oneself.model.vo.PageVO;
 import com.oneself.model.vo.ResponseVO;
 import com.oneself.model.vo.UserVO;
@@ -51,10 +51,10 @@ public class UserController {
         return ResponseVO.success(userService.get(id));
     }
 
-    @Operation(summary = "根据用户名查询登录用户信息")
-    @GetMapping("/get/login/user/by/{name}")
-    public ResponseVO<LoginUserVO> getLoginUserByName(@PathVariable("name") @Valid @NotBlank String name) {
-        return ResponseVO.success(userService.getLoginUserByName(name));
+    @Operation(summary = "根据用户名查询会话信息")
+    @GetMapping("/get/session/by/{name}")
+    public ResponseVO<UserSessionVO> getSessionByName(@PathVariable("name") @Valid @NotBlank String name) {
+        return ResponseVO.success(userService.getSessionByName(name));
     }
 
     @Operation(summary = "修改用户")
