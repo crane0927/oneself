@@ -56,9 +56,9 @@ public class LoginUserVO implements Serializable {
     @Schema(description = "状态")
     private StatusEnum status;
 
-    @Schema(description = "角色 ID 列表")
-    private List<String> roleIds;
+    @Schema(description = "角色 Code 列表")
+    private List<String> roleCodes;
 
-    @Schema(description = "权限 ID 列表")
-    private List<String> permissionIds;
+    @Schema(description = "权限 Code 列表")
+    private List<String> permissionCodes;
 }
