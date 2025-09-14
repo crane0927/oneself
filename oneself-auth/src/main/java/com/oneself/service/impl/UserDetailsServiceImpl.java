@@ -29,8 +29,24 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // 调用远程服务获取用户信息
-        ResponseVO<UserSessionVO> vo = userClient.getSessionByName(username);
+        // 参数校验
+        if (username == null || username.trim().isEmpty()) {
+            throw new UsernameNotFoundException("用户名不能为空");
+        }
+
+        ResponseVO<UserSessionVO> vo;
+        try {
+            // 调用远程服务获取用户信息
+            vo = userClient.getSessionByName(username);
+        } catch (Exception e) {
+            throw new UsernameNotFoundException("获取用户信息失败: " + e.getMessage(), e);
+        }
+
+        // 响应对象空值检查
+        if (vo == null) {
+            throw new UsernameNotFoundException("用户不存在");
+        }
+
         UserSessionVO userVO = vo.getData();
 
         // 用户不存在
