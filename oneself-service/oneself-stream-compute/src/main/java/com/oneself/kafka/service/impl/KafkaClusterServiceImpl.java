@@ -2,6 +2,7 @@ package com.oneself.kafka.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.oneself.exception.OneselfException;
 import com.oneself.kafka.mapper.KafkaClusterMapper;
 import com.oneself.kafka.model.dto.KafkaClusterDTO;
 import com.oneself.kafka.model.dto.PageKafkaClusterDTO;
@@ -11,13 +12,14 @@ import com.oneself.kafka.service.KafkaClusterService;
 import com.oneself.model.dto.PageDTO;
 import com.oneself.model.vo.PageVO;
 import com.oneself.pagination.MyBatisPageWrapper;
-import com.oneself.utils.AssertUtils;
 import com.oneself.utils.BeanCopyUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.util.Optional;
 
@@ -39,14 +41,15 @@ public class KafkaClusterServiceImpl implements KafkaClusterService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer add(KafkaClusterDTO dto) {
-        AssertUtils.notNull(dto, "参数对象不能为空");
+        Assert.notNull(dto, "参数对象不能为空");
         // 1. 查询集群名称是否重复
         Long count = kafkaClusterMapper.selectCount(
                 new LambdaQueryWrapper<KafkaCluster>()
                         .eq(KafkaCluster::getName, dto.getName())
         );
-
-        AssertUtils.isFalse(count > 0, "集群名称已存在");
+        if (count > 0) {
+            throw new OneselfException("集群名称已存在");
+        }
 
         // 2. 新建 KafkaCluster 对象并拷贝属性
         KafkaCluster kafkaCluster = KafkaCluster.builder().build();
@@ -59,18 +62,22 @@ public class KafkaClusterServiceImpl implements KafkaClusterService {
     @Override
     public Integer update(Long id, KafkaClusterDTO dto) {
         // 简洁版校验
-        AssertUtils.notNull(id, "id 不能为空");
-        AssertUtils.notNull(dto, "参数对象不能为空");
+        Assert.notNull(id, "id 不能为空");
+        Assert.notNull(dto, "参数对象不能为空");
 
         KafkaCluster existingCluster = kafkaClusterMapper.selectById(id);
-        AssertUtils.notNull(existingCluster, "更新失败，未找到对应的集群");
+        if (ObjectUtils.isEmpty(existingCluster)) {
+            throw new OneselfException("更新失败，未找到对应的集");
+        }
 
         Long count = kafkaClusterMapper.selectCount(
                 new LambdaQueryWrapper<KafkaCluster>()
                         .eq(KafkaCluster::getName, dto.getName())
                         .ne(KafkaCluster::getId, id)
         );
-        AssertUtils.isFalse(count > 0, "集群名称已存在");
+        if (count > 0) {
+            throw new OneselfException("更新失败，集群名称已存在");
+        }
 
         KafkaCluster updatedCluster = KafkaCluster.builder().id(id).build();
         BeanCopyUtils.copy(dto, updatedCluster);

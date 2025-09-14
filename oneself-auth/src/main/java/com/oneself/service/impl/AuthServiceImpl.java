@@ -7,7 +7,6 @@ import com.oneself.model.bo.UserSessionBO;
 import com.oneself.model.dto.LoginDTO;
 import com.oneself.model.enums.RedisKeyPrefixEnum;
 import com.oneself.service.AuthService;
-import com.oneself.utils.AssertUtils;
 import com.oneself.utils.JacksonUtils;
 import com.oneself.utils.JwtUtils;
 import eu.bitwalker.useragentutils.Browser;
@@ -23,6 +22,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -48,9 +48,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String login(LoginDTO dto, HttpServletRequest request) {
+        Assert.notNull(dto, "请求参数不能为空");
         // 1. RSA 私钥解密
         String password;
-        AssertUtils.notNull(dto, "请求参数不能为空");
         try {
             password = rsaKeyConfig.decrypt(dto.getPassword());
         } catch (Exception e) {

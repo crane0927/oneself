@@ -2,6 +2,7 @@ package com.oneself.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.oneself.exception.OneselfException;
 import com.oneself.mapper.ConfigurationMapper;
 import com.oneself.model.dto.ConfigurationDTO;
 import com.oneself.model.dto.ConfigurationQueryDTO;
@@ -12,14 +13,15 @@ import com.oneself.model.vo.ConfigurationVO;
 import com.oneself.model.vo.PageVO;
 import com.oneself.pagination.MyBatisPageWrapper;
 import com.oneself.service.ConfigurationService;
-import com.oneself.utils.AssertUtils;
 import com.oneself.utils.BeanCopyUtils;
 import com.oneself.utils.DuplicateCheckUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +61,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 DuplicateCheckUtils.FieldCondition.of(Configuration::getParamKey, DuplicateCheckUtils.ConditionType.EQ)
         );
         int insert = configurationMapper.insert(configuration);
-        AssertUtils.isTrue(insert > 0, "新增参数失败");
+        if (insert < 1) {
+            throw new OneselfException("新增参数失败");
+        }
+
         log.info("新增参数成功，参数 ID：{}", configuration.getId());
         return configuration.getId();
     }
@@ -73,7 +78,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Override
     public ConfigurationVO get(String id) {
         Configuration configuration = configurationMapper.selectById(id);
-        AssertUtils.notNull(configuration, "参数不存在");
+        Assert.notNull(configuration, "参数不存在");
         ConfigurationVO vo = new ConfigurationVO();
         BeanCopyUtils.copy(configuration, vo);
         return vo;
@@ -89,12 +94,19 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean update(String id, ConfigurationDTO dto) {
+        Assert.hasText(id, "系统配置 ID 不能为空");
+        Assert.notNull(dto, "系统配置不能为 null");
         Configuration configuration = configurationMapper.selectById(id);
-        AssertUtils.notNull(configuration, "参数不存在");
-        AssertUtils.isFalse(ConfigurationTypeEnum.SYSTEM.equals(configuration.getType()), "系统内置参数不允许修改");
+        if (ObjectUtils.isEmpty(configuration)) {
+            throw new OneselfException("系统配置不存在");
+        }
+        if (configuration.getType() == ConfigurationTypeEnum.BUSINESS) {
+            throw new OneselfException("系统内置参数不允许修改");
+        }
+
         BeanCopyUtils.copy(dto, configuration);
         int update = configurationMapper.updateById(configuration);
-        AssertUtils.isTrue(update > 0, "更新参数失败");
+        if (update < 1) throw new OneselfException("更新参数失败");
         return true;
     }
 
@@ -107,15 +119,22 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean delete(List<String> ids) {
+        Assert.noNullElements(ids, "删除失败，参数不能为空");
         ArrayList<String> deleteIds = new ArrayList<>();
         for (String id : ids) {
             Configuration configuration = configurationMapper.selectById(id);
-            AssertUtils.notNull(configuration, "参数不存在");
-            AssertUtils.isFalse(ConfigurationTypeEnum.SYSTEM.equals(configuration.getType()), "系统内置参数不允许删除");
+            if (ObjectUtils.isEmpty(configuration)) {
+                throw new OneselfException("参数不存在");
+            }
+            if (configuration.getType() == ConfigurationTypeEnum.SYSTEM) {
+                throw new OneselfException("系统参数不能删除");
+            }
             deleteIds.add(id);
         }
         int delete = configurationMapper.deleteByIds(deleteIds);
-        AssertUtils.isTrue(delete > 0, "删除参数失败");
+        if (delete < 1) {
+            throw new OneselfException("删除参数失败");
+        }
         return true;
     }
 

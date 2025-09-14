@@ -5,9 +5,11 @@ import com.oneself.client.UserClient;
 import com.oneself.model.bo.UserSessionBO;
 import com.oneself.model.vo.ResponseVO;
 import com.oneself.model.vo.UserSessionVO;
-import com.oneself.utils.AssertUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -31,8 +33,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AssertUtils.hasText(username,
-                () -> new UsernameNotFoundException("用户名不能为空"));
+        if (StringUtils.isBlank(username)) {
+            throw new UsernameNotFoundException("用户名不能为空");
+        }
         ResponseVO<UserSessionVO> vo;
         try {
             vo = userClient.getSessionByName(username);
@@ -41,9 +44,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new InternalAuthenticationServiceException("获取用户信息失败", e);
         }
 
-        AssertUtils.notNull(vo, () -> new InternalAuthenticationServiceException("用户服务返回异常"));
+        if (vo.getMsgCode() != HttpStatus.OK.value()) {
+            throw new InternalAuthenticationServiceException("用户服务返回异常");
+        }
         UserSessionVO userVO = vo.getData();
-        AssertUtils.notNull(userVO, () -> new UsernameNotFoundException("用户不存在"));
+        if (ObjectUtils.isEmpty(userVO)) {
+            throw new UsernameNotFoundException("用户不存在");
+        }
         return new UserSessionBO(userVO);
     }
 }

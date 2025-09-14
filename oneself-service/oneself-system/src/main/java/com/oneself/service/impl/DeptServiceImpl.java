@@ -3,6 +3,7 @@ package com.oneself.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.oneself.exception.OneselfException;
 import com.oneself.mapper.DeptMapper;
 import com.oneself.mapper.UserMapper;
 import com.oneself.model.dto.DeptDTO;
@@ -16,7 +17,6 @@ import com.oneself.model.vo.DeptVO;
 import com.oneself.model.vo.PageVO;
 import com.oneself.pagination.MyBatisPageWrapper;
 import com.oneself.service.DeptService;
-import com.oneself.utils.AssertUtils;
 import com.oneself.utils.BeanCopyUtils;
 import com.oneself.utils.DuplicateCheckUtils;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.util.Assert;
 
 import java.util.*;
 
@@ -80,7 +81,9 @@ public class DeptServiceImpl implements DeptService {
         int insert = deptMapper.insert(dept);
 
         // 4. 检查插入结果
-        AssertUtils.isTrue(insert > 0, "部门添加失败");
+        if (insert < 1) {
+            throw new OneselfException("部门添加失败");
+        }
         log.info("部门添加成功, ID: {}", dept.getId());
         return dept.getId();
     }
@@ -95,7 +98,9 @@ public class DeptServiceImpl implements DeptService {
     @Cacheable(value = "sysDept", key = "#id")
     public DeptVO get(String id) {
         Dept dept = deptMapper.selectById(id);
-        AssertUtils.notNull(dept, "部门不存在");
+        if (ObjectUtils.isEmpty(dept)) {
+            throw new OneselfException("部门不存在");
+        }
         DeptVO deptVO = new DeptVO();
         BeanCopyUtils.copy(dept, deptVO);
         return deptVO;
@@ -137,9 +142,12 @@ public class DeptServiceImpl implements DeptService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean delete(List<String> ids) {
+        Assert.noNullElements(ids, "参数不能为空");
         // 1. 获取当前部门 ID 和所有子部门 ID
         List<String> allChildDeptIds = getAllChildDeptIds(ids);
-        AssertUtils.isFalse(CollectionUtils.isEmpty(allChildDeptIds), "删除失败，该部门不存在");
+        if (allChildDeptIds.isEmpty()) {
+            return true;
+        }
 
         // 2. 删除部门下所有的用户
         List<User> users = userMapper.selectList(

@@ -13,7 +13,6 @@ import com.oneself.model.vo.PageVO;
 import com.oneself.model.vo.UserSessionVO;
 import com.oneself.model.vo.UserVO;
 import com.oneself.service.UserService;
-import com.oneself.utils.AssertUtils;
 import com.oneself.utils.DuplicateCheckUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -93,7 +92,9 @@ public class UserServiceImpl implements UserService {
         user.setPassword(bCryptPasswordEncoder.encode(configuration.getParamValue()));
         int insert = userMapper.insert(user);
 
-        AssertUtils.isTrue(insert > 0, "新增用户失败");
+        if (insert == 0) {
+            throw new OneselfException("新增用户失败");
+        }
         log.info("用户添加成功, ID: {}", user.getId());
         return user.getId();
     }
@@ -117,8 +118,6 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserSessionVO getSessionByName(String name) {
-        AssertUtils.hasText(name, "用户名不能为空");
-
         User user = Optional.ofNullable(
                 userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, name))
         ).orElseThrow(() -> new IllegalArgumentException("用户不存在"));
