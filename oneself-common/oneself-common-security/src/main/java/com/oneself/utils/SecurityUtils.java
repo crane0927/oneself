@@ -4,7 +4,7 @@ import com.oneself.exception.OneselfException;
 import com.oneself.model.bo.LoginUserSessionBO;
 import com.oneself.model.enums.RedisKeyPrefixEnum;
 import com.oneself.model.enums.UserTypeEnum;
-import com.oneself.model.vo.LoginUserVO;
+import com.oneself.model.vo.UserSessionVO;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -123,7 +123,7 @@ public class SecurityUtils {
 
     public void checkRole(String... requiredRoles) {
         checkLogin();
-        LoginUserVO user = loadUserFromRedis(getCurrentUser().getUserId());
+        UserSessionVO user = loadUserFromRedis(getCurrentUser().getUserId());
         if (UserTypeEnum.ADMIN.equals(user.getType())) return; // 管理员直接放行
 
         Set<String> userRoles = new HashSet<>(user.getRoleCodes());
@@ -135,7 +135,7 @@ public class SecurityUtils {
 
     public void checkPermission(String... requiredPerms) {
         checkLogin();
-        LoginUserVO user = loadUserFromRedis(getCurrentUser().getUserId());
+        UserSessionVO user = loadUserFromRedis(getCurrentUser().getUserId());
         if (UserTypeEnum.ADMIN.equals(user.getType())) return; // 管理员直接放行
 
         Set<String> userPerms = new HashSet<>(user.getPermissionCodes());
@@ -145,9 +145,9 @@ public class SecurityUtils {
         }
     }
 
-    private LoginUserVO loadUserFromRedis(String userId) {
+    private UserSessionVO loadUserFromRedis(String userId) {
         String userKey = RedisKeyPrefixEnum.LOGIN_USER.getPrefix() + userId;
         String json = redisTemplate.opsForValue().get(userKey);
-        return JacksonUtils.fromJson(json, LoginUserVO.class);
+        return JacksonUtils.fromJson(json, UserSessionVO.class);
     }
 }

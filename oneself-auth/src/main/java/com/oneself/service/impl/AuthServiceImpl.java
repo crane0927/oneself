@@ -2,7 +2,7 @@ package com.oneself.service.impl;
 
 import com.oneself.config.RsaKeyConfig;
 import com.oneself.exception.OneselfException;
-import com.oneself.model.bo.LoginUserBO;
+import com.oneself.model.bo.UserSessionBO;
 import com.oneself.model.bo.LoginUserSessionBO;
 import com.oneself.model.dto.LoginDTO;
 import com.oneself.model.enums.RedisKeyPrefixEnum;
@@ -64,7 +64,7 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("用户名或密码错误");
         }
 
-        LoginUserBO bo = (LoginUserBO) authenticate.getPrincipal();
+        UserSessionBO bo = (UserSessionBO) authenticate.getPrincipal();
         String userId = bo.getId();
         String username = bo.getUsername();
 
