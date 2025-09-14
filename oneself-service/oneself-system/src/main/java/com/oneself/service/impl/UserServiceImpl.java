@@ -117,7 +117,7 @@ public class UserServiceImpl implements UserService {
      * @return 登录用户信息 VO
      */
     @Override
-    public UserSessionVO getLoginUserByName(String name) {
+    public UserSessionVO getSessionByName(String name) {
         AssertUtils.isFalse(StringUtils.isBlank(name), "用户名不能为空");
 
         User user = Optional.ofNullable(

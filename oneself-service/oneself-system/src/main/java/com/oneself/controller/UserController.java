@@ -51,10 +51,10 @@ public class UserController {
         return ResponseVO.success(userService.get(id));
     }
 
-    @Operation(summary = "根据用户名查询登录用户信息")
-    @GetMapping("/get/login/user/by/{name}")
-    public ResponseVO<UserSessionVO> getLoginUserByName(@PathVariable("name") @Valid @NotBlank String name) {
-        return ResponseVO.success(userService.getLoginUserByName(name));
+    @Operation(summary = "根据用户名查询会话信息")
+    @GetMapping("/get/session/by/{name}")
+    public ResponseVO<UserSessionVO> getSessionByName(@PathVariable("name") @Valid @NotBlank String name) {
+        return ResponseVO.success(userService.getSessionByName(name));
     }
 
     @Operation(summary = "修改用户")

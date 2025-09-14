@@ -26,7 +26,7 @@ public class UserClientFallbackFactory implements FallbackFactory<UserClient> {
     public UserClient create(Throwable cause) {
         return new UserClient() {
             @Override
-            public ResponseVO<UserSessionVO> getLoginUserByName(String username) {
+            public ResponseVO<UserSessionVO> getSessionByName(String username) {
                 if (cause instanceof FeignException.NotFound) {
                     return ResponseVO.failure("服务不存在", HttpStatus.NOT_FOUND);
                 } else if (cause instanceof TimeoutException) {

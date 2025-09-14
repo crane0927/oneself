@@ -45,7 +45,7 @@ public interface UserService {
      * @param name 用户名
      * @return 登录用户信息 VO
      */
-    UserSessionVO getLoginUserByName(@Valid @NotBlank String name);
+    UserSessionVO getSessionByName(@Valid @NotBlank String name);
 
     /**
      * 更新用户信息

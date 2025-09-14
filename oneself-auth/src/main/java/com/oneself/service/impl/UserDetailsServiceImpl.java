@@ -30,7 +30,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // 调用远程服务获取用户信息
-        ResponseVO<UserSessionVO> vo = userClient.getLoginUserByName(username);
+        ResponseVO<UserSessionVO> vo = userClient.getSessionByName(username);
         UserSessionVO userVO = vo.getData();
 
         // 用户不存在
