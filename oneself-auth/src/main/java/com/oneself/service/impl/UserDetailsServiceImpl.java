@@ -37,7 +37,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         ResponseVO<UserSessionVO> vo;
         try {
             // 调用远程服务获取用户信息
-            vo = userClient.getLoginUserByName(username);
+            vo = userClient.getSessionByName(username);
         } catch (Exception e) {
             throw new UsernameNotFoundException("获取用户信息失败: " + e.getMessage(), e);
         }
