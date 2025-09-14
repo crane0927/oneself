@@ -32,8 +32,9 @@ import java.util.Random;
 public class CacheConfig {
 
     /**
-     * 创建ObjectMapper Bean用于Redis序列化
-     * @return 配置好的ObjectMapper实例
+     * 创建 ObjectMapper Bean 用于 Redis 序列化
+     *
+     * @return 配置好的 ObjectMapper 实例
      */
     @Bean
     public ObjectMapper redisObjectMapper() {
@@ -56,7 +57,7 @@ public class CacheConfig {
      * 构建 RedisCacheManager Bean
      *
      * @param redisConnectionFactory Redis 连接工厂（Spring Boot 自动配置）
-     * @param objectMapper           ObjectMapper实例
+     * @param objectMapper           ObjectMapper 实例
      * @return RedisCacheManager 管理器
      */
     @Bean
@@ -96,10 +97,11 @@ public class CacheConfig {
     }
 
     /**
-     * 生成随机TTL值
+     * 生成随机 TTL 值
+     *
      * @param min 最小分钟数
      * @param max 最大分钟数
-     * @return 随机TTL值
+     * @return 随机 TTL 值
      */
     private int generateRandomTtl(int min, int max) {
         Random random = new Random();

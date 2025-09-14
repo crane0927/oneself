@@ -59,7 +59,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 DuplicateCheckUtils.FieldCondition.of(Configuration::getParamKey, DuplicateCheckUtils.ConditionType.EQ)
         );
         int insert = configurationMapper.insert(configuration);
-        AssertUtils.isTrue(insert < 1, "新增参数失败");
+        AssertUtils.isTrue(insert > 0, "新增参数失败");
         log.info("新增参数成功，参数 ID：{}", configuration.getId());
         return configuration.getId();
     }
@@ -91,10 +91,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     public boolean update(String id, ConfigurationDTO dto) {
         Configuration configuration = configurationMapper.selectById(id);
         AssertUtils.notNull(configuration, "参数不存在");
-        AssertUtils.isTrue(ConfigurationTypeEnum.SYSTEM.equals(configuration.getType()), "系统内置参数不允许修改");
+        AssertUtils.isFalse(ConfigurationTypeEnum.SYSTEM.equals(configuration.getType()), "系统内置参数不允许修改");
         BeanCopyUtils.copy(dto, configuration);
         int update = configurationMapper.updateById(configuration);
-        AssertUtils.isTrue(update < 1, "更新参数失败");
+        AssertUtils.isTrue(update > 0, "更新参数失败");
         return true;
     }
 
@@ -111,11 +111,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         for (String id : ids) {
             Configuration configuration = configurationMapper.selectById(id);
             AssertUtils.notNull(configuration, "参数不存在");
-            AssertUtils.isTrue(ConfigurationTypeEnum.SYSTEM.equals(configuration.getType()), "系统内置参数不允许删除");
+            AssertUtils.isFalse(ConfigurationTypeEnum.SYSTEM.equals(configuration.getType()), "系统内置参数不允许删除");
             deleteIds.add(id);
         }
         int delete = configurationMapper.deleteByIds(deleteIds);
-        AssertUtils.isTrue(delete < 1, "删除参数失败");
+        AssertUtils.isTrue(delete > 0, "删除参数失败");
         return true;
     }
 

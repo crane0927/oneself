@@ -46,7 +46,7 @@ public class KafkaClusterServiceImpl implements KafkaClusterService {
                         .eq(KafkaCluster::getName, dto.getName())
         );
 
-        AssertUtils.isFalse(count != null && count > 0, "集群名称已存在");
+        AssertUtils.isFalse(count > 0, "集群名称已存在");
 
         // 2. 新建 KafkaCluster 对象并拷贝属性
         KafkaCluster kafkaCluster = KafkaCluster.builder().build();
@@ -59,7 +59,7 @@ public class KafkaClusterServiceImpl implements KafkaClusterService {
     @Override
     public Integer update(Long id, KafkaClusterDTO dto) {
         // 简洁版校验
-        AssertUtils.notNull(id, "id不能为空");
+        AssertUtils.notNull(id, "id 不能为空");
         AssertUtils.notNull(dto, "参数对象不能为空");
 
         KafkaCluster existingCluster = kafkaClusterMapper.selectById(id);
@@ -70,7 +70,7 @@ public class KafkaClusterServiceImpl implements KafkaClusterService {
                         .eq(KafkaCluster::getName, dto.getName())
                         .ne(KafkaCluster::getId, id)
         );
-        AssertUtils.isTrue(count == 1, "集群名称已存在");
+        AssertUtils.isFalse(count > 0, "集群名称已存在");
 
         KafkaCluster updatedCluster = KafkaCluster.builder().id(id).build();
         BeanCopyUtils.copy(dto, updatedCluster);

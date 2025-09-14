@@ -2,11 +2,12 @@ package com.oneself.service.impl;
 
 import com.oneself.config.RsaKeyConfig;
 import com.oneself.exception.OneselfException;
-import com.oneself.model.bo.UserSessionBO;
 import com.oneself.model.bo.JwtSessionBO;
+import com.oneself.model.bo.UserSessionBO;
 import com.oneself.model.dto.LoginDTO;
 import com.oneself.model.enums.RedisKeyPrefixEnum;
 import com.oneself.service.AuthService;
+import com.oneself.utils.AssertUtils;
 import com.oneself.utils.JacksonUtils;
 import com.oneself.utils.JwtUtils;
 import eu.bitwalker.useragentutils.Browser;
@@ -49,6 +50,7 @@ public class AuthServiceImpl implements AuthService {
     public String login(LoginDTO dto, HttpServletRequest request) {
         // 1. RSA 私钥解密
         String password;
+        AssertUtils.notNull(dto, "请求参数不能为空");
         try {
             password = rsaKeyConfig.decrypt(dto.getPassword());
         } catch (Exception e) {

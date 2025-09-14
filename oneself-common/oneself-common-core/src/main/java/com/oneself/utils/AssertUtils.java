@@ -1,94 +1,161 @@
 package com.oneself.utils;
 
 import com.oneself.exception.OneselfException;
+import org.springframework.lang.Contract;
 import org.springframework.util.StringUtils;
 
-import java.lang.reflect.Constructor;
 import java.util.Collection;
+import java.util.function.Supplier;
+
 
 /**
  * @author liuhuan
- * date 2025/4/28
+ * date 2024/12/31
  * packageName com.oneself.utils
  * className AssertUtils
- * description 断言工具类，支持默认或指定异常类型
- * version 2.0
+ * description 断言工具类
+ * <p>断言工具类，用于条件校验，支持抛出默认异常 {@link OneselfException} 或自定义 {@link RuntimeException} 类型</p>
+ * <p>提供常用断言方法，包括：</p>
+ * <ul>
+ *     <li>布尔条件判断：isTrue / isFalse</li>
+ *     <li>对象非空 / 空：notNull / isNull</li>
+ *     <li>字符串非空：hasText</li>
+ *     <li>集合非空：notEmpty</li>
+ * </ul>
+ * <p>工具类不可实例化</p>
  */
 public class AssertUtils {
 
+    /**
+     * 私有构造方法，防止实例化
+     */
     private AssertUtils() {
         throw new AssertionError("此工具类不允许实例化");
     }
 
     // ================= 默认抛 OneselfException =================
-    public static void isTrue(boolean expression, String message) {
-        isTrue(expression, message, OneselfException.class);
-    }
 
-    public static void isFalse(boolean expression, String message) {
-        isFalse(expression, message, OneselfException.class);
-    }
-
+    /**
+     * 断言对象不为 null，否则抛 {@link OneselfException}
+     *
+     * @param object 对象
+     * @param message 异常信息
+     */
+    @Contract("null -> fail")
     public static void notNull(Object object, String message) {
-        notNull(object, message, OneselfException.class);
+        notNull(object, () -> new OneselfException(message));
     }
 
-    public static void isNull(Object object, String message) {
-        isNull(object, message, OneselfException.class);
-    }
-
+    /**
+     * 断言字符串有内容，否则抛 {@link OneselfException}
+     *
+     * @param text 字符串
+     * @param message 异常信息
+     */
+    @Contract("null -> fail")
     public static void hasText(String text, String message) {
-        hasText(text, message, OneselfException.class);
+        hasText(text, () -> new OneselfException(message));
     }
 
+    /**
+     * 断言集合不为空，否则抛 {@link OneselfException}
+     *
+     * @param collection 集合
+     * @param message 异常信息
+     */
+    @Contract("null -> fail")
     public static void notEmpty(Collection<?> collection, String message) {
-        notEmpty(collection, message, OneselfException.class);
+        notEmpty(collection, () -> new OneselfException(message));
     }
 
-    public static void isTrue(boolean expression, String message, Class<? extends RuntimeException> exceptionClass) {
-        if (expression) {
-            throw newException(exceptionClass, message);
-        }
+    /**
+     * 断言布尔表达式为 true，否则抛 {@link OneselfException}
+     *
+     * @param expression 条件表达式
+     * @param message 异常信息
+     */
+    @Contract("false -> fail")
+    public static void isTrue(boolean expression, String message) {
+        isTrue(expression, () -> new OneselfException(message));
     }
 
-    public static void isFalse(boolean expression, String message, Class<? extends RuntimeException> exceptionClass) {
-        if (expression) {
-            throw newException(exceptionClass, message);
-        }
+    /**
+     * 断言布尔表达式为 false，否则抛 {@link OneselfException}
+     *
+     * @param expression 条件表达式
+     * @param message 异常信息
+     */
+    @Contract("true -> fail")
+    public static void isFalse(boolean expression, String message) {
+        isFalse(expression, () -> new OneselfException(message));
     }
 
-    public static void notNull(Object object, String message, Class<? extends RuntimeException> exceptionClass) {
+
+    // ================= 支持 Supplier<RuntimeException> =================
+
+    /**
+     * 断言对象不为 null，否则抛由 {@link Supplier} 提供的异常
+     *
+     * @param object 对象
+     * @param exceptionSupplier 异常供应器
+     */
+    @Contract("null -> fail")
+    public static void notNull(Object object, Supplier<? extends RuntimeException> exceptionSupplier) {
         if (object == null) {
-            throw newException(exceptionClass, message);
+            throw exceptionSupplier.get();
         }
     }
 
-    public static void isNull(Object object, String message, Class<? extends RuntimeException> exceptionClass) {
-        if (object != null) {
-            throw newException(exceptionClass, message);
-        }
-    }
-
-    public static void hasText(String text, String message, Class<? extends RuntimeException> exceptionClass) {
+    /**
+     * 断言字符串有内容，否则抛由 {@link Supplier} 提供的异常
+     *
+     * @param text 字符串
+     * @param exceptionSupplier 异常供应器
+     */
+    @Contract("null -> fail")
+    public static void hasText(String text, Supplier<? extends RuntimeException> exceptionSupplier) {
         if (!StringUtils.hasText(text)) {
-            throw newException(exceptionClass, message);
+            throw exceptionSupplier.get();
         }
     }
 
-    public static void notEmpty(Collection<?> collection, String message, Class<? extends RuntimeException> exceptionClass) {
+    /**
+     * 断言集合不为空，否则抛由 {@link Supplier} 提供的异常
+     *
+     * @param collection 集合
+     * @param exceptionSupplier 异常供应器
+     */
+    @Contract("null -> fail")
+    public static void notEmpty(Collection<?> collection, Supplier<? extends RuntimeException> exceptionSupplier) {
         if (collection == null || collection.isEmpty()) {
-            throw newException(exceptionClass, message);
+            throw exceptionSupplier.get();
         }
     }
 
-    // ================= 辅助方法 =================
-    private static RuntimeException newException(Class<? extends RuntimeException> clazz, String message) {
-        try {
-            Constructor<? extends RuntimeException> constructor = clazz.getConstructor(String.class);
-            return constructor.newInstance(message);
-        } catch (Exception e) {
-            // 如果构造失败，兜底抛 OneselfException
-            return new OneselfException(message, e);
+    /**
+     * 断言布尔表达式为 true，否则抛由 {@link Supplier} 提供的异常
+     *
+     * @param expression 条件表达式
+     * @param exceptionSupplier 异常供应器
+     */
+    @Contract("false -> fail")
+    public static void isTrue(boolean expression, Supplier<? extends RuntimeException> exceptionSupplier) {
+        if (!expression) {
+            throw exceptionSupplier.get();
         }
     }
+
+    /**
+     * 断言布尔表达式为 false，否则抛由 {@link Supplier} 提供的异常
+     *
+     * @param expression 条件表达式
+     * @param exceptionSupplier 异常供应器
+     */
+    @Contract("true -> fail")
+    public static void isFalse(boolean expression, Supplier<? extends RuntimeException> exceptionSupplier) {
+        if (expression) {
+            throw exceptionSupplier.get();
+        }
+    }
+
 }

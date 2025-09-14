@@ -9,8 +9,8 @@ import com.oneself.model.dto.UserQueryDTO;
 import com.oneself.model.enums.ConfigurationTypeEnum;
 import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.pojo.*;
-import com.oneself.model.vo.UserSessionVO;
 import com.oneself.model.vo.PageVO;
+import com.oneself.model.vo.UserSessionVO;
 import com.oneself.model.vo.UserVO;
 import com.oneself.service.UserService;
 import com.oneself.utils.AssertUtils;
@@ -18,7 +18,6 @@ import com.oneself.utils.DuplicateCheckUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -94,7 +93,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(bCryptPasswordEncoder.encode(configuration.getParamValue()));
         int insert = userMapper.insert(user);
 
-        AssertUtils.isTrue(insert < 1, "新增用户失败");
+        AssertUtils.isTrue(insert > 0, "新增用户失败");
         log.info("用户添加成功, ID: {}", user.getId());
         return user.getId();
     }
@@ -118,7 +117,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserSessionVO getSessionByName(String name) {
-        AssertUtils.isFalse(StringUtils.isBlank(name), "用户名不能为空");
+        AssertUtils.hasText(name, "用户名不能为空");
 
         User user = Optional.ofNullable(
                 userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, name))

@@ -80,7 +80,7 @@ public class DeptServiceImpl implements DeptService {
         int insert = deptMapper.insert(dept);
 
         // 4. 检查插入结果
-        AssertUtils.isTrue(insert < 1, "部门添加失败");
+        AssertUtils.isTrue(insert > 0, "部门添加失败");
         log.info("部门添加成功, ID: {}", dept.getId());
         return dept.getId();
     }
