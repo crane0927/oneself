@@ -9,7 +9,7 @@ import com.oneself.model.dto.UserQueryDTO;
 import com.oneself.model.enums.ConfigurationTypeEnum;
 import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.pojo.*;
-import com.oneself.model.vo.LoginUserVO;
+import com.oneself.model.vo.UserSessionVO;
 import com.oneself.model.vo.PageVO;
 import com.oneself.model.vo.UserVO;
 import com.oneself.service.UserService;
@@ -116,14 +116,14 @@ public class UserServiceImpl implements UserService {
      * @return 登录用户信息 VO
      */
     @Override
-    public LoginUserVO getLoginUserByName(String name) {
+    public UserSessionVO getLoginUserByName(String name) {
         AssertUtils.isFalse(StringUtils.isBlank(name), "用户名不能为空");
 
         User user = Optional.ofNullable(
                 userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, name))
         ).orElseThrow(() -> new IllegalArgumentException("用户不存在"));
 
-        LoginUserVO vo = new LoginUserVO();
+        UserSessionVO vo = new UserSessionVO();
         BeanUtils.copyProperties(user, vo);
 
         List<String> roleIds = userRoleMapper.selectList(new LambdaQueryWrapper<UserRole>().eq(UserRole::getUserId,

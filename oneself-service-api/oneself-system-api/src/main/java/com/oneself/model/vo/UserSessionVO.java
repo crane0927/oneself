@@ -1,6 +1,7 @@
 package com.oneself.model.vo;
 
 import com.oneself.annotation.Sensitive;
+import com.oneself.model.enums.DesensitizedTypeEnum;
 import com.oneself.model.enums.SexEnum;
 import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.enums.UserTypeEnum;
@@ -15,13 +16,13 @@ import java.util.List;
  * @author liuhuan
  * date 2025/9/11
  * packageName com.oneself.model.vo
- * className LoginUserVO
+ * className UserSessionVO
  * description
  * version 1.0
  */
 @Data
-@Schema(name = "LoginUserVO", description = "登录用户信息数据传输对象")
-public class LoginUserVO implements Serializable {
+@Schema(name = "UserSessionVO", description = "登录用户信息数据传输对象")
+public class UserSessionVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -31,9 +32,9 @@ public class LoginUserVO implements Serializable {
     @Schema(description = "用户名")
     private String username;
 
-    @Sensitive
+    @Sensitive(value = DesensitizedTypeEnum.PASSWORD)
     @Schema(description = "密码")
-    private String password;
+    private transient String password;
 
     @Schema(description = "邮箱")
     private String email;

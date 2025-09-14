@@ -4,7 +4,7 @@ import com.oneself.model.dto.PageDTO;
 import com.oneself.model.dto.UserDTO;
 import com.oneself.model.dto.UserQueryDTO;
 import com.oneself.model.enums.StatusEnum;
-import com.oneself.model.vo.LoginUserVO;
+import com.oneself.model.vo.UserSessionVO;
 import com.oneself.model.vo.PageVO;
 import com.oneself.model.vo.UserVO;
 import jakarta.validation.Valid;
@@ -45,7 +45,7 @@ public interface UserService {
      * @param name 用户名
      * @return 登录用户信息 VO
      */
-    LoginUserVO getLoginUserByName(@Valid @NotBlank String name);
+    UserSessionVO getLoginUserByName(@Valid @NotBlank String name);
 
     /**
      * 更新用户信息
