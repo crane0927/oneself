@@ -27,7 +27,7 @@
         官方默认推荐使用 Spring Cloud Loadbalancer 正式替换 Ribbon，并成为了Spring Cloud 负载均衡器的唯一实现 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-loadbalancer</artifactId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
 
         <!-- Nacos 服务注册-->

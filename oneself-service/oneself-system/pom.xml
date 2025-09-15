@@ -51,13 +51,6 @@
             <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
         </dependency>
 
-        <!-- 在 Spring Cloud 2020 版本以后，默认移除了对 Netflix 的依赖，其中就包括 Ribbon，
-       官方默认推荐使用 Spring Cloud Loadbalancer 正式替换 Ribbon，并成为了Spring Cloud 负载均衡器的唯一实现 -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-loadbalancer</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>com.oneself</groupId>
             <artifactId>oneself-common-jdbc</artifactId>

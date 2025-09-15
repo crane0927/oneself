@@ -31,43 +31,35 @@ import java.util.Random;
 @EnableCaching
 public class CacheConfig {
 
-    /**
-     * 创建 ObjectMapper Bean 用于 Redis 序列化
-     *
-     * @return 配置好的 ObjectMapper 实例
-     */
-    @Bean
-    public ObjectMapper redisObjectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+    static {
+        OBJECT_MAPPER.registerModule(new JavaTimeModule());
         // 禁用时间戳格式（默认会把时间转为毫秒数，禁用后输出 "2025-09-12T10:00:00" 格式）
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        // 忽略未知字段（避免 JSON 中有多余字段时反序列化失败）
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        // 可选：忽略未知字段（避免 JSON 中有多余字段时反序列化失败）
+        OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         // 开启类型信息，但用 PROPERTY 方式
-        objectMapper.activateDefaultTyping(
-                objectMapper.getPolymorphicTypeValidator(),
+        OBJECT_MAPPER.activateDefaultTyping(
+                OBJECT_MAPPER.getPolymorphicTypeValidator(),
                 ObjectMapper.DefaultTyping.NON_FINAL,
                 com.fasterxml.jackson.annotation.JsonTypeInfo.As.PROPERTY
         );
-        return objectMapper;
     }
 
     /**
      * 构建 RedisCacheManager Bean
      *
      * @param redisConnectionFactory Redis 连接工厂（Spring Boot 自动配置）
-     * @param objectMapper           ObjectMapper 实例
      * @return RedisCacheManager 管理器
      */
     @Bean
-    public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory,
-                                               ObjectMapper objectMapper) {
+    public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
         // ========== 1. 全局默认配置 ==========
         RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofMinutes(10))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(
-                        new GenericJackson2JsonRedisSerializer(objectMapper)
+                        new GenericJackson2JsonRedisSerializer(OBJECT_MAPPER)
                 ))
                 .computePrefixWith(cacheName -> RedisKeyPrefixEnum.SYSTEM_NAME.getPrefix() + cacheName + ":")
                 .disableCachingNullValues();
