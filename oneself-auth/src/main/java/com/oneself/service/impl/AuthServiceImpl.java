@@ -95,7 +95,7 @@ public class AuthServiceImpl implements AuthService {
 
         // 7. 存 Redis 会话 (String + TTL)
         String redisKey = buildLoginKey(sessionId);
-        long ttlSeconds = JwtUtils.JWT_DEFAULT_TTL; // 1 小时
+        long ttlSeconds = 3600; // 1 小时
         bo.setPassword(null);
         redisTemplate.opsForValue().set(redisKey, JacksonUtils.toJsonString(bo), ttlSeconds, TimeUnit.SECONDS);
 

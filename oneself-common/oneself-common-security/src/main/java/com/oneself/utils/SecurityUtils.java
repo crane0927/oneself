@@ -52,6 +52,7 @@ public class SecurityUtils {
 
     public JwtSessionBO parseAndValidateToken(String token) {
         if (StringUtils.isBlank(token)) return null;
+
         try {
             Claims claims = JwtUtils.parseJWT(token);
             String subject = claims.getSubject();
@@ -62,11 +63,12 @@ public class SecurityUtils {
             String redisKey = RedisKeyPrefixEnum.LOGIN_SESSION.getPrefix() + sessionId;
             String userKey = RedisKeyPrefixEnum.LOGIN_USER.getPrefix() + userId;
 
-            // 清理已过期 session
+            // 清理已过期 session（ZSet 中的老数据）
             redisTemplate.opsForZSet().removeRangeByScore(userKey, 0, System.currentTimeMillis());
 
             Long expire = redisTemplate.getExpire(redisKey, TimeUnit.MILLISECONDS);
             if (expire > 0) {
+                // 绝对过期检查
                 long absoluteExpireMillis = TimeUnit.DAYS.toMillis(ABSOLUTE_EXPIRE_DAYS);
                 if (System.currentTimeMillis() - sessionBO.getLoginTime() > absoluteExpireMillis) {
                     redisTemplate.delete(redisKey);
@@ -75,6 +77,7 @@ public class SecurityUtils {
                     return null;
                 }
 
+                // 滑动过期：必要时续期
                 refreshSessionIfNecessary(userId, sessionId, redisKey, userKey);
 
                 USER_HOLDER.set(sessionBO);
