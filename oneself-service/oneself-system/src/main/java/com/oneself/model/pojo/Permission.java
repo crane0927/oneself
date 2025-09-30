@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.oneself.model.enums.ResourceTypeEnum;
 import com.oneself.model.enums.StatusEnum;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -18,6 +19,7 @@ import lombok.EqualsAndHashCode;
  * version 1.0
  */
 @Data
+@Builder
 @EqualsAndHashCode(callSuper = true)
 @TableName("sys_permission")
 public class Permission extends BasePojo {

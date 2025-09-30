@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -16,6 +17,7 @@ import lombok.EqualsAndHashCode;
  * version 1.0
  */
 @Data
+@Builder
 @EqualsAndHashCode(callSuper = true)
 @TableName("sys_user_role")
 public class UserRole extends BasePojo {

@@ -1,6 +1,7 @@
 package com.oneself.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.oneself.exception.OneselfException;
 import com.oneself.mapper.*;
 import com.oneself.model.dto.PageDTO;
@@ -13,6 +14,8 @@ import com.oneself.model.vo.PageVO;
 import com.oneself.model.vo.UserSessionVO;
 import com.oneself.model.vo.UserVO;
 import com.oneself.service.UserService;
+import com.oneself.pagination.MyBatisPageWrapper;
+import com.oneself.utils.BeanCopyUtils;
 import com.oneself.utils.DuplicateCheckUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -107,7 +110,13 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserVO get(String id) {
-        return null;
+        User user = Optional.ofNullable(
+                userMapper.selectById(id)
+        ).orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+
+        UserVO vo = new UserVO();
+        BeanUtils.copyProperties(user, vo);
+        return vo;
     }
 
     /**
@@ -155,8 +164,56 @@ public class UserServiceImpl implements UserService {
      * @return 更新是否成功
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean update(String id, UserDTO dto) {
-        return false;
+        User existingUser = userMapper.selectById(id);
+        if (ObjectUtils.isEmpty(existingUser)) {
+            throw new IllegalArgumentException("用户不存在");
+        }
+
+        User user = User.builder().build();
+        BeanUtils.copyProperties(dto, user);
+        user.setId(id);
+
+        // 检查用户名是否重复（排除当前用户）
+        if (!existingUser.getUsername().equals(dto.getUsername())) {
+            DuplicateCheckUtils.checkDuplicateMultiFields(
+                    user,
+                    User::getId,
+                    userMapper::selectCount,
+                    "用户名已存在",
+                    DuplicateCheckUtils.FieldCondition.of(User::getUsername, DuplicateCheckUtils.ConditionType.EQ)
+            );
+        }
+
+        // 检查邮箱是否重复（排除当前用户）
+        if (!ObjectUtils.isEmpty(dto.getEmail()) && !dto.getEmail().equals(existingUser.getEmail())) {
+            DuplicateCheckUtils.checkDuplicateMultiFields(
+                    user,
+                    User::getId,
+                    userMapper::selectCount,
+                    "邮箱已存在",
+                    DuplicateCheckUtils.FieldCondition.of(User::getEmail, DuplicateCheckUtils.ConditionType.EQ)
+            );
+        }
+
+        // 检查手机号是否重复（排除当前用户）
+        if (!ObjectUtils.isEmpty(dto.getPhone()) && !dto.getPhone().equals(existingUser.getPhone())) {
+            DuplicateCheckUtils.checkDuplicateMultiFields(
+                    user,
+                    User::getId,
+                    userMapper::selectCount,
+                    "手机号码已存在",
+                    DuplicateCheckUtils.FieldCondition.of(User::getPhone, DuplicateCheckUtils.ConditionType.EQ)
+            );
+        }
+
+        int update = userMapper.updateById(user);
+        if (update == 0) {
+            throw new OneselfException("更新用户失败");
+        }
+        log.info("用户更新成功, ID: {}", id);
+        return true;
     }
 
     /**
@@ -166,8 +223,29 @@ public class UserServiceImpl implements UserService {
      * @return 删除是否成功
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean delete(List<String> ids) {
-        return false;
+        if (ObjectUtils.isEmpty(ids)) {
+            throw new IllegalArgumentException("用户ID列表不能为空");
+        }
+
+        // 检查用户是否存在
+        List<User> users = userMapper.selectByIds(ids);
+        if (users.size() != ids.size()) {
+            throw new IllegalArgumentException("部分用户不存在");
+        }
+
+        // 逻辑删除用户
+        int deleteCount = userMapper.deleteByIds(ids);
+        if (deleteCount == 0) {
+            throw new OneselfException("删除用户失败");
+        }
+
+        // 删除用户角色关联
+        userRoleMapper.delete(new LambdaQueryWrapper<UserRole>().in(UserRole::getUserId, ids));
+
+        log.info("批量删除用户成功, 删除数量: {}", deleteCount);
+        return true;
     }
 
     /**
@@ -178,8 +256,32 @@ public class UserServiceImpl implements UserService {
      * @return 是否成功
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean updateStatus(List<String> ids, StatusEnum status) {
-        return false;
+        if (ObjectUtils.isEmpty(ids)) {
+            throw new IllegalArgumentException("用户ID列表不能为空");
+        }
+
+        // 检查用户是否存在
+        List<User> users = userMapper.selectByIds(ids);
+        if (users.size() != ids.size()) {
+            throw new IllegalArgumentException("部分用户不存在");
+        }
+
+        // 批量更新状态
+        User updateUser = new User();
+        updateUser.setStatus(status);
+
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(User::getId, ids);
+
+        int updateCount = userMapper.update(updateUser, wrapper);
+        if (updateCount == 0) {
+            throw new OneselfException("更新用户状态失败");
+        }
+
+        log.info("批量更新用户状态成功, 更新数量: {}, 状态: {}", updateCount, status);
+        return true;
     }
 
     /**
@@ -190,7 +292,53 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public PageVO<UserVO> page(PageDTO<UserQueryDTO> dto) {
-        return null;
+        // 构建查询条件
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+
+        if (ObjectUtils.isNotEmpty(dto.getCondition())) {
+            UserQueryDTO query = dto.getCondition();
+
+            if (ObjectUtils.isNotEmpty(query.getUsername())) {
+                wrapper.like(User::getUsername, query.getUsername());
+            }
+            if (ObjectUtils.isNotEmpty(query.getEmail())) {
+                wrapper.like(User::getEmail, query.getEmail());
+            }
+            if (ObjectUtils.isNotEmpty(query.getPhone())) {
+                wrapper.like(User::getPhone, query.getPhone());
+            }
+            if (ObjectUtils.isNotEmpty(query.getRealName())) {
+                wrapper.like(User::getRealName, query.getRealName());
+            }
+            if (ObjectUtils.isNotEmpty(query.getDeptId())) {
+                wrapper.eq(User::getDeptId, query.getDeptId());
+            }
+            if (ObjectUtils.isNotEmpty(query.getSex())) {
+                wrapper.eq(User::getSex, query.getSex());
+            }
+            if (ObjectUtils.isNotEmpty(query.getType())) {
+                wrapper.eq(User::getType, query.getType());
+            }
+            if (ObjectUtils.isNotEmpty(query.getStatus())) {
+                wrapper.eq(User::getStatus, query.getStatus());
+            }
+        }
+
+        // 按创建时间倒序
+        wrapper.orderByDesc(User::getCreateTime);
+
+        // 分页查询
+        PageDTO.Pagination pagination = dto.getPagination();
+        Page<User> page = new Page<>(pagination.getPageNum(), pagination.getPageSize());
+        Page<User> userPage = userMapper.selectPage(page, wrapper);
+
+        // 对齐 DeptServiceImpl 的分页转换
+        MyBatisPageWrapper<User> pageWrapper = new MyBatisPageWrapper<>(userPage);
+        return PageVO.convert(pageWrapper, user -> {
+            UserVO vo = new UserVO();
+            BeanCopyUtils.copy(user, vo);
+            return vo;
+        });
     }
 
     /**
@@ -201,6 +349,18 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public List<UserVO> listByDeptId(String deptId) {
-        return List.of();
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(User::getDeptId, deptId);
+        wrapper.orderByDesc(User::getCreateTime);
+
+        List<User> users = userMapper.selectList(wrapper);
+
+        return users.stream()
+                .map(user -> {
+                    UserVO vo = new UserVO();
+                    BeanUtils.copyProperties(user, vo);
+                    return vo;
+                })
+                .collect(Collectors.toList());
     }
 }

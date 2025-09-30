@@ -1,18 +1,35 @@
 package com.oneself.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.oneself.exception.OneselfException;
+import com.oneself.mapper.PermissionMapper;
+import com.oneself.mapper.RolePermissionMapper;
 import com.oneself.model.dto.PageDTO;
 import com.oneself.model.dto.PermissionDTO;
 import com.oneself.model.dto.PermissionQueryDTO;
 import com.oneself.model.enums.StatusEnum;
+import com.oneself.model.pojo.Permission;
+import com.oneself.model.pojo.RolePermission;
 import com.oneself.model.vo.PageVO;
 import com.oneself.model.vo.PermissionTreeVO;
 import com.oneself.model.vo.PermissionVO;
+import com.oneself.pagination.MyBatisPageWrapper;
 import com.oneself.service.PermissionService;
+import com.oneself.utils.BeanCopyUtils;
+import com.oneself.utils.DuplicateCheckUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author liuhuan
@@ -26,6 +43,10 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class PermissionServiceImpl implements PermissionService {
+
+    private final PermissionMapper permissionMapper;
+    private final RolePermissionMapper rolePermissionMapper;
+
     /**
      * 新增权限
      *
@@ -33,8 +54,26 @@ public class PermissionServiceImpl implements PermissionService {
      * @return 新增权限ID
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public String add(PermissionDTO dto) {
-        return "";
+        Permission permission = Permission.builder().build();
+        BeanCopyUtils.copy(dto, permission);
+
+        // 检查权限编码是否重复
+        DuplicateCheckUtils.checkDuplicateMultiFields(
+                permission,
+                Permission::getId,
+                permissionMapper::selectCount,
+                "权限编码已存在",
+                DuplicateCheckUtils.FieldCondition.of(Permission::getPermCode, DuplicateCheckUtils.ConditionType.EQ)
+        );
+
+        int insert = permissionMapper.insert(permission);
+        if (insert == 0) {
+            throw new OneselfException("新增权限失败");
+        }
+        log.info("权限添加成功, ID: {}", permission.getId());
+        return permission.getId();
     }
 
     /**
@@ -45,7 +84,13 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     public PermissionVO get(String id) {
-        return null;
+        Permission permission = permissionMapper.selectById(id);
+        if (ObjectUtils.isEmpty(permission)) {
+            throw new OneselfException("权限不存在");
+        }
+        PermissionVO vo = new PermissionVO();
+        BeanCopyUtils.copy(permission, vo);
+        return vo;
     }
 
     /**
@@ -56,8 +101,33 @@ public class PermissionServiceImpl implements PermissionService {
      * @return 更新是否成功
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean update(String id, PermissionDTO dto) {
-        return false;
+        Permission existingPermission = permissionMapper.selectById(id);
+        if (ObjectUtils.isEmpty(existingPermission)) {
+            throw new OneselfException("权限不存在");
+        }
+
+        Permission permission = Permission.builder().id(id).build();
+        BeanCopyUtils.copy(dto, permission);
+
+        // 检查权限编码是否重复（排除当前权限）
+        if (!existingPermission.getPermCode().equals(dto.getPermCode())) {
+            DuplicateCheckUtils.checkDuplicateMultiFields(
+                    permission,
+                    Permission::getId,
+                    permissionMapper::selectCount,
+                    "权限编码已存在",
+                    DuplicateCheckUtils.FieldCondition.of(Permission::getPermCode, DuplicateCheckUtils.ConditionType.EQ)
+            );
+        }
+
+        int update = permissionMapper.updateById(permission);
+        if (update == 0) {
+            throw new OneselfException("更新权限失败");
+        }
+        log.info("权限更新成功, ID: {}", id);
+        return true;
     }
 
     /**
@@ -67,8 +137,29 @@ public class PermissionServiceImpl implements PermissionService {
      * @return 删除是否成功
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean delete(List<String> ids) {
-        return false;
+        if (ObjectUtils.isEmpty(ids)) {
+            throw new IllegalArgumentException("权限ID列表不能为空");
+        }
+
+        // 检查权限是否存在
+        List<Permission> permissions = permissionMapper.selectByIds(ids);
+        if (permissions.size() != ids.size()) {
+            throw new IllegalArgumentException("部分权限不存在");
+        }
+
+        // 删除权限
+        int deleteCount = permissionMapper.deleteByIds(ids);
+        if (deleteCount == 0) {
+            throw new OneselfException("删除权限失败");
+        }
+
+        // 删除角色权限关联
+        rolePermissionMapper.delete(new LambdaQueryWrapper<RolePermission>().in(RolePermission::getPermId, ids));
+
+        log.info("批量删除权限成功, 删除数量: {}", deleteCount);
+        return true;
     }
 
     /**
@@ -79,8 +170,29 @@ public class PermissionServiceImpl implements PermissionService {
      * @return 状态更新是否成功
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean updateStatus(List<String> ids, StatusEnum status) {
-        return false;
+        if (ObjectUtils.isEmpty(ids)) {
+            throw new IllegalArgumentException("权限ID列表不能为空");
+        }
+
+        // 检查权限是否存在
+        List<Permission> permissions = permissionMapper.selectByIds(ids);
+        if (permissions.size() != ids.size()) {
+            throw new IllegalArgumentException("部分权限不存在");
+        }
+
+        // 批量更新状态
+        LambdaUpdateWrapper<Permission> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.in(Permission::getId, ids).set(Permission::getStatus, status);
+
+        int updateCount = permissionMapper.update(null, wrapper);
+        if (updateCount == 0) {
+            throw new OneselfException("更新权限状态失败");
+        }
+
+        log.info("批量更新权限状态成功, 更新数量: {}, 状态: {}", updateCount, status);
+        return true;
     }
 
     /**
@@ -91,7 +203,42 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     public PageVO<PermissionVO> page(PageDTO<PermissionQueryDTO> dto) {
-        return null;
+        // 构建查询条件
+        LambdaQueryWrapper<Permission> wrapper = new LambdaQueryWrapper<>();
+
+        if (ObjectUtils.isNotEmpty(dto.getCondition())) {
+            PermissionQueryDTO query = dto.getCondition();
+
+            if (ObjectUtils.isNotEmpty(query.getPermCode())) {
+                wrapper.like(Permission::getPermCode, query.getPermCode());
+            }
+            if (ObjectUtils.isNotEmpty(query.getPermName())) {
+                wrapper.like(Permission::getPermName, query.getPermName());
+            }
+            if (ObjectUtils.isNotEmpty(query.getResourceType())) {
+                wrapper.eq(Permission::getResourceType, query.getResourceType());
+            }
+            if (ObjectUtils.isNotEmpty(query.getStatus())) {
+                wrapper.eq(Permission::getStatus, query.getStatus());
+            }
+        }
+
+        // 按创建时间倒序
+        wrapper.orderByDesc(Permission::getCreateTime);
+
+        PageDTO.Pagination pagination = dto.getPagination();
+        // 分页查询
+        Page<Permission> page = new Page<>(pagination.getPageNum(), pagination.getPageSize());
+        Page<Permission> permissionPage = permissionMapper.selectPage(page, wrapper);
+
+        MyBatisPageWrapper<Permission> pageWrapper = new MyBatisPageWrapper<>(permissionPage);
+
+        return PageVO.convert(pageWrapper, s -> {
+            PermissionVO vo = new PermissionVO();
+            BeanCopyUtils.copy(s, vo);
+            return vo;
+        });
+
     }
 
     /**
@@ -104,7 +251,46 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     public List<PermissionTreeVO> tree() {
-        return List.of();
+        // 查询所有权限
+        List<Permission> permissions = permissionMapper.selectList(
+                new LambdaQueryWrapper<Permission>()
+                        .eq(Permission::getStatus, StatusEnum.NORMAL)
+                        .orderByAsc(Permission::getSortOrder)
+        );
+
+        if (ObjectUtils.isEmpty(permissions)) {
+            return List.of();
+        }
+
+        // 转换为TreeVO
+        List<PermissionTreeVO> treeVOs = permissions.stream()
+                .map(permission -> {
+                    PermissionTreeVO vo = new PermissionTreeVO();
+                    BeanCopyUtils.copy(permission, vo);
+                    return vo;
+                })
+                .toList();
+
+        // 构建id与TreeVO的映射
+        Map<String, PermissionTreeVO> idToTreeVOMap = new HashMap<>();
+        treeVOs.forEach(vo -> idToTreeVOMap.put(vo.getId(), vo));
+
+        // 构建树结构
+        List<PermissionTreeVO> rootNodes = new ArrayList<>();
+        for (PermissionTreeVO vo : treeVOs) {
+            if (ObjectUtils.isEmpty(vo.getParentId())) {
+                // 没有父节点的为顶级节点
+                rootNodes.add(vo);
+            } else {
+                // 找到父节点，并把当前节点加入父节点的children中
+                PermissionTreeVO parent = idToTreeVOMap.get(vo.getParentId());
+                if (parent != null) {
+                    parent.getChildren().add(vo);
+                }
+            }
+        }
+
+        return rootNodes;
     }
 
     /**
@@ -118,6 +304,30 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     public List<PermissionVO> listByRoleId(String roleId) {
-        return List.of();
+        // 查询角色权限关联
+        List<RolePermission> rolePermissions = rolePermissionMapper.selectList(
+                new LambdaQueryWrapper<RolePermission>().eq(RolePermission::getRoleId, roleId)
+        );
+
+        if (ObjectUtils.isEmpty(rolePermissions)) {
+            return List.of();
+        }
+
+        // 获取权限ID列表
+        List<String> permIds = rolePermissions.stream()
+                .map(RolePermission::getPermId)
+                .collect(Collectors.toList());
+
+        // 查询权限信息
+        List<Permission> permissions = permissionMapper.selectByIds(permIds);
+
+        // 转换为VO
+        return permissions.stream()
+                .map(permission -> {
+                    PermissionVO vo = new PermissionVO();
+                    BeanCopyUtils.copy(permission, vo);
+                    return vo;
+                })
+                .collect(Collectors.toList());
     }
 }
