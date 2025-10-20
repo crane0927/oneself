@@ -21,9 +21,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,6 +54,7 @@ public class UserServiceImpl implements UserService {
     private final RolePermissionMapper rolePermissionMapper;
     private final PermissionMapper permissionMapper;
     private final ConfigurationMapper configurationMapper;
+    private final CacheManager cacheManager;
 
 
     /**
@@ -109,6 +116,7 @@ public class UserServiceImpl implements UserService {
      * @return 用户信息 VO
      */
     @Override
+    @Cacheable(value = "sysUser", key = "#id")
     public UserVO get(String id) {
         User user = Optional.ofNullable(
                 userMapper.selectById(id)
@@ -126,6 +134,7 @@ public class UserServiceImpl implements UserService {
      * @return 登录用户信息 VO
      */
     @Override
+    @Cacheable(value = "sysUser", key = "'session:' + #name")
     public UserSessionVO getSessionByName(String name) {
         User user = Optional.ofNullable(
                 userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, name))
@@ -165,6 +174,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = "sysUser", key = "#id")
     public boolean update(String id, UserDTO dto) {
         User existingUser = userMapper.selectById(id);
         if (ObjectUtils.isEmpty(existingUser)) {
@@ -244,6 +254,17 @@ public class UserServiceImpl implements UserService {
         // 删除用户角色关联
         userRoleMapper.delete(new LambdaQueryWrapper<UserRole>().in(UserRole::getUserId, ids));
 
+        // 事务提交后清理缓存（避免回滚导致数据不一致）
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                Cache userCache = cacheManager.getCache("sysUser");
+                if (userCache != null) {
+                    ids.forEach(userCache::evict);
+                }
+            }
+        });
+
         log.info("批量删除用户成功, 删除数量: {}", deleteCount);
         return true;
     }
@@ -279,6 +300,17 @@ public class UserServiceImpl implements UserService {
         if (updateCount == 0) {
             throw new OneselfException("更新用户状态失败");
         }
+
+        // 事务提交后清理缓存（避免回滚导致数据不一致）
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                Cache userCache = cacheManager.getCache("sysUser");
+                if (userCache != null) {
+                    ids.forEach(userCache::evict);
+                }
+            }
+        });
 
         log.info("批量更新用户状态成功, 更新数量: {}, 状态: {}", updateCount, status);
         return true;
@@ -348,6 +380,7 @@ public class UserServiceImpl implements UserService {
      * @return 用户列表
      */
     @Override
+    @Cacheable(value = "sysUser", key = "'dept:' + #deptId")
     public List<UserVO> listByDeptId(String deptId) {
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(User::getDeptId, deptId);

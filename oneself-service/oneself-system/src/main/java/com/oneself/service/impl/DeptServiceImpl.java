@@ -336,6 +336,7 @@ public class DeptServiceImpl implements DeptService {
      * @return 所有部门信息列表
      */
     @Override
+    @Cacheable(value = "sysDept", key = "'all'")
     public List<DeptVO> listAll() {
         List<Dept> depts = deptMapper.selectList(new LambdaQueryWrapper<Dept>()
                 .eq(Dept::getStatus, StatusEnum.NORMAL)

@@ -11,6 +11,8 @@ import com.oneself.utils.BeanCopyUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +43,7 @@ public class RolePermissionServiceImpl implements RolePermissionService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = "sysRolePermission", key = "#roleId")
     public boolean assignPermissions(String roleId, List<String> permIds) {
         if (ObjectUtils.isEmpty(permIds)) {
             throw new IllegalArgumentException("权限ID列表不能为空");
@@ -79,6 +82,7 @@ public class RolePermissionServiceImpl implements RolePermissionService {
      * @return 权限列表 VO
      */
     @Override
+    @Cacheable(value = "sysRolePermission", key = "#roleId")
     public List<PermissionVO> listPermissionsByRoleId(String roleId) {
         // 查询角色权限关联
         List<RolePermission> rolePermissions = rolePermissionMapper.selectList(
@@ -115,6 +119,7 @@ public class RolePermissionServiceImpl implements RolePermissionService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = "sysRolePermission", key = "#roleId")
     public boolean deleteByRoleId(String roleId) {
         int deleteCount = rolePermissionMapper.delete(
             new LambdaQueryWrapper<RolePermission>().eq(RolePermission::getRoleId, roleId)
@@ -133,6 +138,7 @@ public class RolePermissionServiceImpl implements RolePermissionService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = "sysRolePermission", key = "#roleId")
     public boolean deleteByRoleIdAndPermIds(String roleId, List<String> permIds) {
         if (ObjectUtils.isEmpty(permIds)) {
             throw new IllegalArgumentException("权限ID列表不能为空");

@@ -19,8 +19,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
@@ -41,6 +47,7 @@ import java.util.Optional;
 public class ConfigurationServiceImpl implements ConfigurationService {
 
     private final ConfigurationMapper configurationMapper;
+    private final CacheManager cacheManager;
 
     /**
      * 新增系统配置
@@ -76,6 +83,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      * @return 配置详情视图对象
      */
     @Override
+    @Cacheable(value = "sysConfiguration", key = "#id")
     public ConfigurationVO get(String id) {
         Configuration configuration = configurationMapper.selectById(id);
         Assert.notNull(configuration, "参数不存在");
@@ -93,6 +101,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = "sysConfiguration", key = "#id")
     public boolean update(String id, ConfigurationDTO dto) {
         Assert.hasText(id, "系统配置 ID 不能为空");
         Assert.notNull(dto, "系统配置不能为 null");
@@ -135,6 +144,18 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         if (delete < 1) {
             throw new OneselfException("删除参数失败");
         }
+
+        // 事务提交后清理缓存（避免回滚导致数据不一致）
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                Cache configCache = cacheManager.getCache("sysConfiguration");
+                if (configCache != null) {
+                    deleteIds.forEach(configCache::evict);
+                }
+            }
+        });
+
         return true;
     }
 

@@ -1,5 +1,6 @@
 package com.oneself.model.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
@@ -27,5 +28,18 @@ public enum SexEnum {
     SexEnum(Integer code, String desc) {
         this.code = code;
         this.desc = desc;
+    }
+
+    @JsonCreator
+    public static SexEnum fromValue(String value) {
+        if (value == null || value.isEmpty()) {
+            return null;
+        }
+        for (SexEnum status : SexEnum.values()) {
+            if (String.valueOf(status.code).equals(value) || status.name().equalsIgnoreCase(value)) {
+                return status;
+            }
+        }
+        throw new IllegalArgumentException("SexEnum 的值无效: " + value);
     }
 }

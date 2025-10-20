@@ -21,8 +21,14 @@ import com.oneself.utils.DuplicateCheckUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,6 +48,7 @@ public class RoleServiceImpl implements RoleService {
 
     private final RoleMapper roleMapper;
     private final UserRoleMapper userRoleMapper;
+    private final CacheManager cacheManager;
     /**
      * 新增角色
      *
@@ -78,6 +85,7 @@ public class RoleServiceImpl implements RoleService {
      * @return 角色信息 VO
      */
     @Override
+    @Cacheable(value = "sysRole", key = "#id")
     public RoleVO get(String id) {
         Role role = roleMapper.selectById(id);
         if (ObjectUtils.isEmpty(role)) {
@@ -97,6 +105,7 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = "sysRole", key = "#id")
     public boolean update(String id, RoleDTO dto) {
         Role existingRole = roleMapper.selectById(id);
         if (ObjectUtils.isEmpty(existingRole)) {
@@ -153,6 +162,17 @@ public class RoleServiceImpl implements RoleService {
         // 删除用户角色关联
         userRoleMapper.delete(new LambdaQueryWrapper<UserRole>().in(UserRole::getRoleId, ids));
 
+        // 事务提交后清理缓存（避免回滚导致数据不一致）
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                Cache roleCache = cacheManager.getCache("sysRole");
+                if (roleCache != null) {
+                    ids.forEach(roleCache::evict);
+                }
+            }
+        });
+
         log.info("批量删除角色成功, 删除数量: {}", deleteCount);
         return true;
     }
@@ -185,6 +205,17 @@ public class RoleServiceImpl implements RoleService {
         if (updateCount == 0) {
             throw new OneselfException("更新角色状态失败");
         }
+
+        // 事务提交后清理缓存（避免回滚导致数据不一致）
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                Cache roleCache = cacheManager.getCache("sysRole");
+                if (roleCache != null) {
+                    ids.forEach(roleCache::evict);
+                }
+            }
+        });
 
         log.info("批量更新角色状态成功, 更新数量: {}, 状态: {}", updateCount, status);
         return true;
@@ -238,6 +269,7 @@ public class RoleServiceImpl implements RoleService {
      * @return 所有角色信息列表
      */
     @Override
+    @Cacheable(value = "sysRole", key = "'all'")
     public List<RoleVO> listAll() {
         LambdaQueryWrapper<Role> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Role::getStatus, StatusEnum.NORMAL);

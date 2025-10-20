@@ -11,6 +11,8 @@ import com.oneself.utils.BeanCopyUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +43,7 @@ public class UserRoleServiceImpl implements UserRoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = "sysUser", key = "'session:' + #userId")
     public boolean assignRoles(String userId, List<String> roleIds) {
         if (ObjectUtils.isEmpty(roleIds)) {
             throw new IllegalArgumentException("角色ID列表不能为空");
@@ -79,6 +82,7 @@ public class UserRoleServiceImpl implements UserRoleService {
      * @return 角色列表 VO
      */
     @Override
+    @Cacheable(value = "sysUserRole", key = "#userId")
     public List<RoleVO> listRolesByUserId(String userId) {
         // 查询用户角色关联
         List<UserRole> userRoles = userRoleMapper.selectList(
@@ -115,6 +119,7 @@ public class UserRoleServiceImpl implements UserRoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = "sysUserRole", key = "#userId")
     public boolean deleteByUserId(String userId) {
         int deleteCount = userRoleMapper.delete(
             new LambdaQueryWrapper<UserRole>().eq(UserRole::getUserId, userId)
@@ -133,6 +138,7 @@ public class UserRoleServiceImpl implements UserRoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = "sysUserRole", key = "#userId")
     public boolean deleteByUserIdAndRoleIds(String userId, List<String> roleIds) {
         if (ObjectUtils.isEmpty(roleIds)) {
             throw new IllegalArgumentException("角色ID列表不能为空");

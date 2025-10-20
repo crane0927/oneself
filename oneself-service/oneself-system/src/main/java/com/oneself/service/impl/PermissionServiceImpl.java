@@ -22,8 +22,14 @@ import com.oneself.utils.DuplicateCheckUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,6 +52,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     private final PermissionMapper permissionMapper;
     private final RolePermissionMapper rolePermissionMapper;
+    private final CacheManager cacheManager;
 
     /**
      * 新增权限
@@ -83,6 +90,7 @@ public class PermissionServiceImpl implements PermissionService {
      * @return 权限信息 VO
      */
     @Override
+    @Cacheable(value = "sysPermission", key = "#id")
     public PermissionVO get(String id) {
         Permission permission = permissionMapper.selectById(id);
         if (ObjectUtils.isEmpty(permission)) {
@@ -102,6 +110,7 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = "sysPermission", key = "#id")
     public boolean update(String id, PermissionDTO dto) {
         Permission existingPermission = permissionMapper.selectById(id);
         if (ObjectUtils.isEmpty(existingPermission)) {
@@ -158,6 +167,17 @@ public class PermissionServiceImpl implements PermissionService {
         // 删除角色权限关联
         rolePermissionMapper.delete(new LambdaQueryWrapper<RolePermission>().in(RolePermission::getPermId, ids));
 
+        // 事务提交后清理缓存（避免回滚导致数据不一致）
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                Cache permissionCache = cacheManager.getCache("sysPermission");
+                if (permissionCache != null) {
+                    ids.forEach(permissionCache::evict);
+                }
+            }
+        });
+
         log.info("批量删除权限成功, 删除数量: {}", deleteCount);
         return true;
     }
@@ -190,6 +210,17 @@ public class PermissionServiceImpl implements PermissionService {
         if (updateCount == 0) {
             throw new OneselfException("更新权限状态失败");
         }
+
+        // 事务提交后清理缓存（避免回滚导致数据不一致）
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                Cache permissionCache = cacheManager.getCache("sysPermission");
+                if (permissionCache != null) {
+                    ids.forEach(permissionCache::evict);
+                }
+            }
+        });
 
         log.info("批量更新权限状态成功, 更新数量: {}, 状态: {}", updateCount, status);
         return true;
@@ -250,6 +281,7 @@ public class PermissionServiceImpl implements PermissionService {
      * @return 权限树列表
      */
     @Override
+    @Cacheable(value = "sysPermission", key = "'tree'")
     public List<PermissionTreeVO> tree() {
         // 查询所有权限
         List<Permission> permissions = permissionMapper.selectList(
@@ -303,6 +335,7 @@ public class PermissionServiceImpl implements PermissionService {
      * @return 权限列表
      */
     @Override
+    @Cacheable(value = "sysPermission", key = "'role:' + #roleId")
     public List<PermissionVO> listByRoleId(String roleId) {
         // 查询角色权限关联
         List<RolePermission> rolePermissions = rolePermissionMapper.selectList(
