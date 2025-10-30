@@ -1,12 +1,12 @@
 package com.oneself.service;
 
 import com.oneself.model.dto.DeptDTO;
-import com.oneself.model.dto.PageDTO;
+import com.oneself.req.PageReq;
 import com.oneself.model.dto.DeptQueryDTO;
 import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.vo.DeptTreeVO;
 import com.oneself.model.vo.DeptVO;
-import com.oneself.model.vo.PageVO;
+import com.oneself.resp.PageResp;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -71,7 +71,7 @@ public interface DeptService {
      * @param dto 分页查询 DTO，包含页码、每页大小及查询条件
      * @return 分页结果 PageVO<DeptVO>
      */
-    PageVO<DeptVO> page(@Valid PageDTO<DeptQueryDTO> dto);
+    PageResp<DeptVO> page(@Valid PageReq<DeptQueryDTO> dto);
 
     /**
      * 查询部门树形结构

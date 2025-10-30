@@ -1,7 +1,7 @@
 package com.oneself.client;
 
 import com.oneself.model.dto.*;
-import com.oneself.model.vo.ResponseVO;
+import com.oneself.resp.Resp;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -21,33 +21,33 @@ public interface QuartzJobClient {
 
     @Operation(summary = "创建定时任务")
     @PostMapping("/cron")
-    ResponseVO<Boolean> createCronJob(@RequestBody CronJobDTO dto);
+    Resp<Boolean> createCronJob(@RequestBody CronJobDTO dto);
 
     @Operation(summary = "创建执行一次的任务")
     @PostMapping("/one-time")
-    ResponseVO<Boolean> createOneJob(@RequestBody OneJobDTO dto);
+    Resp<Boolean> createOneJob(@RequestBody OneJobDTO dto);
 
     @Operation(summary = "更新定时任务")
     @PutMapping("/cron")
-    ResponseVO<Boolean> updateCronJob(@RequestBody CronJobDTO dto);
+    Resp<Boolean> updateCronJob(@RequestBody CronJobDTO dto);
 
     @Operation(summary = "更新执行一次的任务")
     @PutMapping("/one-time")
-    ResponseVO<Boolean> updateOneJob(@RequestBody OneJobDTO dto);
+    Resp<Boolean> updateOneJob(@RequestBody OneJobDTO dto);
 
     @Operation(summary = "删除定时任务")
     @DeleteMapping
-    ResponseVO<Boolean> delete(@RequestBody DeleteJobDTO dto);
+    Resp<Boolean> delete(@RequestBody DeleteJobDTO dto);
 
     @Operation(summary = "暂停任务")
     @PutMapping("/pause")
-    ResponseVO<Boolean> pause(@RequestBody PauseJobDTO dto);
+    Resp<Boolean> pause(@RequestBody PauseJobDTO dto);
 
     @Operation(summary = "恢复任务")
     @PutMapping("/resume")
-    ResponseVO<Boolean> resume(@RequestBody ResumeJobDTO dto);
+    Resp<Boolean> resume(@RequestBody ResumeJobDTO dto);
 
     @Operation(summary = "立即执行任务")
     @PostMapping("/execute")
-    ResponseVO<Boolean> executeImmediately(@RequestBody ExecuteDTO dto);
+    Resp<Boolean> executeImmediately(@RequestBody ExecuteDTO dto);
 }

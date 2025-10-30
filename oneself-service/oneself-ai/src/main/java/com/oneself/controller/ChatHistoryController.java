@@ -2,7 +2,7 @@ package com.oneself.controller;
 
 import com.oneself.model.enums.ChatTypeEnum;
 import com.oneself.model.vo.ChatHistoryVO;
-import com.oneself.model.vo.ResponseVO;
+import com.oneself.resp.Resp;
 import com.oneself.service.ChatHistoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -40,19 +40,19 @@ public class ChatHistoryController {
 
     @Operation(summary = "根据对话类型获取历史列表")
     @GetMapping
-    public ResponseVO<List<ChatHistoryVO>> getChatHistoryList(@Schema(description = "会话类型", requiredMode = Schema.RequiredMode.REQUIRED) @RequestParam @NotNull ChatTypeEnum chatType) {
-        return ResponseVO.success(chatHistoryService.getChatHistoryList(chatType));
+    public Resp<List<ChatHistoryVO>> getChatHistoryList(@Schema(description = "会话类型", requiredMode = Schema.RequiredMode.REQUIRED) @RequestParam @NotNull ChatTypeEnum chatType) {
+        return Resp.success(chatHistoryService.getChatHistoryList(chatType));
     }
 
     @Operation(summary = "归档对话")
     @PostMapping("/archive")
-    public ResponseVO<Boolean> archive(@Schema(description = "会话 ID", requiredMode = Schema.RequiredMode.REQUIRED) @RequestParam @NotNull String conversationId) {
-        return ResponseVO.success(chatHistoryService.archive(conversationId));
+    public Resp<Boolean> archive(@Schema(description = "会话 ID", requiredMode = Schema.RequiredMode.REQUIRED) @RequestParam @NotNull String conversationId) {
+        return Resp.success(chatHistoryService.archive(conversationId));
     }
 
     @Operation(summary = "获取对话消息")
     @GetMapping("/messages")
-    public ResponseVO<List<Message>> getChatMessageByConversationId(@Schema(description = "会话 ID", requiredMode = Schema.RequiredMode.REQUIRED) @RequestParam @NotNull String conversationId) {
-        return ResponseVO.success(chatMemory.get(conversationId, Integer.MAX_VALUE));
+    public Resp<List<Message>> getChatMessageByConversationId(@Schema(description = "会话 ID", requiredMode = Schema.RequiredMode.REQUIRED) @RequestParam @NotNull String conversationId) {
+        return Resp.success(chatMemory.get(conversationId, Integer.MAX_VALUE));
     }
 }

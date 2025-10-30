@@ -1,6 +1,6 @@
 package com.oneself.controller;
 
-import com.oneself.model.vo.ResponseVO;
+import com.oneself.resp.Resp;
 import com.oneself.utils.DateFormatUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -32,12 +32,12 @@ public class QuartzArgumentController {
 
     @Operation(summary = "获取 CRON 表达式后续执行时间")
     @GetMapping("/cron/next-times")
-    public ResponseVO<List<String>> nextTriggerTime(@Parameter(description = "CRON表达式", required = true, example = "0 0 9/1 * * ? *")
+    public Resp<List<String>> nextTriggerTime(@Parameter(description = "CRON表达式", required = true, example = "0 0 9/1 * * ? *")
                                                     @RequestParam String scheduleConf,
-                                                    @Parameter(description = "后续执行时间数量", required = true, example = "1")
+                                              @Parameter(description = "后续执行时间数量", required = true, example = "1")
                                                     @RequestParam Integer num) {
         if (num == null || num <= 0 || num > 100) {
-            return ResponseVO.failure("参数错误，执行次数范围应在 1 到 100 之间");
+            return Resp.failure("参数错误，执行次数范围应在 1 到 100 之间");
         }
 
         List<String> result = new ArrayList<>();
@@ -53,11 +53,11 @@ public class QuartzArgumentController {
             }
         } catch (Exception e) {
             log.error("解析 CRON 表达式失败: {}", e.getMessage(), e);
-            return ResponseVO.failure("CRON 表达式解析失败，请检查表达式是否正确");
+            return Resp.failure("CRON 表达式解析失败，请检查表达式是否正确");
         } finally {
             DateFormatUtils.remove();
         }
 
-        return ResponseVO.success(result);
+        return Resp.success(result);
     }
 }

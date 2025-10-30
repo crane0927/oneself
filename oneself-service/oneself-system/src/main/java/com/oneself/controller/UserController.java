@@ -1,13 +1,13 @@
 package com.oneself.controller;
 
 import com.oneself.annotation.ApiLog;
-import com.oneself.model.dto.PageDTO;
+import com.oneself.req.PageReq;
 import com.oneself.model.dto.UserDTO;
 import com.oneself.model.dto.UserQueryDTO;
 import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.vo.UserSessionVO;
-import com.oneself.model.vo.PageVO;
-import com.oneself.model.vo.ResponseVO;
+import com.oneself.resp.PageResp;
+import com.oneself.resp.Resp;
 import com.oneself.model.vo.UserVO;
 import com.oneself.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,51 +41,51 @@ public class UserController {
 
     @Operation(summary = "新增用户")
     @PostMapping
-    public ResponseVO<String> add(@RequestBody @Valid UserDTO dto) {
-        return ResponseVO.success(userService.add(dto));
+    public Resp<String> add(@RequestBody @Valid UserDTO dto) {
+        return Resp.success(userService.add(dto));
     }
 
     @Operation(summary = "根据ID查询用户")
     @GetMapping("/{id}")
-    public ResponseVO<UserVO> get(@PathVariable("id") @Valid @NotBlank String id) {
-        return ResponseVO.success(userService.get(id));
+    public Resp<UserVO> get(@PathVariable("id") @Valid @NotBlank String id) {
+        return Resp.success(userService.get(id));
     }
 
     @Operation(summary = "根据用户名查询会话信息")
     @GetMapping("/get/session/by/{name}")
-    public ResponseVO<UserSessionVO> getSessionByName(@PathVariable("name") @Valid @NotBlank String name) {
-        return ResponseVO.success(userService.getSessionByName(name));
+    public Resp<UserSessionVO> getSessionByName(@PathVariable("name") @Valid @NotBlank String name) {
+        return Resp.success(userService.getSessionByName(name));
     }
 
     @Operation(summary = "修改用户")
     @PutMapping("/{id}")
-    public ResponseVO<Boolean> update(@PathVariable("id") @Valid @NotBlank String id,
-                                      @RequestBody @Valid UserDTO dto) {
-        return ResponseVO.success(userService.update(id, dto));
+    public Resp<Boolean> update(@PathVariable("id") @Valid @NotBlank String id,
+                                @RequestBody @Valid UserDTO dto) {
+        return Resp.success(userService.update(id, dto));
     }
 
     @Operation(summary = "删除用户")
     @DeleteMapping
-    public ResponseVO<Boolean> delete(@RequestBody @Valid @NotEmpty List<@NotBlank String> ids) {
-        return ResponseVO.success(userService.delete(ids));
+    public Resp<Boolean> delete(@RequestBody @Valid @NotEmpty List<@NotBlank String> ids) {
+        return Resp.success(userService.delete(ids));
     }
 
     @Operation(summary = "更新用户状态")
     @PutMapping("/status/{status}")
-    public ResponseVO<Boolean> updateStatus(@RequestBody @Valid @NotEmpty List<@NotBlank String> ids,
-                                            @PathVariable("status") @Valid @NotBlank StatusEnum status) {
-        return ResponseVO.success(userService.updateStatus(ids, status));
+    public Resp<Boolean> updateStatus(@RequestBody @Valid @NotEmpty List<@NotBlank String> ids,
+                                      @PathVariable("status") @Valid @NotBlank StatusEnum status) {
+        return Resp.success(userService.updateStatus(ids, status));
     }
 
     @Operation(summary = "分页查询用户")
     @PostMapping("/page")
-    public PageVO<UserVO> page(@RequestBody @Valid PageDTO<UserQueryDTO> dto) {
+    public PageResp<UserVO> page(@RequestBody @Valid PageReq<UserQueryDTO> dto) {
         return userService.page(dto);
     }
 
     @Operation(summary = "根据部门ID查询用户")
     @GetMapping("/list/by/dept/{deptId}")
-    public ResponseVO<List<UserVO>> listByDeptId(@PathVariable("deptId") @Valid @NotBlank String deptId) {
-        return ResponseVO.success(userService.listByDeptId(deptId));
+    public Resp<List<UserVO>> listByDeptId(@PathVariable("deptId") @Valid @NotBlank String deptId) {
+        return Resp.success(userService.listByDeptId(deptId));
     }
 }

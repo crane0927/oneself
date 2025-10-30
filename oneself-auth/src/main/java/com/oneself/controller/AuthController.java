@@ -1,7 +1,7 @@
 package com.oneself.controller;
 
 import com.oneself.model.dto.LoginDTO;
-import com.oneself.model.vo.ResponseVO;
+import com.oneself.resp.Resp;
 import com.oneself.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,19 +31,19 @@ public class AuthController {
 
     @Operation(summary = "登录")
     @PostMapping("/login")
-    public ResponseVO<String> login(@RequestBody LoginDTO dto, HttpServletRequest request) {
-        return ResponseVO.success(authService.login(dto, request));
+    public Resp<String> login(@RequestBody LoginDTO dto, HttpServletRequest request) {
+        return Resp.success(authService.login(dto, request));
     }
 
     @Operation(summary = "登出")
     @DeleteMapping("/logout")
-    public ResponseVO<Boolean> logout(HttpServletRequest request) {
-        return ResponseVO.success(authService.logout(request));
+    public Resp<Boolean> logout(HttpServletRequest request) {
+        return Resp.success(authService.logout(request));
     }
 
     @Operation(summary = "刷新 Token")
     @PostMapping("/refresh")
-    public ResponseVO<Boolean> refresh(HttpServletRequest request) {
-        return ResponseVO.success(true);
+    public Resp<Boolean> refresh(HttpServletRequest request) {
+        return Resp.success(true);
     }
 }

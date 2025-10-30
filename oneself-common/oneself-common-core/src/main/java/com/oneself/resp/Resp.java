@@ -1,4 +1,4 @@
-package com.oneself.model.vo;
+package com.oneself.resp;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -10,14 +10,14 @@ import java.io.Serializable;
 /**
  * @author liuhuan
  * date 2024/12/30
- * packageName com.oneself.common.model.vo
- * className ResponseVO
+ * packageName com.oneself.resp
+ * className Resp
  * description
  * version 1.0
  */
 @Data
 @Schema(description = "响应数据")
-public class ResponseVO<T> implements Serializable {
+public class Resp<T> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -33,16 +33,16 @@ public class ResponseVO<T> implements Serializable {
     @Schema(description = "请求追踪 ID")
     private String traceId;
 
-    ResponseVO() {
+    protected Resp() {
     }
 
-    private ResponseVO(int msgCode, String message, T data) {
+    private Resp(int msgCode, String message, T data) {
         this.msgCode = msgCode;
         this.message = message;
         this.data = data;
     }
 
-    private ResponseVO(int msgCode, String message, String path, String traceId) {
+    private Resp(int msgCode, String message, String path, String traceId) {
         this.msgCode = msgCode;
         this.message = message;
         this.path = path;
@@ -56,9 +56,9 @@ public class ResponseVO<T> implements Serializable {
      * @param <T>  数据类型
      * @return 成功的 ResponseVO 实例
      */
-    public static <T> ResponseVO<T> success(T data) {
+    public static <T> Resp<T> success(T data) {
         // 返回状态码 200，表示成功，并且设置 message 为 "请求成功"
-        return new ResponseVO<>(HttpStatus.OK.value(), "请求成功", data);
+        return new Resp<>(HttpStatus.OK.value(), "请求成功", data);
     }
 
     /**
@@ -68,9 +68,9 @@ public class ResponseVO<T> implements Serializable {
      * @param <T>          数据类型
      * @return 失败的 ResponseVO 实例
      */
-    public static <T> ResponseVO<T> failure(String errorMessage) {
+    public static <T> Resp<T> failure(String errorMessage) {
         // 返回状态码 500，表示服务器内部错误，并设置相应的错误信息
-        return new ResponseVO<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), errorMessage, null);
+        return new Resp<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), errorMessage, null);
     }
 
     /**
@@ -81,9 +81,9 @@ public class ResponseVO<T> implements Serializable {
      * @param <T>          数据类型
      * @return 失败的 ResponseVO 实例
      */
-    public static <T> ResponseVO<T> failure(String errorMessage, HttpStatus status) {
+    public static <T> Resp<T> failure(String errorMessage, HttpStatus status) {
         // 返回状态码 500，表示服务器内部错误，并设置相应的错误信息
-        return new ResponseVO<>(status.value(), errorMessage, null);
+        return new Resp<>(status.value(), errorMessage, null);
     }
 
     /**
@@ -94,9 +94,9 @@ public class ResponseVO<T> implements Serializable {
      * @param <T>          数据类型
      * @return 失败的 ResponseVO 实例
      */
-    public static <T> ResponseVO<T> failure(String errorMessage, HttpStatus status, String path, String traceId) {
+    public static <T> Resp<T> failure(String errorMessage, HttpStatus status, String path, String traceId) {
         // 返回状态码 500，表示服务器内部错误，并设置相应的错误信息
-        return new ResponseVO<>(status.value(), errorMessage, path, traceId);
+        return new Resp<>(status.value(), errorMessage, path, traceId);
     }
 
 }

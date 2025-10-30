@@ -2,7 +2,7 @@ package com.oneself.controller;
 
 import com.oneself.annotation.ApiLog;
 import com.oneself.model.vo.LanguageVO;
-import com.oneself.model.vo.ResponseVO;
+import com.oneself.resp.Resp;
 import com.oneself.utils.JacksonUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -61,7 +61,7 @@ public class SonarController {
     @ApiLog(logRequest = false, logResponse = false)
     @Operation(summary = "获取项目列表")
     @GetMapping("/projects")
-    public ResponseVO<List<String>> getProjects() {
+    public Resp<List<String>> getProjects() {
         // 获取 ProjectsService，用于操作 SonarQube 项目数据
         ProjectsService projects = wsClient.projects();
 
@@ -78,14 +78,14 @@ public class SonarController {
                 .map(Projects.SearchWsResponse.Component::getName)
                 .toList();  // 将名称收集成 List<String>
 
-        return ResponseVO.success(list);
+        return Resp.success(list);
     }
 
 
     @ApiLog(logRequest = false, logResponse = false)
     @Operation(summary = "获取支持的语言")
     @GetMapping("/languages")
-    public ResponseVO<List<LanguageVO.Language>> getLanguages() {
+    public Resp<List<LanguageVO.Language>> getLanguages() {
         LanguagesService languages = wsClient.languages();
 
         ListRequest listRequest = new ListRequest();
@@ -94,15 +94,15 @@ public class SonarController {
         LanguageVO languageVO = JacksonUtils.fromJson(languagesStr, LanguageVO.class);
         if (ObjectUtils.isNotEmpty(languageVO)) {
             log.info("语言种类数量: {}", languageVO.getLanguages().size());
-            return ResponseVO.success(languageVO.getLanguages());
+            return Resp.success(languageVO.getLanguages());
         }
-        return ResponseVO.failure(null);
+        return Resp.failure(null);
     }
 
     @ApiLog(logRequest = false, logResponse = false)
     @Operation(summary = "获取对应语言的规则")
     @GetMapping("/rules")
-    public ResponseVO<List<String>> getRules() {
+    public Resp<List<String>> getRules() {
         RulesService rules = wsClient.rules();
         org.sonarqube.ws.client.rules.SearchRequest searchRequest = new org.sonarqube.ws.client.rules.SearchRequest();
         // 设置查询条件，这里只查询 Java 语言的规则，通过 key 查询
@@ -116,7 +116,7 @@ public class SonarController {
 
         List<String> list = rulesList.stream().map(Rules.Rule::getKey).toList();
         log.info("规则数量: {}", list.size());
-        return ResponseVO.success(list);
+        return Resp.success(list);
     }
 
 

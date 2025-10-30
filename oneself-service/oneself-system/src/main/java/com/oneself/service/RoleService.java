@@ -1,10 +1,10 @@
 package com.oneself.service;
 
-import com.oneself.model.dto.PageDTO;
+import com.oneself.req.PageReq;
 import com.oneself.model.dto.RoleDTO;
 import com.oneself.model.dto.RoleQueryDTO;
 import com.oneself.model.enums.StatusEnum;
-import com.oneself.model.vo.PageVO;
+import com.oneself.resp.PageResp;
 import com.oneself.model.vo.RoleVO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -70,7 +70,7 @@ public interface RoleService {
      * @param dto 分页查询 DTO，包含页码、每页大小及查询条件
      * @return 分页结果 PageVO<RoleVO>
      */
-    PageVO<RoleVO> page(@Valid PageDTO<RoleQueryDTO> dto);
+    PageResp<RoleVO> page(@Valid PageReq<RoleQueryDTO> dto);
 
     /**
      * 查询所有角色列表

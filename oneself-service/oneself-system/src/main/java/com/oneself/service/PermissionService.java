@@ -1,10 +1,10 @@
 package com.oneself.service;
 
-import com.oneself.model.dto.PageDTO;
+import com.oneself.req.PageReq;
 import com.oneself.model.dto.PermissionDTO;
 import com.oneself.model.dto.PermissionQueryDTO;
 import com.oneself.model.enums.StatusEnum;
-import com.oneself.model.vo.PageVO;
+import com.oneself.resp.PageResp;
 import com.oneself.model.vo.PermissionTreeVO;
 import com.oneself.model.vo.PermissionVO;
 import jakarta.validation.Valid;
@@ -71,7 +71,7 @@ public interface PermissionService {
      * @param dto 分页查询 DTO，包含页码、每页大小及查询条件
      * @return 分页结果 PageVO<PermissionVO>
      */
-    PageVO<PermissionVO> page(@Valid PageDTO<PermissionQueryDTO> dto);
+    PageResp<PermissionVO> page(@Valid PageReq<PermissionQueryDTO> dto);
 
     /**
      * 查询权限树

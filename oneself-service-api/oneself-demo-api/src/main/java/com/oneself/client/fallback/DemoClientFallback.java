@@ -3,7 +3,7 @@ package com.oneself.client.fallback;
 import com.oneself.client.DemoClient;
 import com.oneself.model.dto.SensitiveDTO;
 import com.oneself.model.vo.DemoVO;
-import com.oneself.model.vo.ResponseVO;
+import com.oneself.resp.Resp;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DemoClientFallback implements DemoClient {
     @Override
-    public ResponseVO<DemoVO> sensitive(SensitiveDTO dto) {
-        return ResponseVO.failure("DemoClientFallback sayHello error");
+    public Resp<DemoVO> sensitive(SensitiveDTO dto) {
+        return Resp.failure("DemoClientFallback sayHello error");
     }
 }

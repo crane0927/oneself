@@ -5,9 +5,9 @@ import com.oneself.kafka.model.dto.KafkaClusterDTO;
 import com.oneself.kafka.model.dto.PageKafkaClusterDTO;
 import com.oneself.kafka.model.vo.KafkaClusterVO;
 import com.oneself.kafka.service.KafkaClusterService;
-import com.oneself.model.dto.PageDTO;
-import com.oneself.model.vo.PageVO;
-import com.oneself.model.vo.ResponseVO;
+import com.oneself.req.PageReq;
+import com.oneself.resp.PageResp;
+import com.oneself.resp.Resp;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -37,27 +37,27 @@ public class KafkaClusterController {
 
     @Operation(summary = "新增")
     @PostMapping
-    public ResponseVO<Boolean> add(@RequestBody @Valid KafkaClusterDTO dto) {
+    public Resp<Boolean> add(@RequestBody @Valid KafkaClusterDTO dto) {
         Integer size = kafkaClusterService.add(dto);
         if (size == null || size <= 0) {
-            return ResponseVO.failure("新增集群失败");
+            return Resp.failure("新增集群失败");
         }
-        return ResponseVO.success(Boolean.TRUE);
+        return Resp.success(Boolean.TRUE);
     }
 
     @Operation(summary = "修改")
     @PutMapping("/{id}")
-    public ResponseVO<Boolean> update(@PathVariable("id") @Valid @NotNull @Positive Long id, @RequestBody @Valid KafkaClusterDTO dto) {
+    public Resp<Boolean> update(@PathVariable("id") @Valid @NotNull @Positive Long id, @RequestBody @Valid KafkaClusterDTO dto) {
         Integer size = kafkaClusterService.update(id, dto);
         if (size == null || size <= 0) {
-            return ResponseVO.failure("修改集群失败");
+            return Resp.failure("修改集群失败");
         }
-        return ResponseVO.success(Boolean.TRUE);
+        return Resp.success(Boolean.TRUE);
     }
 
     @Operation(summary = "查询列表")
     @PostMapping("/page")
-    public PageVO<KafkaClusterVO> page(@RequestBody @Valid PageDTO<PageKafkaClusterDTO> dto) {
+    public PageResp<KafkaClusterVO> page(@RequestBody @Valid PageReq<PageKafkaClusterDTO> dto) {
         return kafkaClusterService.page(dto);
     }
 

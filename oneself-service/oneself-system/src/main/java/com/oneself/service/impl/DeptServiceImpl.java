@@ -8,13 +8,13 @@ import com.oneself.mapper.DeptMapper;
 import com.oneself.mapper.UserMapper;
 import com.oneself.model.dto.DeptDTO;
 import com.oneself.model.dto.DeptQueryDTO;
-import com.oneself.model.dto.PageDTO;
+import com.oneself.req.PageReq;
 import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.pojo.Dept;
 import com.oneself.model.pojo.User;
 import com.oneself.model.vo.DeptTreeVO;
 import com.oneself.model.vo.DeptVO;
-import com.oneself.model.vo.PageVO;
+import com.oneself.resp.PageResp;
 import com.oneself.pagination.MyBatisPageWrapper;
 import com.oneself.service.DeptService;
 import com.oneself.utils.BeanCopyUtils;
@@ -220,11 +220,11 @@ public class DeptServiceImpl implements DeptService {
      * @return 分页结果 PageVO<DeptVO>
      */
     @Override
-    public PageVO<DeptVO> page(PageDTO<DeptQueryDTO> dto) {
+    public PageResp<DeptVO> page(PageReq<DeptQueryDTO> dto) {
         // 1. 构建查询条件
         DeptQueryDTO condition = dto.getCondition();
         // 2. 分页参数
-        PageDTO.Pagination pagination = dto.getPagination();
+        PageReq.Pagination pagination = dto.getPagination();
         // 3. 构建分页参数
         Page<Dept> pageRequest = new Page<>(pagination.getPageNum(), pagination.getPageSize());
         // 4. 查询
@@ -236,7 +236,7 @@ public class DeptServiceImpl implements DeptService {
         Page<Dept> deptPage = deptMapper.selectPage(pageRequest, wrapper);
         MyBatisPageWrapper<Dept> pageWrapper = new MyBatisPageWrapper<>(deptPage);
         // 5. 转换分页数据
-        return PageVO.convert(pageWrapper, dept -> {
+        return PageResp.convert(pageWrapper, dept -> {
             DeptVO deptVO = new DeptVO();
             BeanCopyUtils.copy(dept, deptVO);
             return deptVO;

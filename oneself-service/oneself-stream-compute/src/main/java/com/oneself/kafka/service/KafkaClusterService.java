@@ -3,8 +3,8 @@ package com.oneself.kafka.service;
 import com.oneself.kafka.model.dto.KafkaClusterDTO;
 import com.oneself.kafka.model.dto.PageKafkaClusterDTO;
 import com.oneself.kafka.model.vo.KafkaClusterVO;
-import com.oneself.model.dto.PageDTO;
-import com.oneself.model.vo.PageVO;
+import com.oneself.req.PageReq;
+import com.oneself.resp.PageResp;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -22,5 +22,5 @@ public interface KafkaClusterService {
 
     Integer update(@Valid @NotNull @Positive Long id, @Valid KafkaClusterDTO dto);
 
-    PageVO<KafkaClusterVO> page(@Valid PageDTO<PageKafkaClusterDTO> dto);
+    PageResp<KafkaClusterVO> page(@Valid PageReq<PageKafkaClusterDTO> dto);
 }

@@ -1,8 +1,8 @@
 package com.oneself.script.service.impl;
 
 import com.oneself.exception.OneselfException;
-import com.oneself.model.dto.PageDTO;
-import com.oneself.model.vo.PageVO;
+import com.oneself.req.PageReq;
+import com.oneself.resp.PageResp;
 import com.oneself.script.model.dto.PageQueryDTO;
 import com.oneself.script.model.dto.ScriptDTO;
 import com.oneself.script.model.enums.ScriptStatusEnum;
@@ -14,13 +14,13 @@ import com.oneself.utils.BeanCopyUtils;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -102,9 +102,9 @@ public class ScriptServiceImpl implements ScriptService {
     }
 
     @Override
-    public PageVO<ScriptVO> page(PageDTO<PageQueryDTO> dto) {
+    public PageResp<ScriptVO> page(PageReq<PageQueryDTO> dto) {
         PageQueryDTO queryDTO = dto.getCondition();
-        PageDTO.Pagination pagination = dto.getPagination();
+        PageReq.Pagination pagination = dto.getPagination();
 
         int page = pagination.getPageNum().intValue() - 1;
         int size = pagination.getPageSize().intValue();
@@ -127,10 +127,32 @@ public class ScriptServiceImpl implements ScriptService {
         long total = mongoTemplate.count(query, Script.class);
 
         // 排序
-        if (pagination.getSort() != null && !pagination.getSort().isEmpty()) {
-            query.with(Sort.by(Sort.Direction.DESC, pagination.getSort()));
+        if (pagination.getSorts() != null && !pagination.getSorts().isEmpty()) {
+            List<org.springframework.data.domain.Sort.Order> orders = new ArrayList<>();
+            for (PageReq.Sort sort : pagination.getSorts()) {
+                // 获取字段名（如果为空，可根据业务决定是否跳过或抛异常）
+                String field = sort.getField();
+                if (field == null || field.trim().isEmpty()) {
+                    // 处理空字段的情况（示例：跳过该排序条件）
+                    continue;
+                }
+                // 转换排序方向（默认降序）
+                org.springframework.data.domain.Sort.Direction direction =
+                        sort.getDirection() == PageReq.SortDirection.ASC
+                                ? org.springframework.data.domain.Sort.Direction.ASC
+                                : org.springframework.data.domain.Sort.Direction.DESC;
+                orders.add(new org.springframework.data.domain.Sort.Order(direction, field));
+            }
+            // 确保有有效排序条件时才应用
+            if (!orders.isEmpty()) {
+                query.with(org.springframework.data.domain.Sort.by(orders));
+            } else {
+                // 若排序列表不为空但所有条件无效，使用默认排序
+                query.with(org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "updateTime"));
+            }
         } else {
-            query.with(Sort.by(Sort.Direction.DESC, "updateTime"));
+            // 无排序条件时使用默认排序
+            query.with(org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "updateTime"));
         }
 
         // 分页
@@ -142,7 +164,7 @@ public class ScriptServiceImpl implements ScriptService {
         List<ScriptVO> records = list.stream().map(ScriptVO::new).toList();
         long pages = (total + size - 1) / size;
 
-        return PageVO.success(records, total, (long) size, pages);
+        return PageResp.success(records, total, (long) size, pages);
     }
 
     @Override

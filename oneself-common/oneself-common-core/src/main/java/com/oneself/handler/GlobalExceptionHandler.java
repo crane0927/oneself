@@ -3,7 +3,7 @@ package com.oneself.handler;
 import com.oneself.exception.OneselfException;
 import com.oneself.exception.OneselfLoginException;
 import com.oneself.filter.TraceFilter;
-import com.oneself.model.vo.ResponseVO;
+import com.oneself.resp.Resp;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.ThreadContext;
@@ -34,9 +34,9 @@ public class GlobalExceptionHandler {
      * @return 响应结果
      */
     @ExceptionHandler(OneselfException.class)
-    public ResponseVO<Object> handleOneselfException(OneselfException e, HttpServletRequest request) {
+    public Resp<Object> handleOneselfException(OneselfException e, HttpServletRequest request) {
         log.info(LOG_MESSAGE_TEMPLATE, request.getRequestURL(), e.getMessage(), e);
-        return ResponseVO.failure(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR,
+        return Resp.failure(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR,
                 request.getRequestURI(), ThreadContext.get(TraceFilter.TRACE_ID));
     }
 
@@ -48,9 +48,9 @@ public class GlobalExceptionHandler {
      * @return 响应结果
      */
     @ExceptionHandler(OneselfLoginException.class)
-    public ResponseVO<Object> handleOneselfLoginException(OneselfLoginException e, HttpServletRequest request) {
+    public Resp<Object> handleOneselfLoginException(OneselfLoginException e, HttpServletRequest request) {
         log.info(LOG_MESSAGE_TEMPLATE, request.getRequestURL(), e.getMessage(), e);
-        return ResponseVO.failure(e.getMessage(), HttpStatus.UNAUTHORIZED,
+        return Resp.failure(e.getMessage(), HttpStatus.UNAUTHORIZED,
                 request.getRequestURI(), ThreadContext.get(TraceFilter.TRACE_ID));
     }
 
@@ -63,23 +63,23 @@ public class GlobalExceptionHandler {
      * @return 响应结果
      */
     @ExceptionHandler(BindException.class)
-    public ResponseVO<Object> handleBindException(BindException e, HttpServletRequest request) {
+    public Resp<Object> handleBindException(BindException e, HttpServletRequest request) {
         log.info(LOG_MESSAGE_TEMPLATE, request.getRequestURL(), e.getMessage(), e);
-        return ResponseVO.failure(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR,
+        return Resp.failure(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR,
                 request.getRequestURI(), ThreadContext.get(TraceFilter.TRACE_ID));
     }
 
     /**
      * 处理其他异常
      *
-     * @param e
-     * @param request
-     * @return
+     * @param e 异常对象
+     * @param request 请求对象
+     * @return 响应结果
      */
     @ExceptionHandler(Exception.class)
-    public ResponseVO<Object> handleException(Exception e, HttpServletRequest request) {
+    public Resp<Object> handleException(Exception e, HttpServletRequest request) {
         log.info(LOG_MESSAGE_TEMPLATE, request.getRequestURL(), e.getMessage(), e);
-        return ResponseVO.failure("系统异常，请稍后重试", HttpStatus.INTERNAL_SERVER_ERROR,
+        return Resp.failure("系统异常，请稍后重试", HttpStatus.INTERNAL_SERVER_ERROR,
                 request.getRequestURI(), ThreadContext.get(TraceFilter.TRACE_ID));
     }
 }

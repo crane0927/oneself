@@ -1,7 +1,7 @@
 package com.oneself.script.service;
 
-import com.oneself.model.dto.PageDTO;
-import com.oneself.model.vo.PageVO;
+import com.oneself.req.PageReq;
+import com.oneself.resp.PageResp;
 import com.oneself.script.model.dto.PageQueryDTO;
 import com.oneself.script.model.dto.ScriptDTO;
 import com.oneself.script.model.vo.ScriptVO;
@@ -25,7 +25,7 @@ public interface ScriptService {
 
     boolean edit(@Valid @NotNull @Positive String id, @Valid ScriptDTO dto);
 
-    PageVO<ScriptVO> page(@Valid PageDTO<PageQueryDTO> dto);
+    PageResp<ScriptVO> page(@Valid PageReq<PageQueryDTO> dto);
 
     ScriptVO get(@Valid @NotNull @Positive String id);
 

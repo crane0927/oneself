@@ -2,7 +2,7 @@ package com.oneself.client;
 
 import com.oneself.client.fallback.UserClientFallbackFactory;
 import com.oneself.model.vo.UserSessionVO;
-import com.oneself.model.vo.ResponseVO;
+import com.oneself.resp.Resp;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -27,5 +27,5 @@ public interface UserClient {
 
     @Operation(summary = "根据用户名查询会话信息")
     @GetMapping("/get/session/by/{name}")
-    ResponseVO<UserSessionVO> getSessionByName(@PathVariable("name") @Valid @NotBlank String name);
+    Resp<UserSessionVO> getSessionByName(@PathVariable("name") @Valid @NotBlank String name);
 }

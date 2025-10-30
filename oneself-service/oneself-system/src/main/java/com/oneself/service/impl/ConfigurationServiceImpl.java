@@ -6,11 +6,11 @@ import com.oneself.exception.OneselfException;
 import com.oneself.mapper.ConfigurationMapper;
 import com.oneself.model.dto.ConfigurationDTO;
 import com.oneself.model.dto.ConfigurationQueryDTO;
-import com.oneself.model.dto.PageDTO;
+import com.oneself.req.PageReq;
 import com.oneself.model.enums.ConfigurationTypeEnum;
 import com.oneself.model.pojo.Configuration;
 import com.oneself.model.vo.ConfigurationVO;
-import com.oneself.model.vo.PageVO;
+import com.oneself.resp.PageResp;
 import com.oneself.pagination.MyBatisPageWrapper;
 import com.oneself.service.ConfigurationService;
 import com.oneself.utils.BeanCopyUtils;
@@ -166,11 +166,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      * @return 配置分页结果
      */
     @Override
-    public PageVO<ConfigurationVO> page(PageDTO<ConfigurationQueryDTO> dto) {
+    public PageResp<ConfigurationVO> page(PageReq<ConfigurationQueryDTO> dto) {
         // 1. 构建查询条件
         ConfigurationQueryDTO condition = dto.getCondition();
         // 2. 分页参数
-        PageDTO.Pagination pagination = dto.getPagination();
+        PageReq.Pagination pagination = dto.getPagination();
         // 3. 构建分页参数
         Page<Configuration> pageRequest = new Page<>(pagination.getPageNum(), pagination.getPageSize());
         // 4. 查询
@@ -184,7 +184,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         Page<Configuration> configurationPage = configurationMapper.selectPage(pageRequest, wrapper);
         MyBatisPageWrapper<Configuration> pageWrapper = new MyBatisPageWrapper<>(configurationPage);
         // 5. 转换分页数据
-        return PageVO.convert(pageWrapper, configuration -> {
+        return PageResp.convert(pageWrapper, configuration -> {
             ConfigurationVO vo = new ConfigurationVO();
             BeanCopyUtils.copy(configuration, vo);
             return vo;

@@ -1,7 +1,7 @@
 package com.oneself.config;
 
 import com.oneself.filter.JwtAuthenticationTokenFilter;
-import com.oneself.model.vo.ResponseVO;
+import com.oneself.resp.Resp;
 import com.oneself.utils.JacksonUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -36,8 +36,8 @@ public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
     private final JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
-    private static final ResponseVO<String> UNAUTHORIZED = ResponseVO.failure("未认证，请登录", HttpStatus.UNAUTHORIZED);
-    private static final ResponseVO<String> FORBIDDEN = ResponseVO.failure("无权限访问", HttpStatus.FORBIDDEN);
+    private static final Resp<String> UNAUTHORIZED = Resp.failure("未认证，请登录", HttpStatus.UNAUTHORIZED);
+    private static final Resp<String> FORBIDDEN = Resp.failure("无权限访问", HttpStatus.FORBIDDEN);
 
     /**
      * 密码编码器

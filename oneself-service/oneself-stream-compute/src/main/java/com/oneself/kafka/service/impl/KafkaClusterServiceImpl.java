@@ -9,8 +9,8 @@ import com.oneself.kafka.model.dto.PageKafkaClusterDTO;
 import com.oneself.kafka.model.pojo.KafkaCluster;
 import com.oneself.kafka.model.vo.KafkaClusterVO;
 import com.oneself.kafka.service.KafkaClusterService;
-import com.oneself.model.dto.PageDTO;
-import com.oneself.model.vo.PageVO;
+import com.oneself.req.PageReq;
+import com.oneself.resp.PageResp;
 import com.oneself.pagination.MyBatisPageWrapper;
 import com.oneself.utils.BeanCopyUtils;
 import lombok.RequiredArgsConstructor;
@@ -86,9 +86,9 @@ public class KafkaClusterServiceImpl implements KafkaClusterService {
     }
 
     @Override
-    public PageVO<KafkaClusterVO> page(PageDTO<PageKafkaClusterDTO> dto) {
+    public PageResp<KafkaClusterVO> page(PageReq<PageKafkaClusterDTO> dto) {
         PageKafkaClusterDTO condition = dto.getCondition();
-        PageDTO.Pagination pagination = dto.getPagination();
+        PageReq.Pagination pagination = dto.getPagination();
         Page<KafkaCluster> pageRequest = new Page<>(pagination.getPageNum(), pagination.getPageSize());
         LambdaQueryWrapper<KafkaCluster> wrapper = new LambdaQueryWrapper<KafkaCluster>()
                 .like(StringUtils.isNotBlank(condition.getName()), KafkaCluster::getName, condition.getName())
@@ -98,7 +98,7 @@ public class KafkaClusterServiceImpl implements KafkaClusterService {
 
         Page<KafkaCluster> kafkaClusterPage = kafkaClusterMapper.selectPage(pageRequest, wrapper);
         MyBatisPageWrapper<KafkaCluster> pageWrapper = new MyBatisPageWrapper<>(kafkaClusterPage);
-        return PageVO.convert(pageWrapper, kafkaCluster -> {
+        return PageResp.convert(pageWrapper, kafkaCluster -> {
             KafkaClusterVO kafkaClusterVO = new KafkaClusterVO();
             BeanCopyUtils.copy(kafkaCluster, kafkaClusterVO);
             return kafkaClusterVO;

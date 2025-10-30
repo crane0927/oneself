@@ -1,14 +1,14 @@
 package com.oneself.controller;
 
 import com.oneself.annotation.ApiLog;
-import com.oneself.model.dto.PageDTO;
+import com.oneself.req.PageReq;
 import com.oneself.model.dto.PermissionDTO;
 import com.oneself.model.dto.PermissionQueryDTO;
 import com.oneself.model.enums.StatusEnum;
-import com.oneself.model.vo.PageVO;
+import com.oneself.resp.PageResp;
 import com.oneself.model.vo.PermissionTreeVO;
 import com.oneself.model.vo.PermissionVO;
-import com.oneself.model.vo.ResponseVO;
+import com.oneself.resp.Resp;
 import com.oneself.service.PermissionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -41,51 +41,51 @@ public class PermissionController {
 
     @Operation(summary = "新增权限")
     @PostMapping
-    public ResponseVO<String> add(@RequestBody @Valid PermissionDTO dto) {
-        return ResponseVO.success(permissionService.add(dto));
+    public Resp<String> add(@RequestBody @Valid PermissionDTO dto) {
+        return Resp.success(permissionService.add(dto));
     }
 
     @Operation(summary = "根据ID查询权限")
     @GetMapping("/{id}")
-    public ResponseVO<PermissionVO> get(@PathVariable("id") @Valid @NotBlank String id) {
-        return ResponseVO.success(permissionService.get(id));
+    public Resp<PermissionVO> get(@PathVariable("id") @Valid @NotBlank String id) {
+        return Resp.success(permissionService.get(id));
     }
 
     @Operation(summary = "修改权限")
     @PutMapping("/{id}")
-    public ResponseVO<Boolean> update(@PathVariable("id") @Valid @NotBlank String id,
-                                      @RequestBody @Valid PermissionDTO dto) {
-        return ResponseVO.success(permissionService.update(id, dto));
+    public Resp<Boolean> update(@PathVariable("id") @Valid @NotBlank String id,
+                                @RequestBody @Valid PermissionDTO dto) {
+        return Resp.success(permissionService.update(id, dto));
     }
 
     @Operation(summary = "删除权限")
     @DeleteMapping
-    public ResponseVO<Boolean> delete(@RequestBody @Valid @NotEmpty List<@NotBlank String> ids) {
-        return ResponseVO.success(permissionService.delete(ids));
+    public Resp<Boolean> delete(@RequestBody @Valid @NotEmpty List<@NotBlank String> ids) {
+        return Resp.success(permissionService.delete(ids));
     }
 
     @Operation(summary = "更新权限状态")
     @PutMapping("/status/{status}")
-    public ResponseVO<Boolean> updateStatus(@RequestBody @Valid @NotEmpty List<@NotBlank String> ids,
-                                            @PathVariable("status") @Valid @NotBlank StatusEnum status) {
-        return ResponseVO.success(permissionService.updateStatus(ids, status));
+    public Resp<Boolean> updateStatus(@RequestBody @Valid @NotEmpty List<@NotBlank String> ids,
+                                      @PathVariable("status") @Valid @NotBlank StatusEnum status) {
+        return Resp.success(permissionService.updateStatus(ids, status));
     }
 
     @Operation(summary = "分页查询权限")
     @PostMapping("/page")
-    public PageVO<PermissionVO> page(@RequestBody @Valid PageDTO<PermissionQueryDTO> dto) {
+    public PageResp<PermissionVO> page(@RequestBody @Valid PageReq<PermissionQueryDTO> dto) {
         return permissionService.page(dto);
     }
 
     @Operation(summary = "查询权限树")
     @GetMapping("/tree")
-    public ResponseVO<List<PermissionTreeVO>> tree() {
-        return ResponseVO.success(permissionService.tree());
+    public Resp<List<PermissionTreeVO>> tree() {
+        return Resp.success(permissionService.tree());
     }
 
     @Operation(summary = "根据角色ID查询权限列表")
     @GetMapping("/listByRole/{roleId}")
-    public ResponseVO<List<PermissionVO>> listByRoleId(@PathVariable("roleId") @Valid @NotBlank String roleId) {
-        return ResponseVO.success(permissionService.listByRoleId(roleId));
+    public Resp<List<PermissionVO>> listByRoleId(@PathVariable("roleId") @Valid @NotBlank String roleId) {
+        return Resp.success(permissionService.listByRoleId(roleId));
     }
 }

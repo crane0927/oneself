@@ -1,9 +1,9 @@
 package com.oneself.script.controller;
 
 import com.oneself.annotation.ApiLog;
-import com.oneself.model.dto.PageDTO;
-import com.oneself.model.vo.PageVO;
-import com.oneself.model.vo.ResponseVO;
+import com.oneself.req.PageReq;
+import com.oneself.resp.PageResp;
+import com.oneself.resp.Resp;
 import com.oneself.script.model.dto.PageQueryDTO;
 import com.oneself.script.model.dto.ScriptDTO;
 import com.oneself.script.model.vo.ScriptVO;
@@ -42,32 +42,32 @@ public class ScriptController {
 
     @Operation(summary = "新增")
     @PostMapping
-    public ResponseVO<String> add(@RequestBody @Valid ScriptDTO dto) {
-        return ResponseVO.success(scriptService.add(dto));
+    public Resp<String> add(@RequestBody @Valid ScriptDTO dto) {
+        return Resp.success(scriptService.add(dto));
     }
 
     @Operation(summary = "编辑")
     @PutMapping("/{id}")
-    public ResponseVO<Boolean> edit(@PathVariable("id") @Valid @NotNull @Positive String id, @RequestBody @Valid ScriptDTO dto) {
-        return ResponseVO.success(scriptService.edit(id, dto));
+    public Resp<Boolean> edit(@PathVariable("id") @Valid @NotNull @Positive String id, @RequestBody @Valid ScriptDTO dto) {
+        return Resp.success(scriptService.edit(id, dto));
     }
 
     @Operation(summary = "查询列表")
     @PostMapping("/page")
-    public PageVO<ScriptVO> page(@RequestBody @Valid PageDTO<PageQueryDTO> dto) {
+    public PageResp<ScriptVO> page(@RequestBody @Valid PageReq<PageQueryDTO> dto) {
         return scriptService.page(dto);
     }
 
     @Operation(summary = "根据 ID 查询")
     @GetMapping("/{id}")
-    public ResponseVO<ScriptVO> get(@PathVariable("id") @Valid @NotNull @Positive String id) {
-        return ResponseVO.success(scriptService.get(id));
+    public Resp<ScriptVO> get(@PathVariable("id") @Valid @NotNull @Positive String id) {
+        return Resp.success(scriptService.get(id));
     }
 
     @Operation(summary = "批量删除")
     @DeleteMapping
-    public ResponseVO<Boolean> delete(@RequestBody @Valid @NotEmpty List<@NotNull String> ids) {
-        return ResponseVO.success(scriptService.delete(ids));
+    public Resp<Boolean> delete(@RequestBody @Valid @NotEmpty List<@NotNull String> ids) {
+        return Resp.success(scriptService.delete(ids));
     }
 
 }

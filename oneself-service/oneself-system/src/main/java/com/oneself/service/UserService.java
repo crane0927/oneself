@@ -1,11 +1,11 @@
 package com.oneself.service;
 
-import com.oneself.model.dto.PageDTO;
+import com.oneself.req.PageReq;
 import com.oneself.model.dto.UserDTO;
 import com.oneself.model.dto.UserQueryDTO;
 import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.vo.UserSessionVO;
-import com.oneself.model.vo.PageVO;
+import com.oneself.resp.PageResp;
 import com.oneself.model.vo.UserVO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -79,7 +79,7 @@ public interface UserService {
      * @param dto 分页查询 DTO
      * @return 分页结果
      */
-    PageVO<UserVO> page(@Valid PageDTO<UserQueryDTO> dto);
+    PageResp<UserVO> page(@Valid PageReq<UserQueryDTO> dto);
 
     /**
      * 根据部门ID查询用户列表

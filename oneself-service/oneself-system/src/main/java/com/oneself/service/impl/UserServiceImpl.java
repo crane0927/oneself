@@ -4,13 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.oneself.exception.OneselfException;
 import com.oneself.mapper.*;
-import com.oneself.model.dto.PageDTO;
+import com.oneself.req.PageReq;
 import com.oneself.model.dto.UserDTO;
 import com.oneself.model.dto.UserQueryDTO;
 import com.oneself.model.enums.ConfigurationTypeEnum;
 import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.pojo.*;
-import com.oneself.model.vo.PageVO;
+import com.oneself.resp.PageResp;
 import com.oneself.model.vo.UserSessionVO;
 import com.oneself.model.vo.UserVO;
 import com.oneself.service.UserService;
@@ -323,7 +323,7 @@ public class UserServiceImpl implements UserService {
      * @return 分页结果
      */
     @Override
-    public PageVO<UserVO> page(PageDTO<UserQueryDTO> dto) {
+    public PageResp<UserVO> page(PageReq<UserQueryDTO> dto) {
         // 构建查询条件
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
 
@@ -360,13 +360,13 @@ public class UserServiceImpl implements UserService {
         wrapper.orderByDesc(User::getCreateTime);
 
         // 分页查询
-        PageDTO.Pagination pagination = dto.getPagination();
+        PageReq.Pagination pagination = dto.getPagination();
         Page<User> page = new Page<>(pagination.getPageNum(), pagination.getPageSize());
         Page<User> userPage = userMapper.selectPage(page, wrapper);
 
         // 对齐 DeptServiceImpl 的分页转换
         MyBatisPageWrapper<User> pageWrapper = new MyBatisPageWrapper<>(userPage);
-        return PageVO.convert(pageWrapper, user -> {
+        return PageResp.convert(pageWrapper, user -> {
             UserVO vo = new UserVO();
             BeanCopyUtils.copy(user, vo);
             return vo;

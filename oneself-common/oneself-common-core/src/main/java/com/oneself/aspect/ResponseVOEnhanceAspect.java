@@ -1,7 +1,7 @@
 package com.oneself.aspect;
 
 import com.oneself.filter.TraceFilter;
-import com.oneself.model.vo.ResponseVO;
+import com.oneself.resp.Resp;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,11 +44,11 @@ public class ResponseVOEnhanceAspect {
             throw throwable;  // 抛出异常，不影响原有异常处理流程
         } finally {
             // 仅当返回值是ResponseVO时，注入path和traceId
-            if (controllerResult instanceof ResponseVO<?> responseVO) {
-                responseVO.setPath(httpServletRequest.getRequestURI());
-                responseVO.setTraceId(ThreadContext.get(TraceFilter.TRACE_ID));
-                log.debug("已为 ResponseVO 注入 path：{}，traceId：{}",
-                        responseVO.getPath(), responseVO.getTraceId());
+            if (controllerResult instanceof Resp<?> resp) {
+                resp.setPath(httpServletRequest.getRequestURI());
+                resp.setTraceId(ThreadContext.get(TraceFilter.TRACE_ID));
+                log.debug("已为 Resp 注入 path：{}，traceId：{}",
+                        resp.getPath(), resp.getTraceId());
             }
         }
         return controllerResult;

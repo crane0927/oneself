@@ -1,12 +1,12 @@
 package com.oneself.controller;
 
 import com.oneself.annotation.ApiLog;
-import com.oneself.model.dto.PageDTO;
+import com.oneself.req.PageReq;
 import com.oneself.model.dto.RoleDTO;
 import com.oneself.model.dto.RoleQueryDTO;
 import com.oneself.model.enums.StatusEnum;
-import com.oneself.model.vo.PageVO;
-import com.oneself.model.vo.ResponseVO;
+import com.oneself.resp.PageResp;
+import com.oneself.resp.Resp;
 import com.oneself.model.vo.RoleVO;
 import com.oneself.service.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,45 +40,45 @@ public class RoleController {
 
     @Operation(summary = "新增角色")
     @PostMapping
-    public ResponseVO<String> add(@RequestBody @Valid RoleDTO dto) {
-        return ResponseVO.success(roleService.add(dto));
+    public Resp<String> add(@RequestBody @Valid RoleDTO dto) {
+        return Resp.success(roleService.add(dto));
     }
 
     @Operation(summary = "根据ID查询角色")
     @GetMapping("/{id}")
-    public ResponseVO<RoleVO> get(@PathVariable("id") @Valid @NotBlank String id) {
-        return ResponseVO.success(roleService.get(id));
+    public Resp<RoleVO> get(@PathVariable("id") @Valid @NotBlank String id) {
+        return Resp.success(roleService.get(id));
     }
 
     @Operation(summary = "修改角色")
     @PutMapping("/{id}")
-    public ResponseVO<Boolean> update(@PathVariable("id") @Valid @NotBlank String id,
-                                      @RequestBody @Valid RoleDTO dto) {
-        return ResponseVO.success(roleService.update(id, dto));
+    public Resp<Boolean> update(@PathVariable("id") @Valid @NotBlank String id,
+                                @RequestBody @Valid RoleDTO dto) {
+        return Resp.success(roleService.update(id, dto));
     }
 
     @Operation(summary = "删除角色")
     @DeleteMapping
-    public ResponseVO<Boolean> delete(@RequestBody @Valid @NotEmpty List<@NotBlank String> ids) {
-        return ResponseVO.success(roleService.delete(ids));
+    public Resp<Boolean> delete(@RequestBody @Valid @NotEmpty List<@NotBlank String> ids) {
+        return Resp.success(roleService.delete(ids));
     }
 
     @Operation(summary = "更新角色状态")
     @PutMapping("/status/{status}")
-    public ResponseVO<Boolean> updateStatus(@RequestBody @Valid @NotEmpty List<@NotBlank String> ids,
-                                            @PathVariable("status") @Valid @NotBlank StatusEnum status) {
-        return ResponseVO.success(roleService.updateStatus(ids, status));
+    public Resp<Boolean> updateStatus(@RequestBody @Valid @NotEmpty List<@NotBlank String> ids,
+                                      @PathVariable("status") @Valid @NotBlank StatusEnum status) {
+        return Resp.success(roleService.updateStatus(ids, status));
     }
 
     @Operation(summary = "分页查询角色")
     @PostMapping("/page")
-    public PageVO<RoleVO> page(@RequestBody @Valid PageDTO<RoleQueryDTO> dto) {
+    public PageResp<RoleVO> page(@RequestBody @Valid PageReq<RoleQueryDTO> dto) {
         return roleService.page(dto);
     }
 
     @Operation(summary = "查询所有角色列表")
     @GetMapping("/list/all")
-    public ResponseVO<List<RoleVO>> listAll() {
-        return ResponseVO.success(roleService.listAll());
+    public Resp<List<RoleVO>> listAll() {
+        return Resp.success(roleService.listAll());
     }
 }

@@ -6,13 +6,13 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.oneself.exception.OneselfException;
 import com.oneself.mapper.PermissionMapper;
 import com.oneself.mapper.RolePermissionMapper;
-import com.oneself.model.dto.PageDTO;
+import com.oneself.req.PageReq;
 import com.oneself.model.dto.PermissionDTO;
 import com.oneself.model.dto.PermissionQueryDTO;
 import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.pojo.Permission;
 import com.oneself.model.pojo.RolePermission;
-import com.oneself.model.vo.PageVO;
+import com.oneself.resp.PageResp;
 import com.oneself.model.vo.PermissionTreeVO;
 import com.oneself.model.vo.PermissionVO;
 import com.oneself.pagination.MyBatisPageWrapper;
@@ -233,7 +233,7 @@ public class PermissionServiceImpl implements PermissionService {
      * @return 分页结果 PageVO<PermissionVO>
      */
     @Override
-    public PageVO<PermissionVO> page(PageDTO<PermissionQueryDTO> dto) {
+    public PageResp<PermissionVO> page(PageReq<PermissionQueryDTO> dto) {
         // 构建查询条件
         LambdaQueryWrapper<Permission> wrapper = new LambdaQueryWrapper<>();
 
@@ -257,14 +257,14 @@ public class PermissionServiceImpl implements PermissionService {
         // 按创建时间倒序
         wrapper.orderByDesc(Permission::getCreateTime);
 
-        PageDTO.Pagination pagination = dto.getPagination();
+        PageReq.Pagination pagination = dto.getPagination();
         // 分页查询
         Page<Permission> page = new Page<>(pagination.getPageNum(), pagination.getPageSize());
         Page<Permission> permissionPage = permissionMapper.selectPage(page, wrapper);
 
         MyBatisPageWrapper<Permission> pageWrapper = new MyBatisPageWrapper<>(permissionPage);
 
-        return PageVO.convert(pageWrapper, s -> {
+        return PageResp.convert(pageWrapper, s -> {
             PermissionVO vo = new PermissionVO();
             BeanCopyUtils.copy(s, vo);
             return vo;

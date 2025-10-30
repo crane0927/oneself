@@ -3,7 +3,7 @@ package com.oneself.client;
 import com.oneself.client.fallback.DemoClientFallbackFactory;
 import com.oneself.model.dto.SensitiveDTO;
 import com.oneself.model.vo.DemoVO;
-import com.oneself.model.vo.ResponseVO;
+import com.oneself.resp.Resp;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -29,5 +29,5 @@ public interface DemoClient {
 
     @Operation(summary = "数据脱敏验证")
     @PostMapping("/sensitive")
-    ResponseVO<DemoVO> sensitive(@RequestBody @Valid SensitiveDTO dto);
+    Resp<DemoVO> sensitive(@RequestBody @Valid SensitiveDTO dto);
 }

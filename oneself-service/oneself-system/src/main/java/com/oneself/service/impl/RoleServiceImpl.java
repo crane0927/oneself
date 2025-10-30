@@ -6,13 +6,13 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.oneself.exception.OneselfException;
 import com.oneself.mapper.RoleMapper;
 import com.oneself.mapper.UserRoleMapper;
-import com.oneself.model.dto.PageDTO;
+import com.oneself.req.PageReq;
 import com.oneself.model.dto.RoleDTO;
 import com.oneself.model.dto.RoleQueryDTO;
 import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.pojo.Role;
 import com.oneself.model.pojo.UserRole;
-import com.oneself.model.vo.PageVO;
+import com.oneself.resp.PageResp;
 import com.oneself.model.vo.RoleVO;
 import com.oneself.service.RoleService;
 import com.oneself.pagination.MyBatisPageWrapper;
@@ -228,7 +228,7 @@ public class RoleServiceImpl implements RoleService {
      * @return 分页结果 PageVO<RoleVO>
      */
     @Override
-    public PageVO<RoleVO> page(PageDTO<RoleQueryDTO> dto) {
+    public PageResp<RoleVO> page(PageReq<RoleQueryDTO> dto) {
         // 构建查询条件
         LambdaQueryWrapper<Role> wrapper = new LambdaQueryWrapper<>();
 
@@ -250,13 +250,13 @@ public class RoleServiceImpl implements RoleService {
         wrapper.orderByDesc(Role::getCreateTime);
 
         // 分页查询
-        PageDTO.Pagination pagination = dto.getPagination();
+        PageReq.Pagination pagination = dto.getPagination();
         Page<Role> page = new Page<>(pagination.getPageNum(), pagination.getPageSize());
         Page<Role> rolePage = roleMapper.selectPage(page, wrapper);
 
         // 对齐 DeptServiceImpl 的分页转换
         MyBatisPageWrapper<Role> pageWrapper = new MyBatisPageWrapper<>(rolePage);
-        return PageVO.convert(pageWrapper, role -> {
+        return PageResp.convert(pageWrapper, role -> {
             RoleVO vo = new RoleVO();
             BeanCopyUtils.copy(role, vo);
             return vo;

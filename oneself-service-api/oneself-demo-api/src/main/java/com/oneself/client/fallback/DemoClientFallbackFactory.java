@@ -3,7 +3,7 @@ package com.oneself.client.fallback;
 import com.oneself.client.DemoClient;
 import com.oneself.model.dto.SensitiveDTO;
 import com.oneself.model.vo.DemoVO;
-import com.oneself.model.vo.ResponseVO;
+import com.oneself.resp.Resp;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
@@ -28,13 +28,13 @@ public class DemoClientFallbackFactory implements FallbackFactory<DemoClient> {
         return new DemoClient() {
 
             @Override
-            public ResponseVO<DemoVO> sensitive(SensitiveDTO dto) {
+            public Resp<DemoVO> sensitive(SensitiveDTO dto) {
                 if (cause instanceof FeignException.NotFound) {
-                    return ResponseVO.failure("服务不存在", HttpStatus.NOT_FOUND);
+                    return Resp.failure("服务不存在", HttpStatus.NOT_FOUND);
                 } else if (cause instanceof TimeoutException) {
-                    return ResponseVO.failure("请求超时", HttpStatus.REQUEST_TIMEOUT);
+                    return Resp.failure("请求超时", HttpStatus.REQUEST_TIMEOUT);
                 } else {
-                    return ResponseVO.failure("服务不可用", HttpStatus.SERVICE_UNAVAILABLE);
+                    return Resp.failure("服务不可用", HttpStatus.SERVICE_UNAVAILABLE);
                 }
             }
         };

@@ -3,7 +3,7 @@ package com.oneself.service.impl;
 
 import com.oneself.client.UserClient;
 import com.oneself.model.bo.UserSessionBO;
-import com.oneself.model.vo.ResponseVO;
+import com.oneself.resp.Resp;
 import com.oneself.model.vo.UserSessionVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +36,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (StringUtils.isBlank(username)) {
             throw new UsernameNotFoundException("用户名不能为空");
         }
-        ResponseVO<UserSessionVO> vo;
+        Resp<UserSessionVO> vo;
         try {
             vo = userClient.getSessionByName(username);
         } catch (Exception e) {

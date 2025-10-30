@@ -3,10 +3,10 @@ package com.oneself.controller;
 import com.oneself.annotation.ApiLog;
 import com.oneself.model.dto.ConfigurationDTO;
 import com.oneself.model.dto.ConfigurationQueryDTO;
-import com.oneself.model.dto.PageDTO;
+import com.oneself.req.PageReq;
 import com.oneself.model.vo.ConfigurationVO;
-import com.oneself.model.vo.PageVO;
-import com.oneself.model.vo.ResponseVO;
+import com.oneself.resp.PageResp;
+import com.oneself.resp.Resp;
 import com.oneself.service.ConfigurationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,33 +39,33 @@ public class ConfigurationController {
 
     @Operation(summary = "新增")
     @PostMapping
-    public ResponseVO<String> add(@RequestBody @Valid ConfigurationDTO dto) {
-        return ResponseVO.success(configurationService.add(dto));
+    public Resp<String> add(@RequestBody @Valid ConfigurationDTO dto) {
+        return Resp.success(configurationService.add(dto));
     }
 
     @Operation(summary = "根据 ID 查询")
     @GetMapping("/{id}")
-    public ResponseVO<ConfigurationVO> get(@PathVariable("id") @Valid @NotBlank String id) {
-        return ResponseVO.success(configurationService.get(id));
+    public Resp<ConfigurationVO> get(@PathVariable("id") @Valid @NotBlank String id) {
+        return Resp.success(configurationService.get(id));
     }
 
     @Operation(summary = "修改")
     @PutMapping("/{id}")
-    public ResponseVO<Boolean> update(@PathVariable("id") @Valid @NotBlank String id, @RequestBody @Valid ConfigurationDTO dto) {
-        return ResponseVO.success(configurationService.update(id, dto));
+    public Resp<Boolean> update(@PathVariable("id") @Valid @NotBlank String id, @RequestBody @Valid ConfigurationDTO dto) {
+        return Resp.success(configurationService.update(id, dto));
     }
 
     @Operation(summary = "删除")
     @DeleteMapping
-    public ResponseVO<Boolean> delete(@RequestBody @Valid @NotEmpty List<@NotBlank String> ids) {
-        return ResponseVO.success(configurationService.delete(ids));
+    public Resp<Boolean> delete(@RequestBody @Valid @NotEmpty List<@NotBlank String> ids) {
+        return Resp.success(configurationService.delete(ids));
     }
 
 
 
     @Operation(summary = "查询列表")
     @PostMapping("/page")
-    public PageVO<ConfigurationVO> page(@RequestBody @Valid PageDTO<ConfigurationQueryDTO> dto) {
+    public PageResp<ConfigurationVO> page(@RequestBody @Valid PageReq<ConfigurationQueryDTO> dto) {
         return configurationService.page(dto);
     }
 }

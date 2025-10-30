@@ -1,4 +1,4 @@
-package com.oneself.model.vo;
+package com.oneself.resp;
 
 import com.oneself.pagination.PageWrapper;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,19 +13,19 @@ import java.util.function.Function;
 /**
  * @author liuhuan
  * date 2024/12/9
- * packageName com.oneself.common.model.vo
- * className PageVO<T>
+ * packageName com.oneself.resp
+ * className PageResp
  * description 分页响应封装类
  * version 1.0
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Schema(description = "分页响应")
-public class PageVO<T> extends ResponseVO<PageVO.DataVO<T>> {
+public class PageResp<T> extends Resp<PageResp.Data<T>> {
 
-    @Data
+    @lombok.Data
     @Schema(description = "分页数据对象")
-    public static class DataVO<T> {
+    public static class Data<T> {
         @Schema(description = "分页记录列表")
         private List<T> records;
 
@@ -43,7 +43,7 @@ public class PageVO<T> extends ResponseVO<PageVO.DataVO<T>> {
     }
 
     @Schema(description = "分页数据")
-    private DataVO<T> data;
+    private Data<T> data;
 
     @Schema(description = "消息描述")
     private String message;
@@ -51,23 +51,24 @@ public class PageVO<T> extends ResponseVO<PageVO.DataVO<T>> {
     @Schema(description = "状态码", example = "200")
     private int msgCode;
 
-    private PageVO() {
+    private PageResp() {
+        super();
     }
 
     @Schema(description = "构建成功分页响应")
-    public static <T> PageVO<T> success(
+    public static <T> PageResp<T> success(
             @Schema(description = "分页记录") List<T> records,
             @Schema(description = "总记录数") Long total,
             @Schema(description = "每页记录数") Long pageSize,
             @Schema(description = "总页数") Long pages) {
-        PageVO<T> vo = new PageVO<>();
-        DataVO<T> dataVO = new DataVO<>();
-        dataVO.setRecords(Optional.ofNullable(records).orElse(Collections.emptyList()));
-        dataVO.setTotal(total == null ? 0L : total);
-        dataVO.setPageSize(pageSize == null ? 10L : pageSize);
-        dataVO.setPages(pages == null ? 0L : pages);
-        dataVO.setShowRealm(false);
-        vo.setData(dataVO);
+        PageResp<T> vo = new PageResp<>();
+        Data<T> data = new Data<>();
+        data.setRecords(Optional.ofNullable(records).orElse(Collections.emptyList()));
+        data.setTotal(total == null ? 0L : total);
+        data.setPageSize(pageSize == null ? 10L : pageSize);
+        data.setPages(pages == null ? 0L : pages);
+        data.setShowRealm(false);
+        vo.setData(data);
         vo.setMessage("请求成功");
         vo.setMsgCode(200);
         return vo;
@@ -77,7 +78,7 @@ public class PageVO<T> extends ResponseVO<PageVO.DataVO<T>> {
      * 将任意实现 PageWrapper 的分页对象转换为 PageVO
      */
     @Schema(description = "将分页对象转换为 PageVO")
-    public static <E, V> PageVO<V> convert(
+    public static <E, V> PageResp<V> convert(
             @Schema(description = "分页对象") PageWrapper<E> page,
             @Schema(description = "映射函数，将 E 类型映射为 V 类型") Function<E, V> mapper) {
         List<V> records = Optional.ofNullable(page.getRecords())
@@ -92,7 +93,7 @@ public class PageVO<T> extends ResponseVO<PageVO.DataVO<T>> {
      * 将 PageWrapper 直接返回原类型记录
      */
     @Schema(description = "将分页对象直接返回原类型记录")
-    public static <T> PageVO<T> from(
+    public static <T> PageResp<T> from(
             @Schema(description = "分页对象") PageWrapper<T> page) {
         return success(page.getRecords(), page.getTotal(), page.getSize(), page.getPages());
     }

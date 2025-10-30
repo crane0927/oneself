@@ -2,9 +2,9 @@ package com.oneself.service;
 
 import com.oneself.model.dto.ConfigurationDTO;
 import com.oneself.model.dto.ConfigurationQueryDTO;
-import com.oneself.model.dto.PageDTO;
+import com.oneself.req.PageReq;
 import com.oneself.model.vo.ConfigurationVO;
-import com.oneself.model.vo.PageVO;
+import com.oneself.resp.PageResp;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -60,5 +60,5 @@ public interface ConfigurationService {
      * @param dto 分页查询条件对象
      * @return 配置分页结果
      */
-    PageVO<ConfigurationVO> page(@Valid PageDTO<ConfigurationQueryDTO> dto);
+    PageResp<ConfigurationVO> page(@Valid PageReq<ConfigurationQueryDTO> dto);
 }
