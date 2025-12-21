@@ -20,6 +20,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author liuhuan
@@ -48,11 +54,38 @@ public class SecurityConfig {
     }
 
     /**
+     * CORS 配置源
+     */
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        // 允许所有源（生产环境建议指定具体域名）
+        configuration.setAllowedOriginPatterns(List.of("*"));
+        // 允许的请求方法
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        // 允许的请求头
+        configuration.setAllowedHeaders(List.of("*"));
+        // 允许发送凭证（Cookie、Authorization 等）
+        configuration.setAllowCredentials(true);
+        // 预检请求的缓存时间（秒）
+        configuration.setMaxAge(3600L);
+        // 暴露的响应头
+        configuration.setExposedHeaders(Arrays.asList("Authorization", "Content-Type"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
+    /**
      * SecurityFilterChain 配置（Spring Security 6.1+ Lambda 风格）
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                // 配置 CORS
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
                 // 关闭 CSRF（无状态 JWT）
                 .csrf(AbstractHttpConfigurer::disable)
 
@@ -63,6 +96,8 @@ public class SecurityConfig {
 
                 // 授权规则
                 .authorizeHttpRequests(auth -> auth
+                        // OPTIONS 预检请求允许匿名（CORS 预检）
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         // 登录和验证码接口允许匿名
                         .requestMatchers("/auth/login", "/auth/captcha").permitAll()
                         // Swagger/Knife4j 文档相关路径允许匿名
