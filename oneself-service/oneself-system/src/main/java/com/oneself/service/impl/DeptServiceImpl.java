@@ -117,10 +117,39 @@ public class DeptServiceImpl implements DeptService {
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = "sysDept", key = "#id")
     public boolean update(String id, DeptDTO dto) {
-        // 1. 构建部门对象
+        // 1. 查询当前部门信息
+        Dept currentDept = deptMapper.selectById(id);
+        if (ObjectUtils.isEmpty(currentDept)) {
+            throw new OneselfException("部门不存在");
+        }
+
+        // 2. 构建更新后的部门对象
         Dept dept = Dept.builder().id(id).build();
         BeanCopyUtils.copy(dto, dept);
-        // 2. 校验部门名称是否重复
+
+        // 3. 检查是否修改了父部门，如果修改了需要检查是否形成环状数据
+        String newParentId = dept.getParentId();
+        String oldParentId = currentDept.getParentId();
+        
+        // 如果父部门ID发生变化，需要检查环状数据
+        if (!Objects.equals(newParentId, oldParentId)) {
+            // 3.1 不能将父部门设置为自身
+            if (id.equals(newParentId)) {
+                throw new OneselfException("不能将父部门设置为自身");
+            }
+            
+            // 3.2 如果新的父部门不为空，检查新的父部门是否是当前部门的子部门（包括所有后代）
+            if (StringUtils.isNotBlank(newParentId)) {
+                // 获取当前部门的所有子部门ID（包括所有后代）
+                List<String> allChildDeptIds = getAllChildDeptIds(Collections.singletonList(id));
+                // 如果新的父部门ID在当前部门的子部门列表中，说明会形成环状数据
+                if (allChildDeptIds.contains(newParentId)) {
+                    throw new OneselfException("不能将父部门设置为当前部门的子部门，否则会形成环状数据");
+                }
+            }
+        }
+
+        // 4. 校验部门名称是否重复
         DuplicateCheckUtils.checkDuplicateMultiFields(
                 dept,
                 Dept::getId,
@@ -129,7 +158,8 @@ public class DeptServiceImpl implements DeptService {
                 DuplicateCheckUtils.FieldCondition.of(Dept::getParentId, Dept::getParentId, DuplicateCheckUtils.ConditionType.EQ),
                 DuplicateCheckUtils.FieldCondition.of(Dept::getDeptName, Dept::getDeptName, DuplicateCheckUtils.ConditionType.EQ)
         );
-        // 3. 更新部门
+        
+        // 5. 更新部门
         return deptMapper.updateById(dept) > 0;
     }
 

@@ -1,6 +1,5 @@
 package com.oneself;
 
-import com.oneself.client.DemoClient;
 import com.oneself.utils.ApplicationStartupUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
