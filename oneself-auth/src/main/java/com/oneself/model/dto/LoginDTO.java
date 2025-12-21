@@ -25,4 +25,8 @@ public class LoginDTO implements Serializable {
     private String username;
     @Schema(description = "密码", example = "123456")
     private String password;
+    @Schema(description = "验证码 ID", example = "abc123def456")
+    private String captchaId;
+    @Schema(description = "验证码", example = "A3B4")
+    private String captchaCode;
 }

@@ -46,6 +46,8 @@
         <commons-net.version>3.9.0</commons-net.version>
         <jsch.version>0.1.55</jsch.version>
         <hibernate-validator.version>8.0.2.Final</hibernate-validator.version>
+        <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
+        <useragentutils.version>1.21</useragentutils.version>
     </properties>
 
     <dependencyManagement>
@@ -91,6 +93,11 @@
                 <groupId>jakarta.json</groupId>
                 <artifactId>jakarta.json-api</artifactId>
                 <version>${jakarta.json-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.bitwalker</groupId>
+                <artifactId>UserAgentUtils</artifactId>
+                <version>${useragentutils.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

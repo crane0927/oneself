@@ -37,7 +37,6 @@
         <dependency>
             <groupId>eu.bitwalker</groupId>
             <artifactId>UserAgentUtils</artifactId>
-            <version>1.21</version>
         </dependency>
 
         <dependency>
@@ -100,22 +99,6 @@
         </resources>
 
         <plugins>
-            <!-- 使用 maven-antrun-plugin 插件执行自定义的 Ant 任务 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <!-- 在 package 阶段执行 -->
-                        <phase>package</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
             <!-- maven-clean-plugin：清理构建目录下的内容 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -169,10 +152,10 @@
                     <outputDirectory>${project.build.directory}/${project.artifactId}</outputDirectory>
                     <!-- 排除一些不需要打包的文件 -->
                     <excludes>
-                        <include>application.yml</include>
-                        <include>application-*.yml</include>
-                        <include>log4j2.xml</include>
-                        <include>run.sh</include>
+                        <exclude>**/application.yml</exclude>
+                        <exclude>**/application-*.yml</exclude>
+                        <exclude>**/log4j2.xml</exclude>
+                        <exclude>**/run.sh</exclude>
                     </excludes>
                     <archive>
                         <!-- 指定程序的入口 main 函数 -->

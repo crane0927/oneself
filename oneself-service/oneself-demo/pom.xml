@@ -6,7 +6,7 @@
         <groupId>com.oneself</groupId>
         <artifactId>oneself-service</artifactId>
         <version>1.0.0</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>oneself-demo</artifactId>
     <version>1.0.0</version>
@@ -33,11 +33,11 @@
         </dependency>
 
         <!-- 引入 自定义 Starter -->
-        <dependency>
-            <groupId>com.oneself</groupId>
-            <artifactId>oneself-spring-boot-starter</artifactId>
-            <version>1.0.0</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.oneself</groupId>-->
+<!--            <artifactId>oneself-spring-boot-starter</artifactId>-->
+<!--            <version>1.0.0</version>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>com.oneself</groupId>

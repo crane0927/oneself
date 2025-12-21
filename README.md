@@ -19,12 +19,11 @@ oneself
 ├── oneself-common                  # 公共模块，存放共享的工具类、公共服务、通用配置等
 │   ├── oneself-common-core         # 公共核心模块
 │   ├── oneself-common-utils        # 公共工具模块
-│   └── ...      
-├── 
+│   └── ...
 ├── oneself-gateway                 # 网关模块，处理请求路由、认证、限流等、默认端口 9100
 ├── oneself-service                 # 核心业务模块，包含多个子模块，处理具体的业务逻辑 端口从 9101 开始
 │   ├── oneself-demo                # 示例服务模块，演示服务如何使用
-│   ├── oneself-ai                  # 人工智能模块，提供 AI 服务，如文本翻译、语音识别、语音合成等（未开发） 
+│   ├── oneself-ai                  # 人工智能模块，提供 AI 服务，如文本翻译、语音识别、语音合成等（未开发）
 │   └── ...                         # 其他具体的业务模块
 ├── oneself-service-api             # 服务的接口定义模块，供其他服务或模块调用
 │   ├── oneself-demo-api            # 示例服务模块的接口定义，包含相关接口和数据传输对象
@@ -66,7 +65,7 @@ src
          ├── application-环境.yml         # 环境配置文件，根据不同环境（开发、生产等）配置不同参数
          ├── log4j2.xml                  # 日志配置文件，配置 Log4j2 的日志输出格式、日志级别等
          ├── run.sh                      # 启动脚本，通常用于容器化或在服务器中自动化运行应用
-     
+
 Dockerfile                           # Docker 配置文件，定义如何构建项目的 Docker 镜像
 ```
 ---
@@ -82,8 +81,8 @@ main
              │   ├── enums            # 枚举类包，定义项目中使用的枚举，如状态、类型等
              │   └── vo               # 视图对象（VO）包，用于表示前端需要的返回数据结构
              ├── client               # 客户端相关模型，通常存放与外部服务交互的模型
-             │   └── fallback         # 服务降级的回退类，通常用于定义外部调用失败时的回退逻辑             
-            
+             │   └── fallback         # 服务降级的回退类，通常用于定义外部调用失败时的回退逻辑
+
 ```
 ---
 ## 4 标准启动类
@@ -780,7 +779,7 @@ oneself:
     contact-url: https://github.com/crane0927 # 联系人 URL，默认 https://github.com/crane0927
     version: 1.0 # 接口文档版本，默认 1.0
     group-name: oneself-demo # 接口文档分组名称，默认 oneself
-    
+
 knife4j:
   enable: true # 开启增强配置，启用 Knife4j 功能
   documents: # 自定义文档集合，该属性是数组
@@ -1002,6 +1001,61 @@ spring:
 </dependency>
 ```
 3. 调用方启动类新增注解 `@EnableFeignClients(basePackages = "com.oneself.client")`
+---
+### 9.8 配置 JWT 密钥
+1. 生成 JWT 密钥（至少32个字符，推荐64个字符）
+```bash
+# 使用 openssl 生成64位十六进制密钥（推荐）
+openssl rand -hex 32
+
+# 或生成32位十六进制密钥（最小要求）
+openssl rand -hex 16
+```
+
+2. 设置环境变量
+```bash
+# Linux/Mac
+export ONESELF_JWT_SECRET=$(openssl rand -hex 32)
+export ONESELF_JWT_ISSUER=oneself  # 可选，默认为 "oneself"
+
+# Windows (PowerShell)
+$env:ONESELF_JWT_SECRET = (openssl rand -hex 32)
+$env:ONESELF_JWT_ISSUER = "oneself"  # 可选，默认为 "oneself"
+```
+
+3. Docker 环境变量配置
+```dockerfile
+# 在 Dockerfile 中
+ENV ONESELF_JWT_SECRET=your-secret-key-here-must-be-at-least-32-chars
+ENV ONESELF_JWT_ISSUER=oneself
+```
+
+4. Docker Compose 配置
+```yaml
+services:
+  oneself-auth:
+    environment:
+      - ONESELF_JWT_SECRET=${ONESELF_JWT_SECRET}
+      - ONESELF_JWT_ISSUER=oneself
+```
+
+5. Kubernetes 配置
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: jwt-secret
+type: Opaque
+stringData:
+  ONESELF_JWT_SECRET: "your-secret-key-here-must-be-at-least-32-chars"
+  ONESELF_JWT_ISSUER: "oneself"
+```
+
+**注意事项：**
+- JWT 密钥必须至少32个字符（256位）
+- 生产环境必须使用强随机密钥，不要使用默认值
+- 密钥一旦设置，不要随意更改，否则会导致所有已签发的 Token 失效
+- 建议将密钥存储在安全的密钥管理系统中（如 Vault、AWS Secrets Manager 等）
 ---
 # 问题记录
 1. JDK 21 中使用 knife4j-openapi3 如何配置 Swagger 在生产环境中关闭

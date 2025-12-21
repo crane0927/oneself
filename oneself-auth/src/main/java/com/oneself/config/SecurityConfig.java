@@ -63,8 +63,20 @@ public class SecurityConfig {
 
                 // 授权规则
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login", "/swagger-ui/**", "/v3/api-docs/**").permitAll() // 登录接口允许匿名
-                        .anyRequest().authenticated()               // 其他接口需要认证
+                        // 登录和验证码接口允许匿名
+                        .requestMatchers("/auth/login", "/auth/captcha").permitAll()
+                        // Swagger/Knife4j 文档相关路径允许匿名
+                        .requestMatchers(
+                                "/doc.html",                    // Knife4j 文档页面
+                                "/swagger-ui/**",               // Swagger UI
+                                "/swagger-ui.html",            // Swagger UI 旧版
+                                "/v3/api-docs/**",             // OpenAPI 3 文档
+                                "/v2/api-docs/**",             // OpenAPI 2 文档（兼容）
+                                "/swagger-resources/**",        // Swagger 资源
+                                "/webjars/**",                 // 静态资源
+                                "/favicon.ico"                 // 图标
+                        ).permitAll()
+                        .anyRequest().authenticated()          // 其他接口需要认证
                 )
 
                 // 自定义异常处理（返回 JSON）

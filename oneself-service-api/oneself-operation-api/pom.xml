@@ -6,7 +6,7 @@
         <groupId>com.oneself</groupId>
         <artifactId>oneself-service-api</artifactId>
         <version>1.0.0</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>oneself-operation-api</artifactId>
     <version>1.0.0</version>

@@ -7,6 +7,7 @@
         <groupId>com.oneself</groupId>
         <artifactId>oneself-service-api</artifactId>
         <version>1.0.0</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>oneself-system-api</artifactId>

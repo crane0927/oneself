@@ -6,7 +6,7 @@
         <groupId>com.oneself</groupId>
         <artifactId>oneself-common</artifactId>
         <version>1.0.0</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>oneself-common-sensitive</artifactId>
     <name>oneself-common-sensitive</name>

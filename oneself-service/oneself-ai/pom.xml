@@ -4,9 +4,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.oneself</groupId>
-		<artifactId>oneself</artifactId>
+		<artifactId>oneself-service</artifactId>
 		<version>1.0.0</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>oneself-ai</artifactId>
 	<name>oneself-ai</name>

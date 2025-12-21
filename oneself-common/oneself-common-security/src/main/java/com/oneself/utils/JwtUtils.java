@@ -1,11 +1,14 @@
 package com.oneself.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.oneself.config.JwtConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -17,26 +20,47 @@ import java.util.UUID;
  * date 2025/9/9
  * packageName com.oneself.utils
  * className JwtUtils
- * description
+ * description JWT 工具类，从配置类读取密钥
  * version 1.0
  */
 @Slf4j
+@Component
 public class JwtUtils {
 
-    private JwtUtils() {
-        throw new AssertionError("此工具类不允许实例化");
+    private static JwtConfig jwtConfig;
+
+    /**
+     * 通过静态方法注入 JwtConfig（Spring 会在初始化后调用）
+     */
+    @Autowired
+    public void setJwtConfig(JwtConfig jwtConfig) {
+        JwtUtils.jwtConfig = jwtConfig;
+        log.info("JwtUtils 已初始化，使用配置的 JWT 密钥");
     }
 
     /**
-     * 安全密钥（生产环境需替换为 ≥32个 字符的随机字符串，建议从 application.yml 注入）
-     * 示例：通过 openssl rand -hex 32 生成安全密钥
+     * 获取 JWT 密钥
+     *
+     * @return JWT 密钥
      */
-    public static final String JWT_SECRET = "oneself-token-32-chars-safe-key-12345678";
+    private static String getJwtSecret() {
+        if (jwtConfig == null) {
+            throw new IllegalStateException("JwtConfig 未初始化，请确保 JwtUtils 已被 Spring 管理");
+        }
+        return jwtConfig.getSecret();
+    }
 
     /**
-     * 签发者（可根据项目修改，如公司/系统名称）
+     * 获取 JWT 签发者
+     *
+     * @return JWT 签发者
      */
-    public static final String JWT_ISSUER = "oneself";
+    private static String getJwtIssuer() {
+        if (jwtConfig == null) {
+            return "oneself"; // 默认值
+        }
+        return jwtConfig.getIssuer();
+    }
 
     /**
      * 生成无符号UUID（移除"-"）
@@ -63,7 +87,7 @@ public class JwtUtils {
             // 不设置 exp / iat，只签名 + subject
             return Jwts.builder()
                     .subject(subject)      // 主题（sub字段，存放业务数据）
-                    .issuer(JWT_ISSUER)    // 签发者
+                    .issuer(getJwtIssuer())    // 签发者
                     .signWith(signingKey)  // 签名配置
                     .compact();
         } catch (Exception e) {
@@ -77,10 +101,11 @@ public class JwtUtils {
      * @return 符合HS256算法的SecretKey
      */
     public static SecretKey generateSigningKey() {
-        if (Objects.isNull(JWT_SECRET) || JWT_SECRET.length() < 32) {
+        String secret = getJwtSecret();
+        if (Objects.isNull(secret) || secret.length() < 32) {
             throw new IllegalArgumentException("JWT 密钥不能为空且长度不能小于 32 个字符（256 位）");
         }
-        byte[] secretBytes = JWT_SECRET.getBytes(StandardCharsets.UTF_8);
+        byte[] secretBytes = secret.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(secretBytes);
     }
 

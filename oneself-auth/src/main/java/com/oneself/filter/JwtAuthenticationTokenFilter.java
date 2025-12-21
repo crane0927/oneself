@@ -43,6 +43,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         String token = securityUtils.resolveToken();
+        String requestUri = request.getRequestURI();
+        String ip = getClientIp(request);
 
         if (StringUtils.isNotBlank(token)) {
             try {
@@ -59,14 +61,41 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                         UsernamePasswordAuthenticationToken authentication =
                                 new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
                         SecurityContextHolder.getContext().setAuthentication(authentication);
+                        log.debug("Token验证成功，userId={}, username={}, uri={}, ip={}",
+                                loginUser.getId(), loginUser.getUsername(), requestUri, ip);
+                    } else {
+                        log.warn("Token验证失败：会话不存在，sessionId={}, uri={}, ip={}",
+                                sessionBO.getSessionId(), requestUri, ip);
                     }
+                } else {
+                    log.debug("Token验证失败：sessionBO为空，uri={}, ip={}", requestUri, ip);
                 }
             } catch (Exception e) {
-                log.error("Token 鉴权失败", e);
+                log.warn("Token鉴权异常，uri={}, ip={}, error={}", requestUri, ip, e.getMessage());
                 throw new OneselfException("Token 无效或解析失败", e);
             }
+        } else {
+            log.trace("请求未携带Token，uri={}, ip={}", requestUri, ip);
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    /**
+     * 获取客户端IP地址
+     */
+    private String getClientIp(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("X-Real-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        // 处理多个IP的情况（取第一个）
+        if (ip != null && ip.contains(",")) {
+            ip = ip.split(",")[0].trim();
+        }
+        return ip;
     }
 }
