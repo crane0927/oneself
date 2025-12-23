@@ -9,7 +9,6 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>oneself-service-api</artifactId>
-    <version>1.0.0</version>
     <name>oneself-service-api</name>
     <description>oneself-service-api</description>
     <packaging>pom</packaging>
@@ -19,8 +18,6 @@
         <module>oneself-demo-api</module>
         <module>oneself-quartz-api</module>
         <module>oneself-system-api</module>
-        <module>oneself-stream-compute-api</module>
-        <module>oneself-operation-api</module>
     </modules>
 
     <properties>

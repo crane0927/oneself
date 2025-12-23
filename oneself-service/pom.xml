@@ -15,11 +15,9 @@
 
     <modules>
         <module>oneself-demo</module>
-        <module>oneself-operation</module>
         <module>oneself-system</module>
         <module>oneself-quartz</module>
         <module>oneself-ai</module>
-        <module>oneself-stream-compute</module>
     </modules>
 
     <properties>
