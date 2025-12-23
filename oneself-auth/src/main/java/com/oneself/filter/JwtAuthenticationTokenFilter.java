@@ -1,8 +1,8 @@
 package com.oneself.filter;
 
 import com.oneself.exception.OneselfException;
-import com.oneself.model.bo.UserSessionBO;
 import com.oneself.model.bo.JwtSessionBO;
+import com.oneself.model.bo.LoginUserBO;
 import com.oneself.model.enums.RedisKeyPrefixEnum;
 import com.oneself.utils.JacksonUtils;
 import com.oneself.utils.SecurityUtils;
@@ -57,7 +57,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                     String sessionJson = redisTemplate.opsForValue().get(redisKey);
 
                     if (StringUtils.isNotBlank(sessionJson)) {
-                        UserSessionBO loginUser = JacksonUtils.fromJson(sessionJson, UserSessionBO.class);
+                        LoginUserBO loginUser = JacksonUtils.fromJson(sessionJson, LoginUserBO.class);
                         UsernamePasswordAuthenticationToken authentication =
                                 new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
                         SecurityContextHolder.getContext().setAuthentication(authentication);

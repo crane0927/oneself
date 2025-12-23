@@ -4,17 +4,16 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.oneself.exception.OneselfException;
 import com.oneself.mapper.*;
-import com.oneself.req.PageReq;
 import com.oneself.model.dto.UserDTO;
 import com.oneself.model.dto.UserQueryDTO;
 import com.oneself.model.enums.ConfigurationTypeEnum;
 import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.pojo.*;
-import com.oneself.resp.PageResp;
-import com.oneself.model.vo.UserSessionVO;
 import com.oneself.model.vo.UserVO;
-import com.oneself.service.UserService;
 import com.oneself.pagination.MyBatisPageWrapper;
+import com.oneself.req.PageReq;
+import com.oneself.resp.PageResp;
+import com.oneself.service.UserService;
 import com.oneself.utils.BeanCopyUtils;
 import com.oneself.utils.DuplicateCheckUtils;
 import lombok.RequiredArgsConstructor;
@@ -135,12 +134,12 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @Cacheable(value = "sysUser", key = "'session:' + #name")
-    public UserSessionVO getSessionByName(String name) {
+    public UserVO getUserByName(String name) {
         User user = Optional.ofNullable(
                 userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, name))
         ).orElseThrow(() -> new IllegalArgumentException("用户不存在"));
 
-        UserSessionVO vo = new UserSessionVO();
+        UserVO vo = new UserVO();
         BeanUtils.copyProperties(user, vo);
 
         List<String> roleIds = userRoleMapper.selectList(new LambdaQueryWrapper<UserRole>().eq(UserRole::getUserId,

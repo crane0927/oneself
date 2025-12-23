@@ -1,11 +1,11 @@
 package com.oneself.service;
 
 import com.oneself.model.dto.DeptDTO;
-import com.oneself.req.PageReq;
 import com.oneself.model.dto.DeptQueryDTO;
 import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.vo.DeptTreeVO;
 import com.oneself.model.vo.DeptVO;
+import com.oneself.req.PageReq;
 import com.oneself.resp.PageResp;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;

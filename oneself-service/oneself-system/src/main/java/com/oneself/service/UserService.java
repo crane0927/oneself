@@ -1,12 +1,11 @@
 package com.oneself.service;
 
-import com.oneself.req.PageReq;
 import com.oneself.model.dto.UserDTO;
 import com.oneself.model.dto.UserQueryDTO;
 import com.oneself.model.enums.StatusEnum;
-import com.oneself.model.vo.UserSessionVO;
-import com.oneself.resp.PageResp;
 import com.oneself.model.vo.UserVO;
+import com.oneself.req.PageReq;
+import com.oneself.resp.PageResp;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -45,7 +44,7 @@ public interface UserService {
      * @param name 用户名
      * @return 登录用户信息 VO
      */
-    UserSessionVO getSessionByName(@Valid @NotBlank String name);
+    UserVO getUserByName(@Valid @NotBlank String name);
 
     /**
      * 更新用户信息

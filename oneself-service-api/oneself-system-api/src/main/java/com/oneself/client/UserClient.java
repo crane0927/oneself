@@ -1,7 +1,7 @@
 package com.oneself.client;
 
 import com.oneself.client.fallback.UserClientFallbackFactory;
-import com.oneself.model.vo.UserSessionVO;
+import com.oneself.model.vo.UserVO;
 import com.oneself.resp.Resp;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,6 +26,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface UserClient {
 
     @Operation(summary = "根据用户名查询会话信息")
-    @GetMapping("/get/session/by/{name}")
-    Resp<UserSessionVO> getSessionByName(@PathVariable("name") @Valid @NotBlank String name);
+    @GetMapping("/get/user/by/{name}")
+    Resp<UserVO> getUserByName(@PathVariable @Valid @NotBlank String name);
 }

@@ -10,20 +10,21 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * @author liuhuan
- * date 2025/9/11
- * packageName com.oneself.model.vo
- * className UserSessionVO
- * description
+ * date 2025/1/18
+ * packageName com.oneself.user.model.vo
+ * className UserVO
+ * description 用户信息
  * version 1.0
  */
 @Data
-@Schema(name = "UserSessionVO", description = "登录用户信息数据传输对象")
-public class UserSessionVO implements Serializable {
+@Schema(name = "UserVO", description = "用户信息数据传输对象")
+public class UserVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -57,6 +58,18 @@ public class UserSessionVO implements Serializable {
 
     @Schema(description = "状态")
     private StatusEnum status;
+
+    @Schema(description = "创建人")
+    private String createBy;
+
+    @Schema(description = "创建时间")
+    private LocalDateTime createTime;
+
+    @Schema(description = "修改人")
+    private String updateBy;
+
+    @Schema(description = "修改时间")
+    private LocalDateTime updateTime;
 
     @Schema(description = "角色 Code 列表")
     private Set<String> roleCodes = new HashSet<>();

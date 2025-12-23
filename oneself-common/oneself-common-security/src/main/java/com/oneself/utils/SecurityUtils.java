@@ -2,9 +2,9 @@ package com.oneself.utils;
 
 import com.oneself.exception.OneselfException;
 import com.oneself.model.bo.JwtSessionBO;
+import com.oneself.model.bo.LoginUserBO;
 import com.oneself.model.enums.RedisKeyPrefixEnum;
 import com.oneself.model.enums.UserTypeEnum;
-import com.oneself.model.vo.UserSessionVO;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -130,7 +130,7 @@ public class SecurityUtils {
 
     public void checkRole(String[] requiredRoles, boolean strict) {
         checkLogin();
-        UserSessionVO user = loadUserFromRedis(getCurrentUser().getSessionId());
+        LoginUserBO user = loadUserFromRedis(getCurrentUser().getSessionId());
         if (user == null) {
             if (strict) throw new OneselfException("用户信息不存在");
             return;
@@ -147,7 +147,7 @@ public class SecurityUtils {
 
     public void checkPermission(String[] requiredPerms, boolean strict) {
         checkLogin();
-        UserSessionVO user = loadUserFromRedis(getCurrentUser().getSessionId());
+        LoginUserBO user = loadUserFromRedis(getCurrentUser().getSessionId());
         if (user == null) {
             if (strict) throw new OneselfException("用户信息不存在");
             return;
@@ -162,9 +162,9 @@ public class SecurityUtils {
         }
     }
 
-    private UserSessionVO loadUserFromRedis(String userId) {
+    private LoginUserBO loadUserFromRedis(String userId) {
         String sessionKey = RedisKeyPrefixEnum.LOGIN_SESSION.getPrefix() + userId;
         String json = redisTemplate.opsForValue().get(sessionKey);
-        return JacksonUtils.fromJson(json, UserSessionVO.class);
+        return JacksonUtils.fromJson(json, LoginUserBO.class);
     }
 }

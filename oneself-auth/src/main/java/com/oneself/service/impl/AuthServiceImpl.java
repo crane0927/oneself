@@ -4,7 +4,7 @@ import com.oneself.config.RsaKeyConfig;
 import com.oneself.exception.OneselfException;
 import com.oneself.exception.OneselfLoginException;
 import com.oneself.model.bo.JwtSessionBO;
-import com.oneself.model.bo.UserSessionBO;
+import com.oneself.model.bo.LoginUserBO;
 import com.oneself.model.dto.LoginDTO;
 import com.oneself.model.enums.RedisKeyPrefixEnum;
 import com.oneself.model.vo.CaptchaVO;
@@ -107,7 +107,7 @@ public class AuthServiceImpl implements AuthService {
                 throw new OneselfLoginException("用户名或密码错误");
             }
 
-        UserSessionBO bo = (UserSessionBO) authenticate.getPrincipal();
+        LoginUserBO bo = (LoginUserBO) authenticate.getPrincipal();
         String userId = bo.getId();
         String authenticatedUsername = bo.getUsername();
 
@@ -260,7 +260,7 @@ public class AuthServiceImpl implements AuthService {
             }
 
             // 5. 获取用户会话信息
-            UserSessionBO userSessionBO = JacksonUtils.fromJson(sessionJson, UserSessionBO.class);
+            LoginUserBO loginUserBO = JacksonUtils.fromJson(sessionJson, LoginUserBO.class);
 
             // 6. 更新客户端信息（IP、设备、浏览器可能变化）
             String newIp = getClientIp(request);

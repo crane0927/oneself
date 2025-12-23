@@ -1,14 +1,13 @@
 package com.oneself.controller;
 
 import com.oneself.annotation.ApiLog;
-import com.oneself.req.PageReq;
 import com.oneself.model.dto.UserDTO;
 import com.oneself.model.dto.UserQueryDTO;
 import com.oneself.model.enums.StatusEnum;
-import com.oneself.model.vo.UserSessionVO;
+import com.oneself.model.vo.UserVO;
+import com.oneself.req.PageReq;
 import com.oneself.resp.PageResp;
 import com.oneself.resp.Resp;
-import com.oneself.model.vo.UserVO;
 import com.oneself.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -52,14 +51,14 @@ public class UserController {
     }
 
     @Operation(summary = "根据用户名查询会话信息")
-    @GetMapping("/get/session/by/{name}")
-    public Resp<UserSessionVO> getSessionByName(@PathVariable("name") @Valid @NotBlank String name) {
-        return Resp.success(userService.getSessionByName(name));
+    @GetMapping("/get/user/by/{name}")
+    public Resp<UserVO> getUserByName(@PathVariable @Valid @NotBlank String name) {
+        return Resp.success(userService.getUserByName(name));
     }
 
     @Operation(summary = "修改用户")
     @PutMapping("/{id}")
-    public Resp<Boolean> update(@PathVariable("id") @Valid @NotBlank String id,
+    public Resp<Boolean> update(@PathVariable @Valid @NotBlank String id,
                                 @RequestBody @Valid UserDTO dto) {
         return Resp.success(userService.update(id, dto));
     }
@@ -73,7 +72,7 @@ public class UserController {
     @Operation(summary = "更新用户状态")
     @PutMapping("/status/{status}")
     public Resp<Boolean> updateStatus(@RequestBody @Valid @NotEmpty List<@NotBlank String> ids,
-                                      @PathVariable("status") @Valid @NotBlank StatusEnum status) {
+                                      @PathVariable @Valid @NotBlank StatusEnum status) {
         return Resp.success(userService.updateStatus(ids, status));
     }
 
@@ -83,9 +82,9 @@ public class UserController {
         return userService.page(dto);
     }
 
-    @Operation(summary = "根据部门ID查询用户")
+    @Operation(summary = "根据部门 ID 查询用户")
     @GetMapping("/list/by/dept/{deptId}")
-    public Resp<List<UserVO>> listByDeptId(@PathVariable("deptId") @Valid @NotBlank String deptId) {
+    public Resp<List<UserVO>> listByDeptId(@PathVariable @Valid @NotBlank String deptId) {
         return Resp.success(userService.listByDeptId(deptId));
     }
 }
