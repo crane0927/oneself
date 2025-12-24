@@ -6,7 +6,7 @@ import com.oneself.filter.TraceFilter;
 import com.oneself.resp.Resp;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.ThreadContext;
+import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
     public Resp<Object> handleOneselfException(OneselfException e, HttpServletRequest request) {
         log.info(LOG_MESSAGE_TEMPLATE, request.getRequestURL(), e.getMessage(), e);
         return Resp.failure(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR,
-                request.getRequestURI(), ThreadContext.get(TraceFilter.TRACE_ID));
+                request.getRequestURI(), MDC.get(TraceFilter.TRACE_ID));
     }
 
     /**
@@ -51,7 +51,7 @@ public class GlobalExceptionHandler {
     public Resp<Object> handleOneselfLoginException(OneselfLoginException e, HttpServletRequest request) {
         log.info(LOG_MESSAGE_TEMPLATE, request.getRequestURL(), e.getMessage(), e);
         return Resp.failure(e.getMessage(), HttpStatus.UNAUTHORIZED,
-                request.getRequestURI(), ThreadContext.get(TraceFilter.TRACE_ID));
+                request.getRequestURI(), MDC.get(TraceFilter.TRACE_ID));
     }
 
 
@@ -66,7 +66,7 @@ public class GlobalExceptionHandler {
     public Resp<Object> handleBindException(BindException e, HttpServletRequest request) {
         log.info(LOG_MESSAGE_TEMPLATE, request.getRequestURL(), e.getMessage(), e);
         return Resp.failure(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR,
-                request.getRequestURI(), ThreadContext.get(TraceFilter.TRACE_ID));
+                request.getRequestURI(), MDC.get(TraceFilter.TRACE_ID));
     }
 
     /**
@@ -80,6 +80,6 @@ public class GlobalExceptionHandler {
     public Resp<Object> handleException(Exception e, HttpServletRequest request) {
         log.info(LOG_MESSAGE_TEMPLATE, request.getRequestURL(), e.getMessage(), e);
         return Resp.failure("系统异常，请稍后重试", HttpStatus.INTERNAL_SERVER_ERROR,
-                request.getRequestURI(), ThreadContext.get(TraceFilter.TRACE_ID));
+                request.getRequestURI(), MDC.get(TraceFilter.TRACE_ID));
     }
 }

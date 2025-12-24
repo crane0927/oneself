@@ -9,7 +9,6 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>oneself-gateway</artifactId>
-    <version>1.0.0</version>
     <name>oneself-gateway</name>
     <description>oneself-gateway</description>
 
@@ -71,7 +70,7 @@
                 <includes>
                     <include>application.yml</include>
                     <include>application-*.yml</include>
-                    <include>log4j2.xml</include>
+                    <include>logback-spring.xml</include>
                 </includes>
             </resource>
             <!-- 第四部分：将运行脚本复制到指定目录 -->
@@ -156,7 +155,7 @@
                     <excludes>
                         <include>application.yml</include>
                         <include>application-*.yml</include>
-                        <include>log4j2.xml</include>
+                        <include>logback-spring.xml</include>
                         <include>run.sh</include>
                     </excludes>
                     <archive>

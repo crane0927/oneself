@@ -5,7 +5,6 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <!--        <version>3.3.7</version>-->
         <version>3.4.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
@@ -72,16 +71,6 @@
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
                 <version>${mybatis-plus.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>ch.qos.logback</groupId>
-                        <artifactId>logback-classic</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>ch.qos.logback</groupId>
-                        <artifactId>logback-core</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <dependency>
@@ -150,18 +139,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <!-- Logging -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
 
         <!-- Lombok - 几乎所有模块都需要 -->

@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.ThreadContext;
+import org.slf4j.MDC;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -20,7 +20,7 @@ import java.util.UUID;
  * date 2025/1/21
  * packageName com.oneself.filter
  * className TraceFilter
- * description 生成一个唯一的Trace ID 并存储在 Log4j2 ThreadContext 中用于分布式跟踪
+ * description 生成一个唯一的Trace ID 并存储在 Logback MDC 中用于分布式跟踪
  * version 1.0
  */
 @Slf4j
@@ -38,7 +38,7 @@ public class TraceFilter extends OncePerRequestFilter {
         try {
             // 获取或生成 traceId
             String traceId = getOrGenerateTraceId(request);
-            ThreadContext.put(TRACE_ID, traceId);
+            MDC.put(TRACE_ID, traceId);
 
             // 设置响应头
             response.setHeader(TRACE_ID_HEADER, traceId);
@@ -55,8 +55,8 @@ public class TraceFilter extends OncePerRequestFilter {
             log.info("Request completed in {} ms", duration);
             log.info("===== Request End =====");
 
-            // 清理 ThreadContext
-            ThreadContext.clearAll();
+            // 清理 MDC
+            MDC.clear();
         }
     }
 
@@ -84,7 +84,7 @@ public class TraceFilter extends OncePerRequestFilter {
      */
     private void logRequestDetails(HttpServletRequest request) {
         log.info("=== Request Details ===");
-        log.info("Trace ID: {}", ThreadContext.get(TRACE_ID));
+        log.info("Trace ID: {}", MDC.get(TRACE_ID));
         log.info("Request Method: {}", request.getMethod());
         log.info("Request URL: {}", request.getRequestURL().toString());
         log.info("Query String: {}", request.getQueryString());

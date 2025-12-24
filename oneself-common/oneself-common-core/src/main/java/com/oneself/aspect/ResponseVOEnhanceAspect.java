@@ -5,7 +5,7 @@ import com.oneself.resp.Resp;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.ThreadContext;
+import org.slf4j.MDC;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -46,7 +46,7 @@ public class ResponseVOEnhanceAspect {
             // 仅当返回值是ResponseVO时，注入path和traceId
             if (controllerResult instanceof Resp<?> resp) {
                 resp.setPath(httpServletRequest.getRequestURI());
-                resp.setTraceId(ThreadContext.get(TraceFilter.TRACE_ID));
+                resp.setTraceId(MDC.get(TraceFilter.TRACE_ID));
                 log.debug("已为 Resp 注入 path：{}，traceId：{}",
                         resp.getPath(), resp.getTraceId());
             }
