@@ -4,13 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.oneself</groupId>
-        <artifactId>oneself-common</artifactId>
+        <artifactId>oneself-common-feature</artifactId>
         <version>1.0.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>oneself-common-elasticsearch</artifactId>
-    <name>oneself-common-elasticsearch</name>
-    <description>Elasticsearch 模块</description>
+    <artifactId>oneself-common-feature-sensitive</artifactId>
+    <name>oneself-common-feature-sensitive</name>
+    <description>数据脱敏模块</description>
 
     <dependencies>
         <dependency>
@@ -18,12 +18,12 @@
             <artifactId>oneself-common-core</artifactId>
             <version>1.0.0</version>
         </dependency>
-
         <dependency>
-            <groupId>co.elastic.clients</groupId>
-            <artifactId>elasticsearch-java</artifactId>
-            <version>${elasticsearch-java.version}</version>
+            <groupId>jakarta.json</groupId>
+            <artifactId>jakarta.json-api</artifactId>
+            <version>${jakarta.json-api.version}</version>
         </dependency>
+
     </dependencies>
 
     <build>
@@ -59,4 +59,6 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
+

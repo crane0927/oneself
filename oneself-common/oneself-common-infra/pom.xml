@@ -4,20 +4,22 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.oneself</groupId>
-        <artifactId>oneself</artifactId>
+        <artifactId>oneself-common</artifactId>
         <version>1.0.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>oneself-common</artifactId>
-    <name>oneself-common</name>
-    <description>Common utilities and dependencies for the project</description>
+    <artifactId>oneself-common-infra</artifactId>
+    <name>oneself-common-infra</name>
+    <description>公共基础设施模块</description>
     <packaging>pom</packaging>
 
     <modules>
-        <module>oneself-common-core</module>
-        <module>oneself-common-infra</module>
-        <module>oneself-common-feature</module>
+        <module>oneself-common-infra-redis</module>
+        <module>oneself-common-infra-jdbc</module>
+        <module>oneself-common-infra-mongodb</module>
+        <module>oneself-common-infra-elasticsearch</module>
     </modules>
+
     <build>
         <plugins>
             <plugin>
@@ -27,3 +29,4 @@
         </plugins>
     </build>
 </project>
+

@@ -4,13 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.oneself</groupId>
-        <artifactId>oneself-common</artifactId>
+        <artifactId>oneself-common-infra</artifactId>
         <version>1.0.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>oneself-common-sensitive</artifactId>
-    <name>oneself-common-sensitive</name>
-    <description>数据脱敏模块</description>
+    <artifactId>oneself-common-infra-redis</artifactId>
+    <name>oneself-common-infra-redis</name>
+    <description>公共 Redis 模块</description>
 
     <dependencies>
         <dependency>
@@ -19,11 +19,13 @@
             <version>1.0.0</version>
         </dependency>
         <dependency>
-            <groupId>jakarta.json</groupId>
-            <artifactId>jakarta.json-api</artifactId>
-            <version>${jakarta.json-api.version}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -59,5 +61,5 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
+

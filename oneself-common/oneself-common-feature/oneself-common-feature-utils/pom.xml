@@ -4,13 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.oneself</groupId>
-        <artifactId>oneself-common</artifactId>
+        <artifactId>oneself-common-feature</artifactId>
         <version>1.0.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>oneself-common-security</artifactId>
-    <name>oneself-common-security</name>
-    <description>公共安全模块</description>
+    <artifactId>oneself-common-feature-utils</artifactId>
+    <name>oneself-common-feature-utils</name>
+    <description>公共工具类模块</description>
 
     <dependencies>
         <dependency>
@@ -20,20 +20,33 @@
         </dependency>
 
         <dependency>
-            <groupId>com.oneself</groupId>
-            <artifactId>oneself-common-redis</artifactId>
-            <version>1.0.0</version>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>fluent-hc</artifactId>
+            <version>4.5.13</version>
         </dependency>
 
+        <!-- Apache POI 基础库 -->
         <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
-            <version>0.13.0</version>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>5.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml-schemas</artifactId>
+            <version>4.1.2</version>
         </dependency>
 
+        <!-- 用于压缩文件的 Commons Compress 库 -->
         <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-core</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.27.1</version>
         </dependency>
     </dependencies>
 
@@ -70,5 +83,5 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
+

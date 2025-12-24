@@ -52,7 +52,7 @@
 
 		<dependency>
 			<groupId>com.oneself</groupId>
-			<artifactId>oneself-common-jdbc</artifactId>
+            <artifactId>oneself-common-infra-jdbc</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 	</dependencies>

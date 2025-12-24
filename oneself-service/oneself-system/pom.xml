@@ -33,7 +33,7 @@
 
         <dependency>
             <groupId>com.oneself</groupId>
-            <artifactId>oneself-common-security</artifactId>
+            <artifactId>oneself-common-feature-security</artifactId>
             <version>1.0.0</version>
         </dependency>
 
@@ -54,13 +54,13 @@
 
         <dependency>
             <groupId>com.oneself</groupId>
-            <artifactId>oneself-common-jdbc</artifactId>
+            <artifactId>oneself-common-infra-jdbc</artifactId>
             <version>1.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>com.oneself</groupId>
-            <artifactId>oneself-common-redis</artifactId>
+            <artifactId>oneself-common-infra-redis</artifactId>
             <version>1.0.0</version>
         </dependency>
     </dependencies>

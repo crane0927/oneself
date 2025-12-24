@@ -4,28 +4,25 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.oneself</groupId>
-        <artifactId>oneself-common</artifactId>
+        <artifactId>oneself-common-infra</artifactId>
         <version>1.0.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>oneself-common-redis</artifactId>
-    <name>oneself-common-redis</name>
-    <description>公共 Redis 模块</description>
+    <artifactId>oneself-common-infra-elasticsearch</artifactId>
+    <name>oneself-common-infra-elasticsearch</name>
+    <description>Elasticsearch 模块</description>
 
     <dependencies>
-
         <dependency>
             <groupId>com.oneself</groupId>
             <artifactId>oneself-common-core</artifactId>
             <version>1.0.0</version>
         </dependency>
+
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-cache</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <groupId>co.elastic.clients</groupId>
+            <artifactId>elasticsearch-java</artifactId>
+            <version>${elasticsearch-java.version}</version>
         </dependency>
     </dependencies>
 
@@ -63,3 +60,4 @@
         </plugins>
     </build>
 </project>
+

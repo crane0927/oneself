@@ -4,20 +4,22 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.oneself</groupId>
-        <artifactId>oneself</artifactId>
+        <artifactId>oneself-common</artifactId>
         <version>1.0.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>oneself-common</artifactId>
-    <name>oneself-common</name>
-    <description>Common utilities and dependencies for the project</description>
+    <artifactId>oneself-common-feature</artifactId>
+    <name>oneself-common-feature</name>
+    <description>公共功能模块</description>
     <packaging>pom</packaging>
 
     <modules>
-        <module>oneself-common-core</module>
-        <module>oneself-common-infra</module>
-        <module>oneself-common-feature</module>
+        <module>oneself-common-feature-security</module>
+        <module>oneself-common-feature-sensitive</module>
+        <module>oneself-common-feature-swagger</module>
+        <module>oneself-common-feature-utils</module>
     </modules>
+
     <build>
         <plugins>
             <plugin>
@@ -27,3 +29,4 @@
         </plugins>
     </build>
 </project>
+

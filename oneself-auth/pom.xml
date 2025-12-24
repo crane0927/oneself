@@ -25,7 +25,7 @@
 
         <dependency>
             <groupId>com.oneself</groupId>
-            <artifactId>oneself-common-security</artifactId>
+            <artifactId>oneself-common-feature-security</artifactId>
             <version>1.0.0</version>
         </dependency>
 

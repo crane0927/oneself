@@ -47,13 +47,13 @@
 
         <dependency>
             <groupId>com.oneself</groupId>
-            <artifactId>oneself-common-elasticsearch</artifactId>
+            <artifactId>oneself-common-infra-elasticsearch</artifactId>
             <version>1.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>com.oneself</groupId>
-            <artifactId>oneself-common-jdbc</artifactId>
+            <artifactId>oneself-common-infra-jdbc</artifactId>
             <version>1.0.0</version>
         </dependency>
 
