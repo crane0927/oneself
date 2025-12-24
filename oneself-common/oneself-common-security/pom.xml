@@ -14,9 +14,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
-            <version>0.13.0</version>
+            <groupId>com.oneself</groupId>
+            <artifactId>oneself-common-core</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
@@ -24,6 +24,13 @@
             <artifactId>oneself-common-redis</artifactId>
             <version>1.0.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.13.0</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
