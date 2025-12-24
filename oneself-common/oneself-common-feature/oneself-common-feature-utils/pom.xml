@@ -48,6 +48,20 @@
             <artifactId>commons-compress</artifactId>
             <version>1.27.1</version>
         </dependency>
+
+        <!-- Apache Commons 工具类 -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

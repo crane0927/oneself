@@ -55,6 +55,11 @@
             <version>${mybatis-plus.version}</version>
         </dependency>
 
+        <!-- Apache Commons Collections4 - 用于 DuplicateCheckUtils -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
