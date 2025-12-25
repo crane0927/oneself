@@ -6,7 +6,7 @@
 - ~~Spring Cloud 2021.0.9~~ -> ~~Spring Cloud 2023.0.5~~ -> Spring Cloud 2024.0.1
 - ~~Spring Cloud Alibaba 2021.0.6.2~~ -> Spring Cloud Alibaba 2023.0.3.2
 - ~~Eleasticsearch 7.17.7~~ -> Eleasticsearch 8.17.0
-- ~~knife4j-openapi2-spring-boot-starter 4.5.0~~ -> ~~openapi3-jakarta-spring-boot-starter.version 4.4.0~~ -> openapi3-jakarta-spring-boot-starter.version 4.5.0
+- ~~knife4j-openapi2-spring-boot-starter 4.5.0~~ -> ~~knife4j-openapi3-jakarta-spring-boot-starter 4.4.0~~ -> knife4j-openapi3-jakarta-spring-boot-starter 4.5.0
 - ~~mybatis-plus-boot-starter 3.5.3.1~~ -> ~~mybatis-plus-spring-boot3-starter 3.5.5~~ -> mybatis-plus-spring-boot3-starter 3.5.8
 - Nacos 2.4.3
 - MySQL 8.0.39
@@ -16,18 +16,31 @@
 ## 2 项目结构
 ```text
 oneself
-├── oneself-common                  # 公共模块，存放共享的工具类、公共服务、通用配置等
-│   ├── oneself-common-core         # 公共核心模块
-│   ├── oneself-common-utils        # 公共工具模块
-│   └── ...
-├── oneself-gateway                 # 网关模块，处理请求路由、认证、限流等、默认端口 9100
-├── oneself-service                 # 核心业务模块，包含多个子模块，处理具体的业务逻辑 端口从 9101 开始
-│   ├── oneself-demo                # 示例服务模块，演示服务如何使用
-│   ├── oneself-ai                  # 人工智能模块，提供 AI 服务，如文本翻译、语音识别、语音合成等（未开发）
-│   └── ...                         # 其他具体的业务模块
-├── oneself-service-api             # 服务的接口定义模块，供其他服务或模块调用
-│   ├── oneself-demo-api            # 示例服务模块的接口定义，包含相关接口和数据传输对象
-│   └── ...                         # 其他具体示例服务模块接口
+├── oneself-auth                    # 认证服务模块，提供用户认证、授权、JWT 令牌管理等功能
+├── oneself-common                 # 公共模块，存放共享的工具类、公共服务、通用配置等
+│   ├── oneself-common-core        # 公共核心模块（最底层）
+│   │                              # 职责：通用工具类、基础对象、统一返回结构、通用异常和抽象模型
+│   ├── oneself-common-infra       # 基础设施层（中间层）
+│   │   ├── oneself-common-infra-redis        # Redis 基础设施封装
+│   │   ├── oneself-common-infra-jdbc         # JDBC/数据库基础设施封装
+│   │   ├── oneself-common-infra-mongodb      # MongoDB 基础设施封装
+│   │   └── oneself-common-infra-elasticsearch # Elasticsearch 基础设施封装
+│   └── oneself-common-feature     # 功能特性层（最上层）
+│       ├── oneself-common-feature-security   # 安全功能模块（权限、认证等）
+│       ├── oneself-common-feature-sensitive  # 数据脱敏功能模块
+│       ├── oneself-common-feature-swagger    # Swagger/OpenAPI 文档功能模块
+│       └── oneself-common-feature-utils     # 工具类功能模块
+├── oneself-gateway                # 网关模块，处理请求路由、认证、限流等，默认端口 9100
+├── oneself-service                # 核心业务模块，包含多个子模块，处理具体的业务逻辑，端口从 9101 开始
+│   ├── oneself-demo               # 示例服务模块，演示服务如何使用
+│   ├── oneself-system             # 系统服务模块，提供系统管理功能（用户、部门、角色、权限等）
+│   ├── oneself-quartz             # 定时任务服务模块，提供任务调度功能
+│   └── oneself-ai                 # 人工智能服务模块，提供 AI 服务（如文本翻译、语音识别、语音合成等）
+└── oneself-service-api            # 服务的接口定义模块，供其他服务或模块调用
+    ├── oneself-demo-api           # 示例服务模块的接口定义，包含相关接口和数据传输对象
+    ├── oneself-system-api          # 系统服务模块的接口定义
+    ├── oneself-quartz-api          # 定时任务服务模块的接口定义
+    └── oneself-ai-api             # AI 服务模块的接口定义
 ```
 ---
 
@@ -51,7 +64,7 @@ src
      │           ├── handler          # 处理器包，处理具体的业务逻辑或事件（如事件处理器、任务处理器等）
      │           ├── mapper           # 数据访问层包，存放 MyBatis 映射接口及 XML 文件，用于数据库操作
      │           ├── model            # 数据模型包，包含业务数据模型相关的类，通常包括：
-     │           │   └── bo           # 通用数据对象（BO）包，用于封装业务逻辑处理过程中需要的数据
+     │           │   ├── bo           # 通用数据对象（BO）包，用于封装业务逻辑处理过程中需要的数据
      │           │   ├── dto          # 数据传输对象（DTO）包，用于服务之间传输数据或从 API 接口接收数据
      │           │   ├── pojo         # 实体类包，对应数据库表的实体映射，通常使用 JPA 或 MyBatis 映射
      │           │   ├── enums        # 枚举类包，定义项目中使用的枚举类型（如状态码、类型分类等）
@@ -63,7 +76,7 @@ src
          ├── mapper                      # 存放 MyBatis 的 XML 映射文件（如 SQL 查询语句）
          ├── application.yml             # Spring Boot 主配置文件，存放全局应用配置（如端口、日志级别等）
          ├── application-环境.yml         # 环境配置文件，根据不同环境（开发、生产等）配置不同参数
-         ├── log4j2.xml                  # 日志配置文件，配置 Log4j2 的日志输出格式、日志级别等
+         ├── logback-spring.xml          # 日志配置文件，配置 Logback 的日志输出格式、日志级别等
          ├── run.sh                      # 启动脚本，通常用于容器化或在服务器中自动化运行应用
 
 Dockerfile                           # Docker 配置文件，定义如何构建项目的 Docker 镜像
@@ -76,6 +89,7 @@ main
      └── com
          └── oneself
              ├── model                # 数据模型包，包含服务端与前端的数据传输结构
+             │   ├── bo               # 通用数据对象（BO）包，用于封装业务逻辑处理过程中需要的数据
              │   ├── dto              # 数据传输对象（DTO）包，用于服务之间的数据传输
              │   ├── pojo             # 实体类包，对应数据库表的实体映射，通常与数据库相关
              │   ├── enums            # 枚举类包，定义项目中使用的枚举，如状态、类型等
@@ -86,7 +100,9 @@ main
 ```
 ---
 ## 4 标准启动类
+### 4.1 基础启动类（无服务间调用）
 ```java
+@EnableDiscoveryClient  // 启用服务发现（如果使用 Nacos 等注册中心）
 @SpringBootApplication
 @Validated
 public class DemoApplication {
@@ -98,6 +114,26 @@ public class DemoApplication {
     }
 }
 ```
+### 4.2 带服务间调用的启动类
+```java
+@EnableFeignClients(basePackages = "com.oneself.client")  // 启用 Feign 客户端，指定扫描包
+@EnableDiscoveryClient  // 启用服务发现
+@SpringBootApplication
+@Validated
+public class DemoApplication {
+
+    public static void main(String[] args) {
+        ConfigurableApplicationContext application = SpringApplication.run(DemoApplication.class, args);
+        // 使用工具类 打印启动信息
+        ApplicationStartupUtils.printStartupInfo(application.getEnvironment());
+    }
+}
+```
+**说明：**
+- `@EnableDiscoveryClient`：启用服务发现功能，如果使用 Nacos、Eureka 等注册中心时需要添加
+- `@EnableFeignClients`：启用 Feign 客户端，如果需要进行服务间调用时需要添加，`basePackages` 指定扫描的包路径
+- `@Validated`：启用参数校验功能
+- `ApplicationStartupUtils.printStartupInfo()`：打印启动信息，包括服务名、端口、环境等
 ---
 ## 5 服务打包配置
 ### ~~5.1 服务打包配置 JDK 1.8~~
@@ -216,7 +252,7 @@ public class DemoApplication {
                 <excludes>
                     <include>application.yml</include>
                     <include>application-*.yml</include>
-                    <include>log4j2.xml</include>
+                    <include>logback-spring.xml</include>
                     <include>run.sh</include>
                 </excludes>
                 <archive>
@@ -359,12 +395,12 @@ public class DemoApplication {
                     <!-- jar 包的输出目录 -->
                     <outputDirectory>${project.build.directory}/${project.artifactId}</outputDirectory>
                     <!-- 排除一些不需要打包的文件 -->
-                    <excludes>
-                        <include>application.yml</include>
-                        <include>application-*.yml</include>
-                        <include>log4j2.xml</include>
-                        <include>run.sh</include>
-                    </excludes>
+                <excludes>
+                    <include>application.yml</include>
+                    <include>application-*.yml</include>
+                    <include>logback-spring.xml</include>
+                    <include>run.sh</include>
+                </excludes>
                     <archive>
                         <!-- 指定程序的入口 main 函数 -->
                         <manifest>
@@ -440,100 +476,123 @@ public class DemoApplication {
 
 ```
 ---
-## 6 log4j2.xml
+## 6 logback-spring.xml
 ### 6.1 基础配置
 ```xml
-<?xml version="1.0" encoding="utf-8"?>
-<!-- status: Log4j2 内部日志的输出级别 -->
-<!-- monitorInterval: 定时检测配置文件的修改,有变化则自动重新加载配置,时间单位为秒,最小间隔为 5s -->
-<Configuration status="WARN" monitorInterval="600">
-    <!-- properties: 设置全局变量 -->
-    <properties>
-        <property name="LOG_HOME">logs</property>
-        <property name="LOG_NAME">${sys:log.name:-info}</property>
-        <property name="pattern">%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %c{1.1.1.*}[%M : %L(%tid)] [%X{traceId}] - %msg%n</property>
-    </properties>
-    <!-- Appenders: 定义日志输出目的地，内容和格式等 -->
-    <Appenders>
-        <console name="Console" target="SYSTEM_OUT">
-            <!-- pattern: 日期,线程名,日志级别,日志名称,日志信息,换行 -->
-            <PatternLayout pattern="${pattern}"/>
-        </console>
-        <!-- info log -->
-        <!-- RollingFile: 日志输出到文件,下面的文件都使用相对路径 -->
-        <!-- fileName: 当前日志输出的文件名称 -->
-        <!-- filePattern: 备份日志文件名称，要求按年月日滚动生成日志文件 -->
-        <RollingRandomAccessFile name="InfoFile" fileName="${LOG_HOME}/${LOG_NAME}-info.log" filePattern="${LOG_HOME}/${LOG_NAME}-info-%d{yyyy-MM-dd}-%i.log">
-            <!--控制台只输出 level 及其以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
-            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
-            <!-- 日期,容器主机名,应用名称,pod哈希码,日志名称,行号,日志级别,日志信息,换行等 （以单个空格做为分隔符） -->
-            <PatternLayout pattern="${pattern}"/>
-            <!--Policies: 触发策略决定何时执行备份 -->
-            <Policies>
-                <!-- 单个日志文件生成的大小-->
-                <SizeBasedTriggeringPolicy size="200MB"/>
-            </Policies>
-            <DefaultRolloverStrategy max="30">
-                <!-- 指向所需删除的日志目录名称 -->
-                <Delete basePath="${LOG_HOME}">
-                    <!-- 删除 7 天前的日志文件，格式为：P天数D -->
-                    <IfLastModified age="P7D"/>
-                </Delete>
-            </DefaultRolloverStrategy>
-        </RollingRandomAccessFile>
-        <!-- debug log -->
-        <RollingRandomAccessFile name="DebugFile" fileName="${LOG_HOME}/${LOG_NAME}-debug.log" filePattern="${LOG_HOME}/${LOG_NAME}-debug-%d{yyyy-MM-dd}-%i.log">
-            <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
-            <PatternLayout pattern="${pattern}"/>
-            <Policies>
-                <SizeBasedTriggeringPolicy size="200MB"/>
-            </Policies>
-            <DefaultRolloverStrategy max="30">
-                <Delete basePath="${LOG_HOME}">
-                    <IfLastModified age="P7D"/>
-                </Delete>
-            </DefaultRolloverStrategy>
-        </RollingRandomAccessFile>
-        <!-- warn log -->
-        <RollingRandomAccessFile name="WarnFile" fileName="${LOG_HOME}/${LOG_NAME}-warn.log" filePattern="${LOG_HOME}/${LOG_NAME}-warn-%d{yyyy-MM-dd}-%i.log">
-            <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
-            <PatternLayout pattern="${pattern}"/>
-            <Policies>
-                <SizeBasedTriggeringPolicy size="200MB"/>
-            </Policies>
-            <DefaultRolloverStrategy max="30">
-                <Delete basePath="${LOG_HOME}">
-                    <IfLastModified age="P7D"/>
-                </Delete>
-            </DefaultRolloverStrategy>
-        </RollingRandomAccessFile>
-        <!-- error log -->
-        <RollingRandomAccessFile name="ErrorFile" fileName="${LOG_HOME}/${LOG_NAME}-error.log" filePattern="${LOG_HOME}/${LOG_NAME}-error-%d{yyyy-MM-dd}-%i.log">
-            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
-            <PatternLayout pattern="${pattern}"/>
-            <Policies>
-                <SizeBasedTriggeringPolicy size="200MB"/>
-            </Policies>
-            <DefaultRolloverStrategy max="30">
-                <Delete basePath="${LOG_HOME}">
-                    <IfLastModified age="P7D"/>
-                </Delete>
-            </DefaultRolloverStrategy>
-        </RollingRandomAccessFile>
-    </Appenders>
-    <!--Loggers: 定义日志级别和使用的输出 -->
-    <Loggers>
-        <!-- Root:日志默认打印到控制台 -->
-        <!-- level日志级别: ALL < TRACE < DEBUG < INFO < WARN < ERROR < FATAL < OFF -->
-        <Root level="INFO">
-            <AppenderRef ref="Console"/>
-            <AppenderRef ref="InfoFile"/>
-            <AppenderRef ref="DebugFile"/>
-            <AppenderRef ref="WarnFile"/>
-            <AppenderRef ref="ErrorFile"/>
-        </Root>
-    </Loggers>
-</Configuration>
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Logback 日志配置
+    status: Logback 内部日志的输出级别
+    scan: 是否扫描配置文件，如果为 true，当配置文件发生改变时会被重新加载
+    scanPeriod: 扫描配置文件的时间间隔
+-->
+<configuration status="WARN" scan="true" scanPeriod="60 seconds">
+    <!-- 定义变量 -->
+    <property name="LOG_HOME" value="logs"/>
+    <property name="LOG_NAME" value="${LOG_NAME:-info}"/>
+    <property name="PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger{36}[%method : %line] [%X{traceId}] - %msg%n"/>
+
+    <!-- 控制台输出 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- INFO 日志文件 -->
+    <appender name="INFO_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/${LOG_NAME}-info.log</file>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/${LOG_NAME}-info-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+            <maxFileSize>200MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+    </appender>
+
+    <!-- DEBUG 日志文件 -->
+    <appender name="DEBUG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/${LOG_NAME}-debug.log</file>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/${LOG_NAME}-debug-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+            <maxFileSize>200MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+    </appender>
+
+    <!-- WARN 日志文件 -->
+    <appender name="WARN_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/${LOG_NAME}-warn.log</file>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/${LOG_NAME}-warn-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+            <maxFileSize>200MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+    </appender>
+
+    <!-- ERROR 日志文件 -->
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/${LOG_NAME}-error.log</file>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/${LOG_NAME}-error-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+            <maxFileSize>200MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 日志级别配置 -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="INFO_FILE"/>
+        <appender-ref ref="DEBUG_FILE"/>
+        <appender-ref ref="WARN_FILE"/>
+        <appender-ref ref="ERROR_FILE"/>
+    </root>
+</configuration>
 ```
 ---
 ### 6.2 日志推送 Kafka 配置
@@ -544,25 +603,26 @@ public class DemoApplication {
     <artifactId>kafka-clients</artifactId>
 </dependency>
 ```
-2. 配置 `log4j2.xml`
+2. 配置 `logback-spring.xml`，添加 Kafka Appender
 ```xml
-<?xml version="1.0" encoding="utf-8"?>
-<Configuration status="WARN" monitorInterval="600">
-    <!-- 添加 kafka 配置 -->
-    <Appenders>
-        <Kafka name="Kafka" topic="${topic name}">
-            <PatternLayout pattern="${pattern}"/>
-            <Property name="bootstrap.servers">${kafka address}</Property>
-        </Kafka>
-    </Appenders>
+<!-- 在 logback-spring.xml 中添加 Kafka Appender -->
+<appender name="KAFKA" class="com.github.danielwegener.logback.kafka.KafkaAppender">
+    <encoder>
+        <pattern>${PATTERN}</pattern>
+    </encoder>
+    <topic>${kafka.topic}</topic>
+    <keyingStrategy class="com.github.danielwegener.logback.kafka.keying.NoKeyKeyingStrategy"/>
+    <deliveryStrategy class="com.github.danielwegener.logback.kafka.delivery.AsynchronousDeliveryStrategy"/>
+    <producerConfig>
+        bootstrap.servers=${kafka.bootstrap.servers}
+    </producerConfig>
+</appender>
 
-    <Loggers>
-        <Root level="DEBUG">
-            <AppenderRef ref="Kafka"/>
-        </Root>
-        <Logger name="org.apache.kafka" level="INFO"/> <!-- 避免递归日志记录 -->
-    </Loggers>
-</Configuration>
+<!-- 在 root 中添加 Kafka Appender -->
+<root level="INFO">
+    <appender-ref ref="KAFKA"/>
+    <!-- 其他 appender -->
+</root>
 ```
 ---
 ## 7 run.sh
@@ -745,11 +805,11 @@ ENTRYPOINT ["/bin/sh", "-c", "./run.sh start ${SERVICE_VERSION}"]
 ---
 ## 9 配置
 ### 9.1 开启 Swagger
-1. 引入依赖 oneself-common
+1. 引入依赖 oneself-common-feature-swagger
 ```xml
 <dependency>
     <groupId>com.oneself</groupId>
-    <artifactId>oneself-common-swagger</artifactId>
+    <artifactId>oneself-common-feature-swagger</artifactId>
     <version>1.0.0</version>
 </dependency>
 ```
@@ -818,11 +878,11 @@ knife4j:
 ```
 ---
 ### 9.2 配置 FTP/SFTP
-1. 引入依赖 oneself-common
+1. 引入依赖 oneself-common-feature-utils
 ```xml
 <dependency>
     <groupId>com.oneself</groupId>
-    <artifactId>oneself-common</artifactId>
+    <artifactId>oneself-common-feature-utils</artifactId>
     <version>1.0.0</version>
 </dependency>
 ```
@@ -901,11 +961,11 @@ feign:
 ```
 ---
 ### 9.5 配置 Elasticsearch
-1. 引入依赖 oneself-common
+1. 引入依赖 oneself-common-infra-elasticsearch
 ```xml
 <dependency>
     <groupId>com.oneself</groupId>
-    <artifactId>oneself-common</artifactId>
+    <artifactId>oneself-common-infra-elasticsearch</artifactId>
     <version>1.0.0</version>
 </dependency>
 ```
@@ -1066,7 +1126,7 @@ knife4j:
 ```
 2. 深拷贝过程中使用了 writeValueAsString 和 readValue，导致原始对象的类型信息和泛型信息在反序列化时丢失问题（SensitiveDataUtils 38 - 41 行）
 3. 服务间调用时，用户信息认证问题
-4. Nacos 2.4.2 无法读取到 nacos 配置中心配置文件问题
+4. Nacos 2.4.2/2.4.3 无法读取到 nacos 配置中心配置文件问题
 > 版本问题， NacosConfigAutoConfiguration 类不能注入到 Spring 容器内，导致配置的类不能正确读取到
 解决方案：
 ```yaml
@@ -1075,3 +1135,4 @@ spring:
     import:
       - nacos:${spring.application.name}-${spring.profiles.active}.yaml?refreshEnabled=true
 ```
+**注意：** 如果使用 Nacos 2.4.2 及以上版本，建议使用上述配置方式导入 Nacos 配置。
