@@ -36,17 +36,10 @@
             <artifactId>hibernate-validator</artifactId>
         </dependency>
 
-        <!-- Web 功能模块（Servlet API） -->
+        <!-- Web 功能模块（Servlet API，包含 ExcelExportUtils 和 ExportFileUtils） -->
         <dependency>
             <groupId>com.oneself</groupId>
             <artifactId>oneself-common-feature-web</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-
-        <!-- 工具类模块 -->
-        <dependency>
-            <groupId>com.oneself</groupId>
-            <artifactId>oneself-common-feature-utils</artifactId>
             <version>1.0.0</version>
         </dependency>
     </dependencies>
