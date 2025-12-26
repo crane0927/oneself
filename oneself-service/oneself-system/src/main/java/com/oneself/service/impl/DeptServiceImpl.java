@@ -166,7 +166,7 @@ public class DeptServiceImpl implements DeptService {
     /**
      * 批量删除部门（逻辑删除）
      *
-     * @param ids 部门ID列表
+     * @param ids 部门 ID 列表
      * @return 删除是否成功
      */
     @Override
@@ -207,7 +207,7 @@ public class DeptServiceImpl implements DeptService {
     /**
      * 批量更新部门状态
      *
-     * @param ids    部门ID列表
+     * @param ids    部门 ID 列表
      * @param status 部门状态（启用/禁用）
      * @return 状态更新是否成功
      */

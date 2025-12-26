@@ -1,6 +1,7 @@
 package com.oneself.controller;
 
 import com.oneself.annotation.ApiLog;
+import com.oneself.annotation.RequireLogin;
 import com.oneself.model.dto.DeptDTO;
 import com.oneself.model.dto.DeptQueryDTO;
 import com.oneself.model.enums.StatusEnum;
@@ -33,7 +34,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @ApiLog
-//@RequireLogin
+@RequireLogin
 @RestController
 @RequestMapping({"/dept"})
 public class DeptController {
