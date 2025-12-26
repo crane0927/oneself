@@ -95,9 +95,9 @@ public class AuthServiceImpl implements AuthService {
                 log.debug("用户 {} 身份验证成功", username);
             } catch (org.springframework.security.core.AuthenticationException e) {
                 String ip = getClientIp(request);
-                log.warn("用户 {} 身份验证失败，ip={}, error={}", username, ip, e.getMessage());
+                log.warn("用户 {} 身份验证失败，ip={}, error={}", username, ip, e.getMessage(), e);
                 recordLoginFailure(username);
-                throw new OneselfLoginException("用户名或密码错误");
+                throw new OneselfLoginException("用户名或密码错误", e);
             }
 
             if (Objects.isNull(authenticate)) {
