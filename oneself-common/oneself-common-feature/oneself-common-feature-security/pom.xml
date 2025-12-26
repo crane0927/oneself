@@ -36,13 +36,6 @@
             <artifactId>spring-security-core</artifactId>
         </dependency>
 
-        <!-- 工具类模块（包含 CurrentUserProvider） -->
-        <dependency>
-            <groupId>com.oneself</groupId>
-            <artifactId>oneself-common-feature-utils</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-
         <!-- Web 功能模块（SecurityUtils 使用 Servlet API） -->
         <dependency>
             <groupId>com.oneself</groupId>
