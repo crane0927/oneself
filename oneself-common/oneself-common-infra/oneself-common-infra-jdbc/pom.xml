@@ -14,12 +14,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.oneself</groupId>
-            <artifactId>oneself-common-core</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
@@ -53,6 +47,13 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
+        </dependency>
+
+        <!-- 工具类模块（包含 CurrentUserProvider） -->
+        <dependency>
+            <groupId>com.oneself</groupId>
+            <artifactId>oneself-common-feature-utils</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 
