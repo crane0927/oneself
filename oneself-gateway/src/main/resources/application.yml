@@ -1,12 +1,28 @@
 server:
   port: 9100
-  servlet:
-    session:
-      timeout: 600
 
 spring:
   application:
     name: oneself-gateway
+  # 设置为响应式应用类型（WebFlux），与 Spring Cloud Gateway 兼容
+  main:
+    web-application-type: reactive
+  # Redis 配置（用于 JWT 会话验证）
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: mBYFyN4wXi6WsA # 请根据实际环境修改
+      database: 0
+      timeout: 10s
+      client-type: lettuce
+      lettuce:
+        pool:
+          enabled: true
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
   config:
     import:
       - nacos:${spring.application.name}.yaml?refreshEnabled=true
@@ -23,9 +39,150 @@ spring:
       discovery:
         cluster-name: dev # 设置 Nacos 的集群属性
         namespace: dev # 配置命名空间，使用命名空间唯一 ID
-#    gateway:
-#      routes: # 路由配置
-#        - id: oneself-demo # 路由 id 自定义 只要唯一即可
-#          uri: lb://oneself-demo # 路由的目标地址 lb 就是负载均衡，后面跟服务名称
-#          predicates: # 路由断言，也就是判断请是否符合路由规则的条件
-#            - Path=/oneself-demo/** # /order 开头的请求访问 service-order
+    gateway:
+      # 启用服务发现（仅用于负载均衡，不自动创建路由）
+      discovery:
+        locator:
+          enabled: false # 禁用服务发现自动路由，使用手动配置的路由
+          lower-case-service-id: true # 服务 ID 转小写
+      # 路由配置
+      routes:
+        # ==================== 认证服务路由 ====================
+        - id: oneself-auth
+          uri: lb://oneself-auth
+          predicates:
+            - Path=/oneself-auth/**
+          metadata:
+            route-name: auth-service
+            description: 认证服务路由
+
+        # ==================== 系统服务路由 ====================
+        - id: oneself-system
+          uri: lb://oneself-system
+          predicates:
+            - Path=/oneself-system/**
+          metadata:
+            route-name: system-service
+            description: 系统服务路由
+
+        # ==================== 示例服务路由 ====================
+        - id: oneself-demo
+          uri: lb://oneself-demo
+          predicates:
+            - Path=/oneself-demo/**
+          metadata:
+            route-name: demo-service
+            description: 示例服务路由
+
+        # ==================== 定时任务服务路由 ====================
+        - id: oneself-quartz
+          uri: lb://oneself-quartz
+          predicates:
+            - Path=/oneself-quartz/**
+          metadata:
+            route-name: quartz-service
+            description: 定时任务服务路由
+
+        # ==================== AI服务路由 ====================
+        - id: oneself-ai
+          uri: lb://oneself-ai
+          predicates:
+            - Path=/oneself-ai/**
+          metadata:
+            route-name: ai-service
+            description: AI服务路由
+
+      # 全局过滤器配置
+      default-filters:
+        # 添加网关标识到响应头
+        - AddResponseHeader=X-Gateway, oneself-gateway
+        # 添加网关版本到响应头
+        - AddResponseHeader=X-Gateway-Version, 1.0.0
+
+      # 全局跨域配置（已在代码中配置 CorsWebFilter，这里作为备用）
+      global-cors:
+        cors-configurations:
+          "[/**]":
+            allowedOriginPatterns: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+              - PATCH
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
+      # HTTP 客户端配置（Netty）- 性能优化
+      httpclient:
+        connect-timeout: 5000 # 连接超时（毫秒）
+        response-timeout: 10s # 响应超时
+        pool:
+          type: ELASTIC # 连接池类型：ELASTIC（弹性）或 FIXED（固定）
+          max-connections: 500 # 最大连接数
+          max-idle-time: 30s # 最大空闲时间
+          max-life-time: 60s # 最大生存时间
+          eviction-interval: 5s # 清理间隔
+
+# JWT 配置（必须与 auth 服务保持一致）
+jwt:
+  secret: 24144a87fc221be646fd48e436ec88fa9fae69547d00931b6749106169e516bc # 请确保与 auth 服务使用相同的密钥
+  issuer: oneself # JWT 签发者
+
+# ==================== Actuator 监控配置 ====================
+management:
+  endpoints:
+    web:
+      exposure:
+        # 暴露监控端点（生产环境建议只暴露必要的端点）
+        include: health,info,metrics,prometheus,gateway
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized # 健康检查详情（需要认证时显示）
+    metrics:
+      access: unrestricted
+    prometheus:
+      access: unrestricted
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true # 启用 HTTP 请求的百分位数直方图
+      percentiles:
+        http.server.requests: 0.5, 0.9, 0.95, 0.99 # 记录 P50, P90, P95, P99
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+# ==================== 限流配置 ====================
+gateway:
+  rate-limit:
+    enabled: true # 是否启用限流
+    default-limit: 100 # 默认每分钟请求数
+    window-seconds: 60 # 时间窗口（秒）
+
+# ==================== 日志配置 ====================
+logging:
+  level:
+    # Gateway 日志（生产环境建议改为 INFO）
+    org.springframework.cloud.gateway: INFO
+    org.springframework.cloud.gateway.filter: INFO
+    org.springframework.cloud.gateway.handler: INFO
+    # 负载均衡日志
+    org.springframework.cloud.loadbalancer: INFO
+    org.springframework.cloud.client.loadbalancer: INFO
+    # Nacos 日志
+    com.alibaba.cloud.nacos: INFO
+    com.alibaba.nacos: INFO
+    # 业务日志
+    com.oneself: INFO
+    com.oneself.filter: INFO
+    # Netty 日志
+    reactor.netty: INFO
+    reactor.netty.http.client: WARN
+    # Actuator 日志
+    org.springframework.boot.actuate: INFO

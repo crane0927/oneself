@@ -40,6 +40,53 @@
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
+
+        <!-- 公共安全模块（JWT、SecurityUtils） -->
+        <dependency>
+            <groupId>com.oneself</groupId>
+            <artifactId>oneself-common-feature-security</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <!-- Redis 基础设施 -->
+        <dependency>
+            <groupId>com.oneself</groupId>
+            <artifactId>oneself-common-infra-redis</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <!-- 公共核心模块 -->
+        <dependency>
+            <groupId>com.oneself</groupId>
+            <artifactId>oneself-common-core</artifactId>
+            <version>1.0.0</version>
+            <exclusions>
+                <!-- 排除 spring-boot-starter-web，因为 Gateway 使用响应式 WebFlux -->
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-web</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- ==================== 监控和指标 ==================== -->
+        <!-- Spring Boot Actuator（健康检查、指标收集） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- Micrometer Prometheus（指标导出） -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+
+        <!-- Gateway Metrics（Gateway 专用指标） -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
