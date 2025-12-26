@@ -49,10 +49,10 @@
             <artifactId>commons-collections4</artifactId>
         </dependency>
 
-        <!-- 工具类模块（包含 CurrentUserProvider） -->
+        <!-- 核心模块（包含 CurrentUserProvider 和工具类） -->
         <dependency>
             <groupId>com.oneself</groupId>
-            <artifactId>oneself-common-feature-utils</artifactId>
+            <artifactId>oneself-common-core</artifactId>
             <version>1.0.0</version>
         </dependency>
     </dependencies>
