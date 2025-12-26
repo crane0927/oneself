@@ -26,4 +26,15 @@ public class OneselfLoginException extends RuntimeException {
     public OneselfLoginException(String message) {
         super(message);
     }
+
+    /**
+     * Constructs a new runtime exception with the specified detail message and cause.
+     *
+     * @param message the detail message
+     * @param cause   the cause (which is saved for later retrieval by the
+     *                {@link #getCause()} method)
+     */
+    public OneselfLoginException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
