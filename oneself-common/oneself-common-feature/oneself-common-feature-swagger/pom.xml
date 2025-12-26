@@ -13,20 +13,6 @@
     <description>swagger 模块</description>
 
     <dependencies>
-        <!--Spring Boot 升级到 3.4.4、Spring Cloud 升级到 2024.0.1 后，存在问题，地址可以打开，但是报错
-        Handler dispatch failed: java.lang.NoSuchMethodError: 'java.util.List org.springdoc.core.properties.SpringDocConfigProperties.getGroupConfigs()'-->
-        <!-- <dependency>
-           <groupId>com.github.xiaoymin</groupId>
-           <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
-           <version>${knife4j-openapi3-jakarta.version}</version>
-           <exclusions>
-               <exclusion>
-                   <groupId>org.springdoc</groupId>
-                   <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-               </exclusion>
-           </exclusions>
-       </dependency>-->
-
         <!-- 未使用高级功能，只引入基础依赖 -->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
