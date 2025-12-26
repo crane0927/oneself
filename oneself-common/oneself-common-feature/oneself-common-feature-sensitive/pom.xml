@@ -13,17 +13,24 @@
     <description>数据脱敏模块</description>
 
     <dependencies>
+        <!-- 核心模块（包含异常类和工具类） -->
         <dependency>
             <groupId>com.oneself</groupId>
-            <artifactId>oneself-common-feature-web</artifactId>
+            <artifactId>oneself-common-core</artifactId>
             <version>1.0.0</version>
         </dependency>
+
+        <!-- AOP Support（ApiLogAspect 需要） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>jakarta.json</groupId>
             <artifactId>jakarta.json-api</artifactId>
             <version>${jakarta.json-api.version}</version>
         </dependency>
-
     </dependencies>
 
     <build>

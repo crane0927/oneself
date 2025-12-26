@@ -19,6 +19,13 @@
             <version>1.0.0</version>
         </dependency>
 
+        <!-- Web 功能模块（SecurityUtils 使用 Servlet API） -->
+        <dependency>
+            <groupId>com.oneself</groupId>
+            <artifactId>oneself-common-feature-web</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
         <dependency>
             <groupId>com.oneself</groupId>
             <artifactId>oneself-common-infra-redis</artifactId>
@@ -36,12 +43,7 @@
             <artifactId>spring-security-core</artifactId>
         </dependency>
 
-        <!-- Web 功能模块（SecurityUtils 使用 Servlet API） -->
-        <dependency>
-            <groupId>com.oneself</groupId>
-            <artifactId>oneself-common-feature-web</artifactId>
-            <version>1.0.0</version>
-        </dependency>
+
     </dependencies>
 
     <build>
