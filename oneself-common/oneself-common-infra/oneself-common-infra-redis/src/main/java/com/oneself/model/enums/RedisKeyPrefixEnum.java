@@ -1,6 +1,5 @@
 package com.oneself.model.enums;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 /**
@@ -8,11 +7,10 @@ import lombok.Getter;
  * date 2025/9/11
  * packageName com.oneself.model.enums
  * enumName RedisKeyPrefixEnum
- * description
+ * description Redis 键前缀枚举
  * version 1.0
  */
 @Getter
-@Schema(description = "Redis 键前缀枚举")
 public enum RedisKeyPrefixEnum {
     SYSTEM_NAME("oneself:", "系统名称"),
     LOGIN_SESSION("oneself:login:session:", "登录会话"),
