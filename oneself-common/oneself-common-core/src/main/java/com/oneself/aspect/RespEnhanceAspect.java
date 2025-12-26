@@ -5,11 +5,11 @@ import com.oneself.resp.Resp;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
 /**
@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Aspect
 @Component
-public class ResponseVOEnhanceAspect {
+public class RespEnhanceAspect {
 
     private final HttpServletRequest httpServletRequest;
 
@@ -34,7 +34,7 @@ public class ResponseVOEnhanceAspect {
         String controllerMethodName = ((MethodSignature) joinPoint.getSignature()).getMethod().getName();
         log.info("正在处理 Controller 请求：{}.{}", controllerClassName, controllerMethodName);
 
-        // 执行目标Controller方法
+        // 执行目标 Controller 方法
         Object controllerResult = null;  // 变量名：controllerResult（明确是Controller的返回结果）
         try {
             controllerResult = joinPoint.proceed();
