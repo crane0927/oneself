@@ -18,6 +18,7 @@
         <module>oneself-common-feature-sensitive</module>
         <module>oneself-common-feature-swagger</module>
         <module>oneself-common-feature-utils</module>
+        <module>oneself-common-feature-web</module>
     </modules>
 
     <build>
