@@ -11,6 +11,7 @@ import com.oneself.model.dto.RoleQueryDTO;
 import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.pojo.Role;
 import com.oneself.model.pojo.UserRole;
+import com.oneself.model.vo.RoleTreeVO;
 import com.oneself.model.vo.RoleVO;
 import com.oneself.pagination.MyBatisPageWrapper;
 import com.oneself.req.PageReq;
@@ -30,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -69,6 +70,11 @@ public class RoleServiceImpl implements RoleService {
                 "角色编码已存在",
                 DuplicateCheckUtils.FieldCondition.of(Role::getRoleCode, DuplicateCheckUtils.ConditionType.EQ)
         );
+
+        // 检查角色继承：防止循环继承
+        if (ObjectUtils.isNotEmpty(role.getParentId())) {
+            validateRoleInheritance(role.getParentId(), null);
+        }
 
         int insert = roleMapper.insert(role);
         if (insert == 0) {
@@ -124,6 +130,11 @@ public class RoleServiceImpl implements RoleService {
                     "角色编码已存在",
                     DuplicateCheckUtils.FieldCondition.of(Role::getRoleCode, DuplicateCheckUtils.ConditionType.EQ)
             );
+        }
+
+        // 检查角色继承：防止循环继承
+        if (ObjectUtils.isNotEmpty(role.getParentId())) {
+            validateRoleInheritance(role.getParentId(), id);
         }
 
         int update = roleMapper.updateById(role);
@@ -284,5 +295,166 @@ public class RoleServiceImpl implements RoleService {
                 return vo;
             })
             .collect(Collectors.toList());
+    }
+
+    /**
+     * 验证角色继承关系，防止循环继承
+     *
+     * @param parentId 父角色ID
+     * @param currentRoleId 当前角色ID（更新时使用，新增时为null）
+     */
+    private void validateRoleInheritance(String parentId, String currentRoleId) {
+        // 1. 检查父角色是否存在
+        Role parentRole = roleMapper.selectById(parentId);
+        if (ObjectUtils.isEmpty(parentRole)) {
+            throw new OneselfException("父角色不存在");
+        }
+
+        // 2. 检查是否将自身设置为父角色（更新时）
+        if (ObjectUtils.isNotEmpty(currentRoleId) && currentRoleId.equals(parentId)) {
+            throw new OneselfException("不能将自身设置为父角色");
+        }
+
+        // 3. 检查是否形成循环继承（父角色的所有祖先不能包含当前角色）
+        if (ObjectUtils.isNotEmpty(currentRoleId)) {
+            Set<String> ancestorIds = getAllAncestorRoleIds(parentId);
+            if (ancestorIds.contains(currentRoleId)) {
+                throw new OneselfException("不能将父角色设置为当前角色的子角色，否则会形成循环继承");
+            }
+        }
+    }
+
+    /**
+     * 获取角色的所有祖先角色ID（包括父角色、祖父角色等）
+     *
+     * @param roleId 角色ID
+     * @return 所有祖先角色ID集合
+     */
+    private Set<String> getAllAncestorRoleIds(String roleId) {
+        Set<String> ancestorIds = new HashSet<>();
+        String currentParentId = roleId;
+        Set<String> visited = new HashSet<>(); // 防止无限循环
+
+        while (ObjectUtils.isNotEmpty(currentParentId) && !visited.contains(currentParentId)) {
+            visited.add(currentParentId);
+            Role role = roleMapper.selectById(currentParentId);
+            if (ObjectUtils.isEmpty(role) || ObjectUtils.isEmpty(role.getParentId())) {
+                break;
+            }
+            currentParentId = role.getParentId();
+            ancestorIds.add(currentParentId);
+        }
+
+        return ancestorIds;
+    }
+
+    /**
+     * 获取角色的所有子角色ID（包括直接子角色和所有后代角色）
+     *
+     * @param roleId 角色ID
+     * @return 所有子角色ID集合
+     */
+    private Set<String> getAllChildRoleIds(String roleId) {
+        Set<String> childIds = new HashSet<>();
+        List<Role> allRoles = roleMapper.selectList(null);
+        Map<String, List<Role>> parentToChildrenMap = allRoles.stream()
+                .filter(role -> ObjectUtils.isNotEmpty(role.getParentId()))
+                .collect(Collectors.groupingBy(Role::getParentId));
+
+        Queue<String> queue = new LinkedList<>();
+        queue.offer(roleId);
+
+        while (!queue.isEmpty()) {
+            String currentId = queue.poll();
+            List<Role> children = parentToChildrenMap.getOrDefault(currentId, Collections.emptyList());
+            for (Role child : children) {
+                if (!childIds.contains(child.getId())) {
+                    childIds.add(child.getId());
+                    queue.offer(child.getId());
+                }
+            }
+        }
+
+        return childIds;
+    }
+
+    /**
+     * 获取角色的所有父角色ID（包括直接父角色和所有祖先角色）
+     * 用于权限继承：子角色自动继承父角色的所有权限（RBAC1）
+     *
+     * @param roleId 角色ID
+     * @return 所有父角色ID集合（包括自身）
+     */
+    @Override
+    public Set<String> getAllParentRoleIds(String roleId) {
+        Set<String> parentIds = new HashSet<>();
+        parentIds.add(roleId); // 包括自身
+
+        String currentParentId = roleId;
+        Set<String> visited = new HashSet<>(); // 防止无限循环
+
+        while (ObjectUtils.isNotEmpty(currentParentId) && !visited.contains(currentParentId)) {
+            visited.add(currentParentId);
+            Role role = roleMapper.selectById(currentParentId);
+            if (ObjectUtils.isEmpty(role) || ObjectUtils.isEmpty(role.getParentId())) {
+                break;
+            }
+            currentParentId = role.getParentId();
+            parentIds.add(currentParentId);
+        }
+
+        return parentIds;
+    }
+
+    /**
+     * 查询角色树形结构（RBAC1：支持角色继承）
+     * <p>
+     * 用于前端展示层级结构的角色树，展示角色继承关系
+     * </p>
+     *
+     * @return 角色树列表
+     */
+    @Override
+    @Cacheable(value = "sysRole", key = "'tree'")
+    public List<RoleTreeVO> tree() {
+        // 查询所有角色
+        List<Role> roles = roleMapper.selectList(
+                new LambdaQueryWrapper<Role>()
+                        .eq(Role::getStatus, StatusEnum.NORMAL)
+                        .orderByDesc(Role::getCreateTime)
+        );
+
+        if (ObjectUtils.isEmpty(roles)) {
+            return List.of();
+        }
+
+        // 转换为TreeVO
+        List<RoleTreeVO> treeVOs = roles.stream()
+                .map(role -> {
+                    RoleTreeVO vo = new RoleTreeVO(role);
+                    return vo;
+                })
+                .toList();
+
+        // 构建id与TreeVO的映射
+        Map<String, RoleTreeVO> idToTreeVOMap = new HashMap<>();
+        treeVOs.forEach(vo -> idToTreeVOMap.put(vo.getId(), vo));
+
+        // 构建树结构
+        List<RoleTreeVO> rootNodes = new ArrayList<>();
+        for (RoleTreeVO vo : treeVOs) {
+            if (ObjectUtils.isEmpty(vo.getParentId())) {
+                // 没有父节点的为顶级节点
+                rootNodes.add(vo);
+            } else {
+                // 找到父节点，并把当前节点加入父节点的children中
+                RoleTreeVO parent = idToTreeVOMap.get(vo.getParentId());
+                if (parent != null) {
+                    parent.getChildren().add(vo);
+                }
+            }
+        }
+
+        return rootNodes;
     }
 }

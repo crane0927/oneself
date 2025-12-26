@@ -7,6 +7,7 @@ import com.oneself.model.pojo.Permission;
 import com.oneself.model.pojo.RolePermission;
 import com.oneself.model.vo.PermissionVO;
 import com.oneself.service.RolePermissionService;
+import com.oneself.service.RoleService;
 import com.oneself.utils.BeanCopyUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -34,6 +35,7 @@ public class RolePermissionServiceImpl implements RolePermissionService {
 
     private final RolePermissionMapper rolePermissionMapper;
     private final PermissionMapper permissionMapper;
+    private final RoleService roleService;
     /**
      * 给角色分配权限
      *
@@ -76,30 +78,33 @@ public class RolePermissionServiceImpl implements RolePermissionService {
     }
 
     /**
-     * 根据角色ID查询权限列表
+     * 根据角色ID查询权限列表（RBAC1：包含继承的权限）
      *
      * @param roleId 角色ID
-     * @return 权限列表 VO
+     * @return 权限列表 VO（包括该角色直接分配的权限和从父角色继承的权限）
      */
     @Override
     @Cacheable(value = "sysRolePermission", key = "#roleId")
     public List<PermissionVO> listPermissionsByRoleId(String roleId) {
-        // 查询角色权限关联
+        // RBAC1: 获取该角色的所有父角色（包括自身），用于权限继承
+        Set<String> allRoleIds = roleService.getAllParentRoleIds(roleId);
+
+        // 查询所有角色（包括继承的角色）的权限关联
         List<RolePermission> rolePermissions = rolePermissionMapper.selectList(
-            new LambdaQueryWrapper<RolePermission>().eq(RolePermission::getRoleId, roleId)
+            new LambdaQueryWrapper<RolePermission>().in(RolePermission::getRoleId, allRoleIds)
         );
 
         if (ObjectUtils.isEmpty(rolePermissions)) {
             return List.of();
         }
 
-        // 获取权限ID列表
-        List<String> permIds = rolePermissions.stream()
+        // 获取权限ID列表（去重）
+        Set<String> permIdSet = rolePermissions.stream()
             .map(RolePermission::getPermId)
-            .collect(Collectors.toList());
+            .collect(Collectors.toSet());
 
         // 查询权限信息
-        List<Permission> permissions = permissionMapper.selectByIds(permIds);
+        List<Permission> permissions = permissionMapper.selectByIds(new ArrayList<>(permIdSet));
 
         // 转换为VO
         return permissions.stream()

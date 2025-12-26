@@ -34,6 +34,9 @@ public class RoleDTO implements Serializable {
     @Schema(description = "角色描述")
     private String description;
 
+    @Schema(description = "父角色ID（用于角色继承，RBAC1）")
+    private String parentId;
+
     @Schema(description = "状态", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "状态不能为空")
     private StatusEnum status;

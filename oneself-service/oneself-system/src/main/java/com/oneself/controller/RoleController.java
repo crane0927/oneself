@@ -4,6 +4,7 @@ import com.oneself.annotation.ApiLog;
 import com.oneself.model.dto.RoleDTO;
 import com.oneself.model.dto.RoleQueryDTO;
 import com.oneself.model.enums.StatusEnum;
+import com.oneself.model.vo.RoleTreeVO;
 import com.oneself.model.vo.RoleVO;
 import com.oneself.req.PageReq;
 import com.oneself.resp.PageResp;
@@ -80,5 +81,11 @@ public class RoleController {
     @GetMapping("/list/all")
     public Resp<List<RoleVO>> listAll() {
         return Resp.success(roleService.listAll());
+    }
+
+    @Operation(summary = "查询角色树（RBAC1：支持角色继承）")
+    @GetMapping("/tree")
+    public Resp<List<RoleTreeVO>> tree() {
+        return Resp.success(roleService.tree());
     }
 }

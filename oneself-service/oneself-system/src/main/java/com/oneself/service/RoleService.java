@@ -78,4 +78,23 @@ public interface RoleService {
      * @return 所有角色信息列表
      */
     List<RoleVO> listAll();
+
+    /**
+     * 获取角色的所有父角色ID（包括直接父角色和所有祖先角色）
+     * 用于权限继承：子角色自动继承父角色的所有权限（RBAC1）
+     *
+     * @param roleId 角色ID
+     * @return 所有父角色ID集合（包括自身）
+     */
+    java.util.Set<String> getAllParentRoleIds(String roleId);
+
+    /**
+     * 查询角色树形结构（RBAC1：支持角色继承）
+     * <p>
+     * 用于前端展示层级结构的角色树，展示角色继承关系
+     * </p>
+     *
+     * @return 角色树列表
+     */
+    List<com.oneself.model.vo.RoleTreeVO> tree();
 }

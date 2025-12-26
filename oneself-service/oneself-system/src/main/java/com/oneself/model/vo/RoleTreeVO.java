@@ -1,24 +1,28 @@
 package com.oneself.model.vo;
 
 import com.oneself.model.enums.StatusEnum;
+import com.oneself.model.pojo.Role;
+import com.oneself.utils.BeanCopyUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author liuhuan
- * date 2025/9/5
+ * date 2025/12/25
  * packageName com.oneself.model.vo
- * className RoleVO
- * description
+ * className RoleTreeVO
+ * description 角色信息树结果 VO（支持角色继承，RBAC1）
  * version 1.0
  */
 @Data
-@Schema(name = "RoleVO", description = "角色信息数据传输对象")
-public class RoleVO implements Serializable {
+@Schema(name = "RoleTreeVO", description = "角色信息树结果 VO")
+public class RoleTreeVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -51,4 +55,17 @@ public class RoleVO implements Serializable {
 
     @Schema(description = "修改时间")
     private LocalDateTime updateTime;
+
+    @Schema(description = "子角色列表")
+    private List<RoleTreeVO> children;
+
+    public RoleTreeVO() {
+        this.children = new ArrayList<>();
+    }
+
+    public RoleTreeVO(Role role) {
+        BeanCopyUtils.copy(role, this);
+        this.children = new ArrayList<>();
+    }
 }
+

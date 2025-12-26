@@ -13,6 +13,7 @@ import com.oneself.model.vo.UserVO;
 import com.oneself.pagination.MyBatisPageWrapper;
 import com.oneself.req.PageReq;
 import com.oneself.resp.PageResp;
+import com.oneself.service.RoleService;
 import com.oneself.service.UserService;
 import com.oneself.utils.BeanCopyUtils;
 import com.oneself.utils.DuplicateCheckUtils;
@@ -30,8 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -54,6 +54,7 @@ public class UserServiceImpl implements UserService {
     private final PermissionMapper permissionMapper;
     private final ConfigurationMapper configurationMapper;
     private final CacheManager cacheManager;
+    private final RoleService roleService;
 
 
     /**
@@ -149,10 +150,21 @@ public class UserServiceImpl implements UserService {
             List<Role> roles = roleMapper.selectList(new LambdaQueryWrapper<Role>().in(Role::getId, roleIds));
             vo.setRoleCodes(roles.stream().map(Role::getRoleCode).collect(Collectors.toSet()));
 
+            // RBAC1: 考虑角色继承，获取所有父角色的权限
+            Set<String> allRoleIds = new HashSet<>();
+            for (String roleId : roleIds) {
+                // 获取该角色的所有父角色（包括自身）
+                Set<String> parentRoleIds = roleService.getAllParentRoleIds(roleId);
+                allRoleIds.addAll(parentRoleIds);
+            }
+
+            // 查询所有角色（包括继承的角色）的权限
             List<String> permissionIds = rolePermissionMapper.selectList(new LambdaQueryWrapper<RolePermission>()
-                            .in(RolePermission::getRoleId, roleIds))
+                            .in(RolePermission::getRoleId, allRoleIds))
                     .stream()
-                    .map(RolePermission::getPermId).toList();
+                    .map(RolePermission::getPermId)
+                    .distinct()
+                    .collect(Collectors.toList());
             if (!permissionIds.isEmpty()) {
                 List<Permission> permissions = permissionMapper.selectList(new LambdaQueryWrapper<Permission>()
                         .in(Permission::getId, permissionIds));

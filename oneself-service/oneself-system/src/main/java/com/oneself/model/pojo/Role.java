@@ -45,6 +45,12 @@ public class Role extends BasePojo {
     private String description;
 
     /**
+     * 父角色ID（用于角色继承，RBAC1）
+     */
+    @TableField("parent_id")
+    private String parentId;
+
+    /**
      * 状态(0-禁用,1-启用)
      */
     @TableField("status")

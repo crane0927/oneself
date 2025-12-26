@@ -75,6 +75,7 @@ CREATE TABLE sys_role (
                           role_code VARCHAR(100) NOT NULL UNIQUE,                 -- 角色编码
                           role_name VARCHAR(100) NOT NULL,                        -- 角色名称
                           description TEXT,                                       -- 角色描述
+                          parent_id VARCHAR(32),                                  -- 父角色ID（用于角色继承，RBAC1）
                           status INTEGER DEFAULT 0,                               -- 状态(0-禁用,1-启用)
                           deleted INTEGER DEFAULT 0,                              -- 逻辑删除标志(0-未删除,1-已删除)
                           create_by VARCHAR(100),                                 -- 创建人
@@ -88,6 +89,7 @@ COMMENT ON COLUMN sys_role.id IS '主键ID';
 COMMENT ON COLUMN sys_role.role_code IS '角色编码';
 COMMENT ON COLUMN sys_role.role_name IS '角色名称';
 COMMENT ON COLUMN sys_role.description IS '角色描述';
+COMMENT ON COLUMN sys_role.parent_id IS '父角色ID（用于角色继承，RBAC1）';
 COMMENT ON COLUMN sys_role.status IS '状态(0-禁用,1-启用)';
 COMMENT ON COLUMN sys_role.deleted IS '逻辑删除标志(0-未删除,1-已删除)';
 COMMENT ON COLUMN sys_role.create_by IS '创建人';
