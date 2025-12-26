@@ -6,6 +6,7 @@ import com.oneself.mapper.UserRoleMapper;
 import com.oneself.model.pojo.Role;
 import com.oneself.model.pojo.UserRole;
 import com.oneself.model.vo.RoleVO;
+import com.oneself.service.ConstraintService;
 import com.oneself.service.UserRoleService;
 import com.oneself.utils.BeanCopyUtils;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
     private final UserRoleMapper userRoleMapper;
     private final RoleMapper roleMapper;
+    private final ConstraintService constraintService;
     /**
      * 给用户分配角色
      *
@@ -54,6 +56,11 @@ public class UserRoleServiceImpl implements UserRoleService {
         if (roles.size() != roleIds.size()) {
             throw new IllegalArgumentException("部分角色不存在");
         }
+
+        // RBAC2: 检查角色约束
+        constraintService.checkRoleMutexConstraint(roleIds); // 角色互斥约束
+        constraintService.checkUserRoleCardinalityConstraint(userId, roleIds); // 用户角色基数约束
+        constraintService.checkRolePrerequisiteConstraint(userId, roleIds); // 角色先决条件约束
 
         // 先删除用户现有的角色关联
         userRoleMapper.delete(new LambdaQueryWrapper<UserRole>().eq(UserRole::getUserId, userId));

@@ -6,6 +6,7 @@ import com.oneself.mapper.RolePermissionMapper;
 import com.oneself.model.pojo.Permission;
 import com.oneself.model.pojo.RolePermission;
 import com.oneself.model.vo.PermissionVO;
+import com.oneself.service.ConstraintService;
 import com.oneself.service.RolePermissionService;
 import com.oneself.service.RoleService;
 import com.oneself.utils.BeanCopyUtils;
@@ -36,6 +37,7 @@ public class RolePermissionServiceImpl implements RolePermissionService {
     private final RolePermissionMapper rolePermissionMapper;
     private final PermissionMapper permissionMapper;
     private final RoleService roleService;
+    private final ConstraintService constraintService;
     /**
      * 给角色分配权限
      *
@@ -56,6 +58,10 @@ public class RolePermissionServiceImpl implements RolePermissionService {
         if (permissions.size() != permIds.size()) {
             throw new IllegalArgumentException("部分权限不存在");
         }
+
+        // RBAC2: 检查权限约束
+        constraintService.checkPermissionMutexConstraint(permIds); // 权限互斥约束
+        constraintService.checkRolePermissionCardinalityConstraint(roleId, permIds); // 角色权限基数约束
 
         // 先删除角色现有的权限关联
         rolePermissionMapper.delete(new LambdaQueryWrapper<RolePermission>().eq(RolePermission::getRoleId, roleId));

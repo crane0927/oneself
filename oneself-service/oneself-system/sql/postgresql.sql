@@ -213,3 +213,39 @@ CREATE INDEX idx_sys_role_permission_deleted ON sys_role_permission(deleted);
 CREATE INDEX idx_sys_dept_parent_id ON sys_dept(parent_id);
 CREATE INDEX idx_sys_dept_status ON sys_dept(status);
 CREATE INDEX idx_sys_dept_deleted ON sys_dept(deleted);
+
+-------------------------------
+-- 表名: sys_constraint (约束配置表)
+-- 功能: 存储RBAC2权限约束配置（角色互斥、权限互斥、基数约束、先决条件）
+-------------------------------
+CREATE TABLE sys_constraint (
+                                id VARCHAR(32) PRIMARY KEY DEFAULT REPLACE(gen_random_uuid()::text, '-', ''), -- 主键ID
+                                constraint_type VARCHAR(50) NOT NULL,              -- 约束类型(ROLE_MUTEX-角色互斥,PERM_MUTEX-权限互斥,CARDINALITY-基数约束,PREREQUISITE-先决条件)
+                                constraint_name VARCHAR(100) NOT NULL,              -- 约束名称
+                                constraint_value TEXT,                              -- 约束值(JSON格式，存储具体的约束规则)
+                                description TEXT,                                   -- 约束描述
+                                status INTEGER DEFAULT 1,                           -- 状态(0-禁用,1-启用)
+                                deleted INTEGER DEFAULT 0,                          -- 逻辑删除标志(0-未删除,1-已删除)
+                                create_by VARCHAR(100),                             -- 创建人
+                                create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,   -- 创建时间
+                                update_by VARCHAR(100),                             -- 更新人
+                                update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP    -- 更新时间
+);
+
+COMMENT ON TABLE sys_constraint IS '约束配置表（RBAC2）';
+COMMENT ON COLUMN sys_constraint.id IS '主键ID';
+COMMENT ON COLUMN sys_constraint.constraint_type IS '约束类型(ROLE_MUTEX-角色互斥,PERM_MUTEX-权限互斥,CARDINALITY-基数约束,PREREQUISITE-先决条件)';
+COMMENT ON COLUMN sys_constraint.constraint_name IS '约束名称';
+COMMENT ON COLUMN sys_constraint.constraint_value IS '约束值(JSON格式，存储具体的约束规则)';
+COMMENT ON COLUMN sys_constraint.description IS '约束描述';
+COMMENT ON COLUMN sys_constraint.status IS '状态(0-禁用,1-启用)';
+COMMENT ON COLUMN sys_constraint.deleted IS '逻辑删除标志(0-未删除,1-已删除)';
+COMMENT ON COLUMN sys_constraint.create_by IS '创建人';
+COMMENT ON COLUMN sys_constraint.create_time IS '创建时间';
+COMMENT ON COLUMN sys_constraint.update_by IS '更新人';
+COMMENT ON COLUMN sys_constraint.update_time IS '更新时间';
+
+-- 创建索引
+CREATE INDEX idx_sys_constraint_type ON sys_constraint(constraint_type);
+CREATE INDEX idx_sys_constraint_status ON sys_constraint(status);
+CREATE INDEX idx_sys_constraint_deleted ON sys_constraint(deleted);
