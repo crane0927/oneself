@@ -4,48 +4,31 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.oneself</groupId>
-        <artifactId>oneself-common</artifactId>
+        <artifactId>oneself-common-feature</artifactId>
         <version>1.0.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>oneself-common-core</artifactId>
-    <name>oneself-common-core</name>
-    <description>公共核心模块</description>
+    <artifactId>oneself-common-feature-web</artifactId>
+    <name>oneself-common-feature-web</name>
+    <description>公共 Web 功能模块（使用 Servlet API）</description>
 
     <dependencies>
         <dependency>
+            <groupId>com.oneself</groupId>
+            <artifactId>oneself-common-core</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <!-- Spring Boot Web（Servlet API） -->
+        <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- Spring Web（仅用于 HttpStatus，不包含 Servlet） -->
+        <!-- AOP Support -->
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-        </dependency>
-
-        <!-- Apache Commons Lang3 - 用于 StringUtils 等工具类 -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>jakarta.json</groupId>
-            <artifactId>jakarta.json-api</artifactId>
-            <version>${jakarta.json-api.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>2.2.25</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- Jackson JSR310 时间类型支持 -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
     </dependencies>
 
@@ -84,3 +67,4 @@
     </build>
 
 </project>
+

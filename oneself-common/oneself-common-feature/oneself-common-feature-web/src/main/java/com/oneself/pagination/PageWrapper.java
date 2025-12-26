@@ -19,3 +19,4 @@ public interface PageWrapper<T> {
 
     long getSize();
 }
+

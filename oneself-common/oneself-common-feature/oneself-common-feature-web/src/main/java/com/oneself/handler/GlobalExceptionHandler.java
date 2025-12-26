@@ -83,3 +83,4 @@ public class GlobalExceptionHandler {
                 request.getRequestURI(), MDC.get(TraceFilter.TRACE_ID));
     }
 }
+

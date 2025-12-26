@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>com.oneself</groupId>
-            <artifactId>oneself-common-core</artifactId>
+            <artifactId>oneself-common-feature-web</artifactId>
             <version>1.0.0</version>
         </dependency>
 
