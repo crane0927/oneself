@@ -14,9 +14,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>oneself-ai-api</module>
-        <module>oneself-demo-api</module>
-        <module>oneself-quartz-api</module>
         <module>oneself-system-api</module>
     </modules>
 

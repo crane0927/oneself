@@ -14,10 +14,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>oneself-demo</module>
         <module>oneself-system</module>
-        <module>oneself-quartz</module>
-        <module>oneself-ai</module>
     </modules>
 
     <properties>
