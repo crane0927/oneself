@@ -493,8 +493,6 @@ public class DemoApplication {
         <file>${LOG_HOME}/${LOG_NAME}-info.log</file>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>INFO</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
         </filter>
         <encoder>
             <pattern>${PATTERN}</pattern>
@@ -514,8 +512,6 @@ public class DemoApplication {
         <file>${LOG_HOME}/${LOG_NAME}-debug.log</file>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>DEBUG</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
         </filter>
         <encoder>
             <pattern>${PATTERN}</pattern>
@@ -535,8 +531,6 @@ public class DemoApplication {
         <file>${LOG_HOME}/${LOG_NAME}-warn.log</file>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>WARN</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
         </filter>
         <encoder>
             <pattern>${PATTERN}</pattern>
@@ -556,8 +550,6 @@ public class DemoApplication {
         <file>${LOG_HOME}/${LOG_NAME}-error.log</file>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>ERROR</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
         </filter>
         <encoder>
             <pattern>${PATTERN}</pattern>
@@ -572,7 +564,7 @@ public class DemoApplication {
         </rollingPolicy>
     </appender>
 
-    <!-- 日志级别配置 -->
+    <!-- 根日志级别 -->
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="INFO_FILE"/>

@@ -24,8 +24,6 @@
         <file>${LOG_HOME}/${LOG_NAME}-info.log</file>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>INFO</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
         </filter>
         <encoder>
             <pattern>${PATTERN}</pattern>
@@ -45,8 +43,6 @@
         <file>${LOG_HOME}/${LOG_NAME}-debug.log</file>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>DEBUG</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
         </filter>
         <encoder>
             <pattern>${PATTERN}</pattern>
@@ -66,8 +62,6 @@
         <file>${LOG_HOME}/${LOG_NAME}-warn.log</file>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>WARN</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
         </filter>
         <encoder>
             <pattern>${PATTERN}</pattern>
@@ -87,8 +81,6 @@
         <file>${LOG_HOME}/${LOG_NAME}-error.log</file>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>ERROR</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
         </filter>
         <encoder>
             <pattern>${PATTERN}</pattern>
