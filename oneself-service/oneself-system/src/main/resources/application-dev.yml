@@ -48,6 +48,11 @@ spring:
           max-idle: 8
           min-idle: 0
           max-wait: -1ms  # 等待时间，单位支持 ms、s 等
+  # Flyway 数据库迁移（宪法原则 4）
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
 
 jwt:
   secret: your-secret-key-here-must-be-at-least-256-bits-long

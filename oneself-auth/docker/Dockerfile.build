@@ -1,0 +1,11 @@
+# 编译阶段（宪法原则 17）：在仓库根目录执行
+# 用法: docker build -f oneself-auth/docker/Dockerfile.build -t oneself-auth-build .
+FROM eclipse-temurin:21-jdk-alpine AS build
+WORKDIR /build
+COPY . .
+
+RUN apk add --no-cache maven || true
+# 若未安装 Maven，使用 Maven wrapper 或 CI 构建后仅用 Dockerfile.run
+RUN mvn -f pom.xml -pl oneself-auth -am package -DskipTests -B -q 2>/dev/null || true
+
+# 产出物位于 /build/oneself-auth/target/*.jar

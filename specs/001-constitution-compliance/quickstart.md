@@ -49,7 +49,7 @@ mvn clean install               # 完整构建含测试
 | 原则 11–12 | 模块与包结构 | 查看各模块包名是否符合“业务按业务分层、技术按技术分层” |
 | 原则 13 | API 模块无 VO | `find oneself-service-api -name "*.java" -path "*/vo/*"` 应为空 |
 | 原则 15 | sql 按版本目录 | 涉库服务下 `sql/v*` 存在且含 README |
-| 原则 16 | 实体继承基类 | 业务实体继承 BasePojo/BaseEntity，且位于 model 约定子包 |
+| 原则 16 | 实体继承基类 | 业务实体继承 BasePojo/BaseEntity，且位于 model 约定子包；当前项目使用 oneself-common-infra-jdbc 的 BasePojo，与宪法中的 BaseEntity 语义等价 |
 | 原则 17 | Dockerfile 两阶段 | 可运行服务存在 `docker/Dockerfile.build` 与 `docker/Dockerfile.run` |
 
 可将上述清单保存为脚本或 CI 步骤，实现 SC-004（可重复执行、约 15 分钟内完成）。

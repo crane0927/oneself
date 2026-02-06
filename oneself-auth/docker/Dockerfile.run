@@ -1,0 +1,8 @@
+# 运行阶段（宪法原则 17）：使用轻量 JRE，预期 jar 已构建
+# 用法: 先由 CI 或 Dockerfile.build 得到 jar，再 docker build -f oneself-auth/docker/Dockerfile.run --build-arg JAR=oneself-auth-1.0.0.jar -t oneself-auth:latest .
+ARG JAR_FILE=oneself-auth-1.0.0.jar
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+COPY ${JAR_FILE} app.jar
+EXPOSE 8081
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]

@@ -1,7 +1,5 @@
 package com.oneself.model.vo;
 
-import com.oneself.annotation.Sensitive;
-import com.oneself.model.enums.DesensitizedTypeEnum;
 import com.oneself.model.enums.SexEnum;
 import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.enums.UserTypeEnum;
@@ -15,15 +13,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * 用户信息 VO（系统服务内部 REST 响应用；宪法原则 13：API 模块仅 DTO，服务内部可保留 VO）
+ *
  * @author liuhuan
- * date 2025/1/18
- * packageName com.oneself.user.model.vo
- * className UserVO
- * description 用户信息
- * version 1.0
  */
 @Data
-@Schema(name = "UserVO", description = "用户信息数据传输对象")
+@Schema(name = "UserVO", description = "用户信息视图对象")
 public class UserVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -34,7 +29,6 @@ public class UserVO implements Serializable {
     @Schema(description = "用户名")
     private String username;
 
-    @Sensitive(value = DesensitizedTypeEnum.PASSWORD)
     @Schema(description = "密码")
     private String password;
 

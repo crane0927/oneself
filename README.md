@@ -1,46 +1,34 @@
 # oneself
+
+微服务后端项目，技术栈与模块结构遵循项目宪法（`.specify/memory/constitution.md`）。
+
 ---
-## 1 环境（JDK 1.8 升级至 JDK 21）
-- ~~JDK 1.8~~ -> JDK 21
-- ~~Spring Boot 2.7.18~~ -> ~~Spring Boot 3.2.12~~ -> ~~Spring Boot 3.3.7~~ -> Spring Boot 3.4.4
-- ~~Spring Cloud 2021.0.9~~ -> ~~Spring Cloud 2023.0.5~~ -> Spring Cloud 2024.0.1
-- ~~Spring Cloud Alibaba 2021.0.6.2~~ -> Spring Cloud Alibaba 2023.0.3.2
-- ~~Eleasticsearch 7.17.7~~ -> Eleasticsearch 8.17.0
-- ~~knife4j-openapi2-spring-boot-starter 4.5.0~~ -> ~~knife4j-openapi3-jakarta-spring-boot-starter 4.4.0~~ -> knife4j-openapi3-jakarta-spring-boot-starter 4.5.0
-- ~~mybatis-plus-boot-starter 3.5.3.1~~ -> ~~mybatis-plus-spring-boot3-starter 3.5.5~~ -> mybatis-plus-spring-boot3-starter 3.5.8
-- Nacos 2.4.3
-- MySQL 8.0.39
-- PostgreSQL 14.15
-- Maven 3.9.11
+## 1 环境与技术栈（宪法对齐）
+
+- **JDK 21**（原则 1）
+- **Spring Boot 3.5.9**
+- **Spring Cloud 2025.0.1**
+- **Spring Cloud Alibaba 2025.0.0.0**
+- **PostgreSQL** 为主数据源，数据库迁移由 **Flyway** 管理（原则 4）
+- MyBatis-Plus 3.5.8、Nacos、Redis、Elasticsearch 8.17.0
+- knife4j-openapi3-jakarta 4.5.0
+- Maven 3.9+
+
 ---
-## 2 项目结构
+## 2 项目结构（模块概要）
+
 ```text
 oneself
-├── oneself-auth                    # 认证服务模块，提供用户认证、授权、JWT 令牌管理等功能
-├── oneself-common                 # 公共模块，存放共享的工具类、公共服务、通用配置等
-│   ├── oneself-common-core        # 公共核心模块（最底层）
-│   │                              # 职责：通用工具类、基础对象、统一返回结构、通用异常和抽象模型
-│   ├── oneself-common-infra       # 基础设施层（中间层）
-│   │   ├── oneself-common-infra-redis        # Redis 基础设施封装
-│   │   ├── oneself-common-infra-jdbc         # JDBC/数据库基础设施封装
-│   │   ├── oneself-common-infra-mongodb      # MongoDB 基础设施封装
-│   │   └── oneself-common-infra-elasticsearch # Elasticsearch 基础设施封装
-│   └── oneself-common-feature     # 功能特性层（最上层）
-│       ├── oneself-common-feature-security   # 安全功能模块（权限、认证等）
-│       ├── oneself-common-feature-sensitive  # 数据脱敏功能模块
-│       ├── oneself-common-feature-swagger    # Swagger/OpenAPI 文档功能模块
-│       └── oneself-common-feature-utils     # 工具类功能模块
-├── oneself-gateway                # 网关模块，处理请求路由、认证、限流等，默认端口 9100
-├── oneself-service                # 核心业务模块，包含多个子模块，处理具体的业务逻辑，端口从 9101 开始
-│   ├── oneself-demo               # 示例服务模块，演示服务如何使用
-│   ├── oneself-system             # 系统服务模块，提供系统管理功能（用户、部门、角色、权限等）
-│   ├── oneself-quartz             # 定时任务服务模块，提供任务调度功能
-│   └── oneself-ai                 # 人工智能服务模块，提供 AI 服务（如文本翻译、语音识别、语音合成等）
-└── oneself-service-api            # 服务的接口定义模块，供其他服务或模块调用
-    ├── oneself-demo-api           # 示例服务模块的接口定义，包含相关接口和数据传输对象
-    ├── oneself-system-api          # 系统服务模块的接口定义
-    ├── oneself-quartz-api          # 定时任务服务模块的接口定义
-    └── oneself-ai-api             # AI 服务模块的接口定义
+├── oneself-auth                    # 认证服务：登录、JWT、验证码等
+├── oneself-common                   # 公共模块
+│   ├── oneself-common-core         # 核心工具、统一返回、异常与基础模型
+│   ├── oneself-common-infra        # 基础设施：jdbc(BasePojo)、redis、mongodb、elasticsearch
+│   └── oneself-common-feature      # 功能特性：security、sensitive、swagger、web
+├── oneself-gateway                 # 网关：路由、鉴权、限流、链路
+├── oneself-service                 # 业务服务
+│   └── oneself-system              # 系统服务：用户、部门、角色、权限等
+└── oneself-service-api             # 服务 API（仅 DTO/Feign 契约）
+    └── oneself-system-api          # 系统服务 API
 ```
 ---
 

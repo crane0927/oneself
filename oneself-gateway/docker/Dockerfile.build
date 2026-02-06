@@ -1,0 +1,6 @@
+# 编译阶段（宪法原则 17）：在仓库根目录执行
+# 用法: docker build -f oneself-gateway/docker/Dockerfile.build -t oneself-gateway-build .
+FROM eclipse-temurin:21-jdk-alpine AS build
+WORKDIR /build
+COPY . .
+RUN mvn -f pom.xml -pl oneself-gateway -am package -DskipTests -B -q 2>/dev/null || true

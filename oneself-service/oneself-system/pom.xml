@@ -69,6 +69,16 @@
             <artifactId>oneself-common-infra-redis</artifactId>
             <version>1.0.0</version>
         </dependency>
+
+        <!-- Flyway 数据库迁移（宪法原则 4） -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

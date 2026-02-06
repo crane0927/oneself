@@ -3,7 +3,7 @@ package com.oneself.service.impl;
 
 import com.oneself.client.UserClient;
 import com.oneself.model.bo.LoginUserBO;
-import com.oneself.model.vo.UserVO;
+import com.oneself.model.dto.UserDTO;
 import com.oneself.resp.Resp;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,23 +37,23 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (StringUtils.isBlank(username)) {
             throw new UsernameNotFoundException("用户名不能为空");
         }
-        Resp<UserVO> vo;
+        Resp<UserDTO> resp;
         try {
-            vo = userClient.getUserByName(username);
+            resp = userClient.getUserByName(username);
         } catch (Exception e) {
             log.error("调用用户服务异常，username={}", username, e);
             throw new InternalAuthenticationServiceException("获取用户信息失败", e);
         }
 
-        if (vo.getMsgCode() != HttpStatus.OK.value()) {
+        if (resp.getMsgCode() != HttpStatus.OK.value()) {
             throw new InternalAuthenticationServiceException("用户服务返回异常");
         }
-        UserVO userVO = vo.getData();
-        if (ObjectUtils.isEmpty(userVO)) {
+        UserDTO userDTO = resp.getData();
+        if (ObjectUtils.isEmpty(userDTO)) {
             throw new UsernameNotFoundException("用户不存在");
         }
         LoginUserBO bo = new LoginUserBO();
-        BeanUtils.copyProperties(userVO, bo);
+        BeanUtils.copyProperties(userDTO, bo);
         return bo;
     }
 }

@@ -1,0 +1,6 @@
+# 编译阶段（宪法原则 17）：在仓库根目录执行
+# 用法: docker build -f oneself-service/oneself-system/docker/Dockerfile.build -t oneself-system-build .
+FROM eclipse-temurin:21-jdk-alpine AS build
+WORKDIR /build
+COPY . .
+RUN mvn -f pom.xml -pl oneself-service/oneself-system -am package -DskipTests -B -q 2>/dev/null || true

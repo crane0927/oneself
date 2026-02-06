@@ -105,6 +105,9 @@ oneself/
 
 > 本特性为合规改造，无新增架构复杂度；若某条原则暂不满足并列为例外，在此记录。
 
+**模块与宪法对应（原则 11）**：当前 common 子模块命名与宪法略有差异，语义等价：`oneself-common-infra-jdbc` 对应宪法中的 infra-db（数据库基础设施），`oneself-common-feature-*` 与宪法一致。包结构按业务分层（原则 12）可延后为技术债，在后续迭代中按子域拆分。
+
 | 例外（若存在） | 原因 | 收敛计划 |
 |----------------|------|----------|
-| （暂无） | — | — |
+| 构建需 JDK 21 或 Lombok 1.18.38+ | 使用 JDK 24 编译时 Lombok 与 javac TypeTag 兼容性；根 POM 已使用 Lombok 1.18.38 | 保持根 POM lombok.version≥1.18.38；推荐用 JDK 21 执行构建 |
+| service-api 经 common-feature-security 传递依赖 infra-redis | 宪法要求 service-api 不直接依赖 infra；当前仅为传递依赖 | 已确认无直接 infra 依赖；传递依赖可接受，必要时可拆 security 的 redis 为可选 |

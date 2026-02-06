@@ -1,7 +1,7 @@
 package com.oneself.client.fallback;
 
 import com.oneself.client.UserClient;
-import com.oneself.model.vo.UserVO;
+import com.oneself.model.dto.UserDTO;
 import com.oneself.resp.Resp;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ public class UserClientFallbackFactory implements FallbackFactory<UserClient> {
     public UserClient create(Throwable cause) {
         return new UserClient() {
             @Override
-            public Resp<UserVO> getUserByName(String username) {
+            public Resp<UserDTO> getUserByName(String username) {
                 if (cause instanceof FeignException.NotFound) {
                     return Resp.failure("服务不存在", HttpStatus.NOT_FOUND);
                 } else if (cause instanceof TimeoutException) {

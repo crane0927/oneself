@@ -1,7 +1,7 @@
 package com.oneself.client;
 
 import com.oneself.client.fallback.UserClientFallbackFactory;
-import com.oneself.model.vo.UserVO;
+import com.oneself.model.dto.UserDTO;
 import com.oneself.resp.Resp;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,5 +27,5 @@ public interface UserClient {
 
     @Operation(summary = "根据用户名查询会话信息")
     @GetMapping("/get/user/by/{name}")
-    Resp<UserVO> getUserByName(@PathVariable @Valid @NotBlank String name);
+    Resp<UserDTO> getUserByName(@PathVariable @Valid @NotBlank String name);
 }
