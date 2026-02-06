@@ -16,10 +16,10 @@
         <java.version>21</java.version>
     </properties>
     <dependencies>
-        <!-- Gateway 网关依赖 -->
+        <!-- Gateway 网关依赖（WebFlux 服务端，替代已弃用的 spring-cloud-starter-gateway） -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-gateway</artifactId>
+            <artifactId>spring-cloud-starter-gateway-server-webflux</artifactId>
         </dependency>
 
         <!-- 在 Spring Cloud 2020 版本以后，默认移除了对 Netflix 的依赖，其中就包括 Ribbon，

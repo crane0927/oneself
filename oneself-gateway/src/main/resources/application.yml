@@ -40,90 +40,92 @@ spring:
         cluster-name: dev # 设置 Nacos 的集群属性
         namespace: dev # 配置命名空间，使用命名空间唯一 ID
     gateway:
-      # 启用服务发现（仅用于负载均衡，不自动创建路由）
-      discovery:
-        locator:
-          enabled: false # 禁用服务发现自动路由，使用手动配置的路由
-          lower-case-service-id: true # 服务 ID 转小写
-      # 路由配置
-      routes:
-        # ==================== 认证服务路由 ====================
-        - id: oneself-auth
-          uri: lb://oneself-auth
-          predicates:
-            - Path=/oneself-auth/**
-          metadata:
-            route-name: auth-service
-            description: 认证服务路由
+      server:
+        webflux:
+          # 启用服务发现（仅用于负载均衡，不自动创建路由）
+          discovery:
+            locator:
+              enabled: false # 禁用服务发现自动路由，使用手动配置的路由
+              lower-case-service-id: true # 服务 ID 转小写
+          # 路由配置
+          routes:
+            # ==================== 认证服务路由 ====================
+            - id: oneself-auth
+              uri: lb://oneself-auth
+              predicates:
+                - Path=/oneself-auth/**
+              metadata:
+                route-name: auth-service
+                description: 认证服务路由
 
-        # ==================== 系统服务路由 ====================
-        - id: oneself-system
-          uri: lb://oneself-system
-          predicates:
-            - Path=/oneself-system/**
-          metadata:
-            route-name: system-service
-            description: 系统服务路由
+            # ==================== 系统服务路由 ====================
+            - id: oneself-system
+              uri: lb://oneself-system
+              predicates:
+                - Path=/oneself-system/**
+              metadata:
+                route-name: system-service
+                description: 系统服务路由
 
-        # ==================== 示例服务路由 ====================
-        - id: oneself-demo
-          uri: lb://oneself-demo
-          predicates:
-            - Path=/oneself-demo/**
-          metadata:
-            route-name: demo-service
-            description: 示例服务路由
+            # ==================== 示例服务路由 ====================
+            - id: oneself-demo
+              uri: lb://oneself-demo
+              predicates:
+                - Path=/oneself-demo/**
+              metadata:
+                route-name: demo-service
+                description: 示例服务路由
 
-        # ==================== 定时任务服务路由 ====================
-        - id: oneself-quartz
-          uri: lb://oneself-quartz
-          predicates:
-            - Path=/oneself-quartz/**
-          metadata:
-            route-name: quartz-service
-            description: 定时任务服务路由
+            # ==================== 定时任务服务路由 ====================
+            - id: oneself-quartz
+              uri: lb://oneself-quartz
+              predicates:
+                - Path=/oneself-quartz/**
+              metadata:
+                route-name: quartz-service
+                description: 定时任务服务路由
 
-        # ==================== AI服务路由 ====================
-        - id: oneself-ai
-          uri: lb://oneself-ai
-          predicates:
-            - Path=/oneself-ai/**
-          metadata:
-            route-name: ai-service
-            description: AI服务路由
+            # ==================== AI服务路由 ====================
+            - id: oneself-ai
+              uri: lb://oneself-ai
+              predicates:
+                - Path=/oneself-ai/**
+              metadata:
+                route-name: ai-service
+                description: AI服务路由
 
-      # 全局过滤器配置
-      default-filters:
-        # 添加网关标识到响应头
-        - AddResponseHeader=X-Gateway, oneself-gateway
-        # 添加网关版本到响应头
-        - AddResponseHeader=X-Gateway-Version, 1.0.0
+          # 全局过滤器配置
+          default-filters:
+            # 添加网关标识到响应头
+            - AddResponseHeader=X-Gateway, oneself-gateway
+            # 添加网关版本到响应头
+            - AddResponseHeader=X-Gateway-Version, 1.0.0
 
-      # 全局跨域配置（已在代码中配置 CorsWebFilter，这里作为备用）
-      global-cors:
-        cors-configurations:
-          "[/**]":
-            allowedOriginPatterns: "*"
-            allowedMethods:
-              - GET
-              - POST
-              - PUT
-              - DELETE
-              - OPTIONS
-              - PATCH
-            allowedHeaders: "*"
-            allowCredentials: true
-            maxAge: 3600
-      # HTTP 客户端配置（Netty）- 性能优化
-      httpclient:
-        connect-timeout: 5000 # 连接超时（毫秒）
-        response-timeout: 10s # 响应超时
-        pool:
-          type: ELASTIC # 连接池类型：ELASTIC（弹性）或 FIXED（固定）
-          max-connections: 500 # 最大连接数
-          max-idle-time: 30s # 最大空闲时间
-          max-life-time: 60s # 最大生存时间
-          eviction-interval: 5s # 清理间隔
+          # 全局跨域配置（已在代码中配置 CorsWebFilter，这里作为备用）
+          globalcors:
+            cors-configurations:
+              "[/**]":
+                allowedOriginPatterns: "*"
+                allowedMethods:
+                  - GET
+                  - POST
+                  - PUT
+                  - DELETE
+                  - OPTIONS
+                  - PATCH
+                allowedHeaders: "*"
+                allowCredentials: true
+                maxAge: 3600
+          # HTTP 客户端配置（Netty）- 性能优化
+          httpclient:
+            connect-timeout: 5000 # 连接超时（毫秒）
+            response-timeout: 10s # 响应超时
+            pool:
+              type: ELASTIC # 连接池类型：ELASTIC（弹性）或 FIXED（固定）
+              max-connections: 500 # 最大连接数
+              max-idle-time: 30s # 最大空闲时间
+              max-life-time: 60s # 最大生存时间
+              eviction-interval: 5s # 清理间隔
 
 # JWT 配置（必须与 auth 服务保持一致）
 jwt:

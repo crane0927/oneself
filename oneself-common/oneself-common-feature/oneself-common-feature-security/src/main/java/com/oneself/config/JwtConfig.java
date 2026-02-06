@@ -36,12 +36,12 @@ public class JwtConfig {
             @Value("${ONESELF_JWT_ISSUER:oneself}") String issuer,
             @Value("${spring.profiles.active:}") String activeProfiles) {
 
-        boolean isDev = activeProfiles != null && activeProfiles.contains("dev");
+        boolean isDev = activeProfiles != null && (activeProfiles.contains("dev") || activeProfiles.contains("default"));
         String resolvedSecret = (secret != null && secret.length() >= 32) ? secret : null;
 
         if (resolvedSecret == null && isDev) {
             resolvedSecret = DEV_DEFAULT_SECRET;
-            log.warn("ONESELF_JWT_SECRET 未配置或长度不足，dev 环境使用默认密钥。生产环境请设置：export ONESELF_JWT_SECRET=$(openssl rand -hex 32)");
+            log.warn("ONESELF_JWT_SECRET 未配置或长度不足，dev/default 环境使用默认密钥。生产环境请设置：export ONESELF_JWT_SECRET=$(openssl rand -hex 32)");
         }
 
         if (resolvedSecret == null) {
