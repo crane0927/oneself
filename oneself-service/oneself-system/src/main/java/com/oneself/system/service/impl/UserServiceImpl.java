@@ -3,7 +3,6 @@ package com.oneself.system.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.oneself.common.core.exception.OneselfException;
-import com.oneself.mapper.*;
 import com.oneself.system.mapper.*;
 import com.oneself.system.model.dto.UserDTO;
 import com.oneself.system.model.dto.UserQueryDTO;

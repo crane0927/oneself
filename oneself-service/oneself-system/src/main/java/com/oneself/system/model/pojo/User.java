@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.oneself.common.infra.jdbc.model.pojo.BasePojo;
 import com.oneself.system.model.enums.SexEnum;
 import com.oneself.common.feature.security.model.enums.StatusEnum;
 import com.oneself.common.feature.security.model.enums.UserTypeEnum;
