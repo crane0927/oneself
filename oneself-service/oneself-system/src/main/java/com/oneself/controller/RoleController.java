@@ -77,7 +77,7 @@ public class RoleController {
         return roleService.page(dto);
     }
 
-    @Operation(summary = "查询所有角色列表（原则 6 名词化路径）")
+    @Operation(summary = "查询所有角色列表")
     @GetMapping("/all")
     public Resp<List<RoleVO>> listAll() {
         return Resp.success(roleService.listAll());

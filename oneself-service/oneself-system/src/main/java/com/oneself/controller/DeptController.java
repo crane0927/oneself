@@ -84,7 +84,7 @@ public class DeptController {
         return Resp.success(deptService.tree());
     }
 
-    @Operation(summary = "查询所有部门列表（原则 6 名词化路径）")
+    @Operation(summary = "查询所有部门列表")
     @GetMapping("/all")
     public Resp<List<DeptVO>> listAll() {
         return Resp.success(deptService.listAll());

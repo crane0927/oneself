@@ -83,7 +83,7 @@ public class PermissionController {
         return Resp.success(permissionService.tree());
     }
 
-    @Operation(summary = "根据角色ID查询权限列表（原则 6 名词化路径）")
+    @Operation(summary = "根据角色ID查询权限列表")
     @GetMapping("/by-role/{roleId}")
     public Resp<List<PermissionVO>> listByRoleId(@PathVariable("roleId") @Valid @NotBlank String roleId) {
         return Resp.success(permissionService.listByRoleId(roleId));

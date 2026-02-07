@@ -33,26 +33,26 @@ public class UserRoleController {
 
     private final UserRoleService userRoleService;
 
-    @Operation(summary = "给用户分配角色（原则 6 名词化路径）")
+    @Operation(summary = "给用户分配角色")
     @PostMapping("/users/{userId}/roles")
     public Resp<Boolean> assignRoles(@PathVariable("userId") @Valid @NotBlank String userId,
                                      @RequestBody @Valid @NotEmpty List<@NotBlank String> roleIds) {
         return Resp.success(userRoleService.assignRoles(userId, roleIds));
     }
 
-    @Operation(summary = "根据用户ID查询角色列表（原则 6 名词化路径）")
+    @Operation(summary = "根据用户ID查询角色列表")
     @GetMapping("/users/{userId}/roles")
     public Resp<List<RoleVO>> listRolesByUserId(@PathVariable("userId") @Valid @NotBlank String userId) {
         return Resp.success(userRoleService.listRolesByUserId(userId));
     }
 
-    @Operation(summary = "删除用户所有角色关联（原则 6 名词化路径）")
+    @Operation(summary = "删除用户所有角色关联")
     @DeleteMapping("/users/{userId}/roles")
     public Resp<Boolean> deleteByUserId(@PathVariable("userId") @Valid @NotBlank String userId) {
         return Resp.success(userRoleService.deleteByUserId(userId));
     }
 
-    @Operation(summary = "删除用户指定角色关联（原则 6 名词化路径）")
+    @Operation(summary = "删除用户指定角色关联")
     @DeleteMapping("/users/{userId}/roles/batch")
     public Resp<Boolean> deleteByUserIdAndRoleIds(@PathVariable("userId") @Valid @NotBlank String userId,
                                                   @RequestBody @Valid @NotEmpty List<@NotBlank String> roleIds) {

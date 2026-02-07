@@ -61,8 +61,6 @@ public class ConfigurationController {
         return Resp.success(configurationService.delete(ids));
     }
 
-
-
     @Operation(summary = "查询列表")
     @PostMapping("/page")
     public PageResp<ConfigurationVO> page(@RequestBody @Valid PageReq<ConfigurationQueryDTO> dto) {
