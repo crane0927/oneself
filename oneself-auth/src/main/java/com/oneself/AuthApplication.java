@@ -8,7 +8,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.validation.annotation.Validated;
 
-@EnableFeignClients(basePackages = "com.oneself.client")
+@EnableFeignClients(basePackages = {"com.oneself.client", "com.oneself.system.client"})
 @EnableDiscoveryClient
 @SpringBootApplication
 @Validated

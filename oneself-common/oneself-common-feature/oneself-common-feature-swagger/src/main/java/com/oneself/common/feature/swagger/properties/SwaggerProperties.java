@@ -2,18 +2,16 @@ package com.oneself.common.feature.swagger.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 /**
  * @author liuhuan
  * date 2025/1/17
  * packageName com.oneself.properties
  * className SwaggerProperties
- * description
+ * description 由 SwaggerConfig 通过 @EnableConfigurationProperties 注册，支持自动配置场景
  * version 1.0
  */
 @Data
-@Component
 @ConfigurationProperties(prefix = "oneself.swagger")
 public class SwaggerProperties {
     private Boolean enable = Boolean.FALSE;
