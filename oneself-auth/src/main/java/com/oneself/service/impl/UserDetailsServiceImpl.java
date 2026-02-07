@@ -39,7 +39,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
         Resp<UserDTO> resp;
         try {
-            resp = userClient.getUserByName(username);
+            resp = userClient.getUserByUsername(username);
         } catch (Exception e) {
             log.error("调用用户服务异常，username={}", username, e);
             throw new InternalAuthenticationServiceException("获取用户信息失败", e);

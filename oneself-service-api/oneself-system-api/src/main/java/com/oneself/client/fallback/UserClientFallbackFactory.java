@@ -26,7 +26,7 @@ public class UserClientFallbackFactory implements FallbackFactory<UserClient> {
     public UserClient create(Throwable cause) {
         return new UserClient() {
             @Override
-            public Resp<UserDTO> getUserByName(String username) {
+            public Resp<UserDTO> getUserByUsername(String name) {
                 if (cause instanceof FeignException.NotFound) {
                     return Resp.failure("服务不存在", HttpStatus.NOT_FOUND);
                 } else if (cause instanceof TimeoutException) {
@@ -34,6 +34,11 @@ public class UserClientFallbackFactory implements FallbackFactory<UserClient> {
                 } else {
                     return Resp.failure("服务不可用", HttpStatus.SERVICE_UNAVAILABLE);
                 }
+            }
+            @Override
+            @Deprecated
+            public Resp<UserDTO> getUserByName(String username) {
+                return getUserByUsername(username);
             }
         };
     }

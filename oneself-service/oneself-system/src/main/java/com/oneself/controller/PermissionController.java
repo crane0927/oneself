@@ -83,9 +83,17 @@ public class PermissionController {
         return Resp.success(permissionService.tree());
     }
 
-    @Operation(summary = "根据角色ID查询权限列表")
-    @GetMapping("/listByRole/{roleId}")
+    @Operation(summary = "根据角色ID查询权限列表（原则 6 名词化路径）")
+    @GetMapping("/by-role/{roleId}")
     public Resp<List<PermissionVO>> listByRoleId(@PathVariable("roleId") @Valid @NotBlank String roleId) {
+        return Resp.success(permissionService.listByRoleId(roleId));
+    }
+
+    /** @deprecated 请使用 GET /permission/by-role/{roleId} */
+    @Deprecated
+    @Operation(summary = "根据角色ID查询权限列表（已废弃）", hidden = true)
+    @GetMapping("/listByRole/{roleId}")
+    public Resp<List<PermissionVO>> listByRoleIdLegacy(@PathVariable("roleId") @Valid @NotBlank String roleId) {
         return Resp.success(permissionService.listByRoleId(roleId));
     }
 }

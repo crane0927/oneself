@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RESTful Principle 6 Audit Report",
+  "description": "审计报告结构：按接口与检查项记录符合性结果",
+  "type": "object",
+  "required": ["reportId", "auditedAt", "scope", "endpoints", "summary"],
+  "properties": {
+    "reportId": { "type": "string", "description": "报告标识（时间或版本）" },
+    "auditedAt": { "type": "string", "format": "date-time", "description": "审计执行时间" },
+    "scope": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "参与审计的模块/服务列表"
+    },
+    "endpoints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["module", "path", "method", "checks"],
+        "properties": {
+          "module": { "type": "string" },
+          "handler": { "type": "string", "description": "类.方法" },
+          "path": { "type": "string" },
+          "method": { "type": "string", "enum": ["GET", "POST", "PUT", "DELETE", "PATCH"] },
+          "checks": {
+            "type": "object",
+            "description": "检查项 ID -> 结果",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "status": { "type": "string", "enum": ["pass", "fail", "exception"] },
+                "reason": { "type": "string" },
+                "suggestion": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "totalEndpoints": { "type": "integer" },
+        "passCount": { "type": "integer" },
+        "failCount": { "type": "integer" },
+        "exceptionCount": { "type": "integer" }
+      }
+    }
+  }
+}

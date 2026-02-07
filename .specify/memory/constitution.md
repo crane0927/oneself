@@ -1,26 +1,24 @@
 <!--
 Sync Impact Report:
-Version: 无 → 1.0.0
-创建日期: 2026-02-04
-最后修订: 2026-02-04
-说明: 根据根目录 constitution.md（原 Atlas 项目宪法）生成 oneself 项目宪法，项目名称与模块/包前缀已统一为 oneself。
-修改的原则: 无（为初次采纳）
+Version: 1.0.0 → 1.1.0
+最后修订: 2026-02-06
+说明: 原则 6 新增「分页查询使用公共 PageReq、不必遵守 RESTful 分页形式」的例外与强制要求。
+修改的原则: 原则 6（RESTful API 设计）— 新增分页接口必须使用 PageReq，且分页接口在分页参数形式上不必遵守 RESTful
 新增章节: 无
 移除章节: 无
 模板更新状态:
   - .specify/templates/plan-template.md: ✅ 已存在 Constitution Check，无需修改
   - .specify/templates/spec-template.md: ✅ 无需修改
   - .specify/templates/tasks-template.md: ✅ 无需修改
-  - .specify/templates/commands/*: 未发现 .specify/templates/commands/ 目录
 后续待办: 无
 -->
 
 # 项目宪法
 
 **项目名称**: oneself  
-**版本**: 1.0.0  
+**版本**: 1.1.0  
 **批准日期**: 2026-02-04  
-**最后修订日期**: 2026-02-04
+**最后修订日期**: 2026-02-06
 
 ## 概述
 
@@ -114,20 +112,22 @@ Version: 无 → 1.0.0
 
 ### 原则 6: RESTful API 设计
 
-**规则**: 所有 HTTP 接口必须严格遵循 RESTful 设计风格。
+**规则**: 所有 HTTP 接口必须严格遵循 RESTful 设计风格；分页查询接口必须使用项目公共的 `PageReq`，且在分页参数形式上不必遵守 RESTful 约定。
 
 **具体要求**:
 - 使用标准 HTTP 方法（GET、POST、PUT、DELETE、PATCH）
 - URL 路径使用名词复数形式，避免动词（如 `/api/users` 而非 `/api/getUsers`）
 - 使用 HTTP 状态码表示操作结果（200、201、204、400、401、403、404、500 等）
 - 响应体使用 JSON 格式，统一使用 `Result<T>` 包装
-- 分页查询使用 `page` 和 `size` 参数，排序使用 `sort` 参数
+- **分页查询接口**：必须使用项目公共的 `PageReq`（或等价封装）承载分页与排序条件；此类接口在「分页参数形式」上不必遵守 RESTful 的 GET + query 参数约定，允许使用 POST + 请求体（PageReq）等形式实现分页查询
+- 非分页的列表/查询接口仍推荐使用 `page`、`size`、`sort` 等 query 参数（GET）
 - 版本控制通过 URL 路径实现（如 `/api/v1/users`）
 
-**理由**: RESTful 风格是业界标准，提供了一致的 API 设计规范，便于前端调用和第三方集成，降低学习成本。
+**理由**: RESTful 风格是业界标准，提供了一致的 API 设计规范；分页场景统一使用 PageReq 可保证参数形态一致、便于复用与校验，且与项目现有公共组件一致，故在分页参数形式上豁免严格 RESTful 要求。
 
 **验证**:
 - 代码审查时检查 Controller 层的 URL 设计和 HTTP 方法使用
+- 分页查询接口必须使用公共 PageReq（或等价封装），禁止手写分散的 page/size 参数对象
 - API 文档必须明确标注每个接口的 HTTP 方法和状态码
 - 禁止在 URL 中使用动词（如 `/createUser`、`/deleteUser`）
 
@@ -1076,6 +1076,7 @@ oneself/
 | 版本 | 日期 | 修订内容 | 修订人 |
 |------|------|----------|--------|
 | 1.0.0 | 2026-02-04 | 根据根目录 constitution.md（原 Atlas 项目宪法）生成 oneself 项目宪法，统一项目名称与模块/包前缀为 oneself | 系统 |
+| 1.1.0 | 2026-02-06 | 原则 6：分页查询接口必须使用公共 PageReq，且在分页参数形式上不必遵守 RESTful 设计（允许 POST+PageReq 等） | 系统 |
 
 ---
 

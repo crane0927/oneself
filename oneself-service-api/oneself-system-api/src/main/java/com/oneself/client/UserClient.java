@@ -25,7 +25,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 )
 public interface UserClient {
 
-    @Operation(summary = "根据用户名查询会话信息")
+    /** 原则 6 合规：名词化路径，与 UserController 新路径一致 */
+    @Operation(summary = "根据用户名查询用户（RESTful）")
+    @GetMapping("/by-name/{name}")
+    Resp<UserDTO> getUserByUsername(@PathVariable("name") @Valid @NotBlank String name);
+
+    @Deprecated
+    @Operation(summary = "根据用户名查询会话信息（已废弃，请使用 getUserByUsername 即 GET /by-name/{name}）")
     @GetMapping("/get/user/by/{name}")
     Resp<UserDTO> getUserByName(@PathVariable @Valid @NotBlank String name);
 }

@@ -84,9 +84,17 @@ public class DeptController {
         return Resp.success(deptService.tree());
     }
 
-    @Operation(summary = "查询所有部门列表")
-    @GetMapping("/list/all")
+    @Operation(summary = "查询所有部门列表（原则 6 名词化路径）")
+    @GetMapping("/all")
     public Resp<List<DeptVO>> listAll() {
+        return Resp.success(deptService.listAll());
+    }
+
+    /** @deprecated 请使用 GET /dept/all */
+    @Deprecated
+    @Operation(summary = "查询所有部门列表（已废弃）", hidden = true)
+    @GetMapping("/list/all")
+    public Resp<List<DeptVO>> listAllLegacy() {
         return Resp.success(deptService.listAll());
     }
 }
