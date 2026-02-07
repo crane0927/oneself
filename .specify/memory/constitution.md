@@ -1,9 +1,9 @@
 <!--
 Sync Impact Report:
-Version: 1.0.0 → 1.1.0
+Version: 1.1.0 → 1.2.0
 最后修订: 2026-02-06
-说明: 原则 6 新增「分页查询使用公共 PageReq、不必遵守 RESTful 分页形式」的例外与强制要求。
-修改的原则: 原则 6（RESTful API 设计）— 新增分页接口必须使用 PageReq，且分页接口在分页参数形式上不必遵守 RESTful
+说明: 新增 Feign 微服务间调用不使用 Result/Resp 包装、直接返回 DTO 的规则；原则 6 与原则 13 同步修订。
+修改的原则: 原则 6（RESTful API 设计）— 补充 Feign 接口例外；原则 13（DTO 与 VO）— Result 使用场景与 Feign 直接返回 DTO
 新增章节: 无
 移除章节: 无
 模板更新状态:
@@ -16,7 +16,7 @@ Version: 1.0.0 → 1.1.0
 # 项目宪法
 
 **项目名称**: oneself  
-**版本**: 1.1.0  
+**版本**: 1.2.0  
 **批准日期**: 2026-02-04  
 **最后修订日期**: 2026-02-06
 
@@ -118,7 +118,8 @@ Version: 1.0.0 → 1.1.0
 - 使用标准 HTTP 方法（GET、POST、PUT、DELETE、PATCH）
 - URL 路径使用名词复数形式，避免动词（如 `/api/users` 而非 `/api/getUsers`）
 - 使用 HTTP 状态码表示操作结果（200、201、204、400、401、403、404、500 等）
-- 响应体使用 JSON 格式，统一使用 `Result<T>` 包装
+- 响应体使用 JSON 格式，面向前端/网关的 HTTP 接口统一使用 `Result<T>`（即项目中的 `Resp<T>`）包装
+- **Feign 微服务间调用**：通过 Feign 进行微服务间调用的接口**不需要**使用 `Result`/`Resp` 包装，直接返回对应 DTO；调用方直接得到 DTO，异常与错误由 Feign 降级或统一异常处理承载
 - **分页查询接口**：必须使用项目公共的 `PageReq`（或等价封装）承载分页与排序条件；此类接口在「分页参数形式」上不必遵守 RESTful 的 GET + query 参数约定，允许使用 POST + 请求体（PageReq）等形式实现分页查询
 - 非分页的列表/查询接口仍推荐使用 `page`、`size`、`sort` 等 query 参数（GET）
 - 版本控制通过 URL 路径实现（如 `/api/v1/users`）
@@ -611,12 +612,12 @@ oneself/
      - 禁止在 `model` 包外定义枚举
      - 禁止将枚举直接放在业务模块根包下
 
-7. **Result<T>（统一响应包装类）**
-   - **用途**: 统一封装所有 HTTP 接口的响应数据
+7. **Result<T>（统一响应包装类，项目中或写作 Resp<T>）**
+   - **用途**: 统一封装面向前端/网关的 HTTP 接口的响应数据；**不用于** Feign 微服务间调用。
    - **使用场景**:
-     - **Controller 返回**: 所有 Controller 方法的返回值
-     - **Feign 接口返回**: 所有 Feign 接口的返回值
-     - **统一响应格式**: 提供统一的成功/失败响应格式
+     - **Controller 返回（面向前端/网关）**: 所有对外的 Controller 方法返回值必须使用 `Result<T>` 包装
+     - **Feign 接口（微服务间调用）**: Feign 接口**禁止**使用 `Result`/`Resp` 包装，必须**直接返回 DTO**；调用方直接得到 DTO，异常由 Feign 降级或统一异常处理承载
+     - **统一响应格式**: 对前端/网关提供统一的成功/失败响应格式
    - **特点**:
      - 包含状态码（code）、消息（message）、数据（data）、时间戳（timestamp）、追踪ID（traceId）
      - 支持泛型，可以包装任意类型的数据
@@ -625,8 +626,8 @@ oneself/
      - 失败响应：`Result.error(code, message)`
    - **包路径**: `com.oneself.common.feature.core.result`
    - **使用规范**:
-     - 所有 HTTP 接口必须使用 `Result<T>` 包装响应数据
-     - 禁止直接返回 DTO、VO 或 Entity
+     - 面向前端/网关的 HTTP 接口必须使用 `Result<T>` 包装响应数据
+     - Feign 接口必须直接返回 DTO，禁止返回 `Result<DTO>`/`Resp<DTO>`
      - 禁止在 Service 层返回 `Result<T>`（Service 层返回业务对象，Controller 层包装为 Result）
 
 8. **PageResult<T>（分页响应对象）**
@@ -652,9 +653,9 @@ oneself/
 数据查询:
   数据库 → Mapper (Entity) → Service (Entity/BO) → Service (DTO) → Controller (VO) → Result<VO> → 前端
 
-服务间调用:
-  服务A → Feign (QueryDTO) → 服务B Controller (QueryDTO) → Service (Entity) → Mapper (Entity) → 数据库
-  数据库 → Mapper (Entity) → Service (DTO) → Controller (DTO) → Result<DTO> → Feign (DTO) → 服务A
+服务间调用（Feign 直接返回 DTO，不包装 Result）:
+  服务A → Feign (QueryDTO) → 服务B Controller (DTO 入参) → Service (Entity) → Mapper (Entity) → 数据库
+  数据库 → Mapper (Entity) → Service (DTO) → Controller 直接返回 DTO → Feign (DTO) → 服务A
 ```
 
 **对象类型选择指南**:
@@ -676,9 +677,10 @@ oneself/
 1. **禁止在 API 模块中定义 Entity**: `oneself-service-api` 模块中禁止定义 Entity，只能定义 DTO
 2. **禁止在 Controller 层直接使用 Entity**: Controller 层禁止直接接收或返回 Entity，必须转换为 VO 或 DTO
 3. **禁止在 Service 层返回 Result**: Service 层返回业务对象，Controller 层负责包装为 Result
-4. **禁止混用对象类型**: 同一场景下必须使用统一的对象类型，禁止混用
-5. **禁止在 model 包外定义对象类型**: 所有对象类型（DTO、VO、Entity、BO、枚举等）必须放在 `model` 包下
-6. **禁止将枚举放在 model 包外**: 枚举必须放在 `model.enums` 包下，禁止直接放在业务模块根包下
+4. **禁止 Feign 接口返回 Result/Resp**: Feign 接口（微服务间调用）必须直接返回 DTO，禁止使用 `Result<DTO>`/`Resp<DTO>` 包装
+5. **禁止混用对象类型**: 同一场景下必须使用统一的对象类型，禁止混用
+6. **禁止在 model 包外定义对象类型**: 所有对象类型（DTO、VO、Entity、BO、枚举等）必须放在 `model` 包下
+7. **禁止将枚举放在 model 包外**: 枚举必须放在 `model.enums` 包下，禁止直接放在业务模块根包下
 
 ### 原则 14: 模块职责边界
 
@@ -1077,6 +1079,7 @@ oneself/
 |------|------|----------|--------|
 | 1.0.0 | 2026-02-04 | 根据根目录 constitution.md（原 Atlas 项目宪法）生成 oneself 项目宪法，统一项目名称与模块/包前缀为 oneself | 系统 |
 | 1.1.0 | 2026-02-06 | 原则 6：分页查询接口必须使用公共 PageReq，且在分页参数形式上不必遵守 RESTful 设计（允许 POST+PageReq 等） | 系统 |
+| 1.2.0 | 2026-02-06 | Feign 微服务间调用接口不使用 Result/Resp 包装，直接返回 DTO；原则 6、原则 13 同步修订 | 系统 |
 
 ---
 
