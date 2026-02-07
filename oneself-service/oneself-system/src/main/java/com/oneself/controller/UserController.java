@@ -6,9 +6,6 @@ import com.oneself.model.dto.UserQueryDTO;
 import com.oneself.model.enums.StatusEnum;
 import com.oneself.model.vo.UserVO;
 import com.oneself.req.PageReq;
-import com.oneself.req.PageReq.Pagination;
-import com.oneself.req.PageReq.Sort;
-import com.oneself.req.PageReq.SortDirection;
 import com.oneself.resp.PageResp;
 import com.oneself.resp.Resp;
 import com.oneself.service.UserService;
@@ -21,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
