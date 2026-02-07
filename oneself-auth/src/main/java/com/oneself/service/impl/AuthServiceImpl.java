@@ -1,17 +1,17 @@
 package com.oneself.service.impl;
 
-import com.oneself.config.RsaKeyConfig;
-import com.oneself.exception.OneselfException;
-import com.oneself.exception.OneselfLoginException;
-import com.oneself.model.bo.JwtSessionBO;
-import com.oneself.model.bo.LoginUserBO;
+import com.oneself.common.feature.security.config.RsaKeyConfig;
+import com.oneself.common.core.exception.OneselfException;
+import com.oneself.common.core.exception.OneselfLoginException;
+import com.oneself.common.feature.security.model.bo.JwtSessionBO;
+import com.oneself.common.feature.security.model.bo.LoginUserBO;
 import com.oneself.model.dto.LoginDTO;
-import com.oneself.model.enums.RedisKeyPrefixEnum;
+import com.oneself.common.infra.redis.model.enums.RedisKeyPrefixEnum;
 import com.oneself.model.vo.CaptchaVO;
 import com.oneself.service.AuthService;
 import com.oneself.service.CaptchaService;
-import com.oneself.utils.JacksonUtils;
-import com.oneself.utils.JwtUtils;
+import com.oneself.common.core.utils.JacksonUtils;
+import com.oneself.common.feature.security.utils.JwtUtils;
 import eu.bitwalker.useragentutils.Browser;
 import eu.bitwalker.useragentutils.OperatingSystem;
 import eu.bitwalker.useragentutils.UserAgent;

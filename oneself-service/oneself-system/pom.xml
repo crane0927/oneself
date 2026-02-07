@@ -200,7 +200,7 @@
                     <archive>
                         <!-- 指定程序的入口 main 函数 -->
                         <manifest>
-                            <mainClass>com.oneself.SystemApplication</mainClass>
+                            <mainClass>com.oneself.system.SystemApplication</mainClass>
                             <addClasspath>true</addClasspath> <!-- 添加 classpath -->
                             <classpathPrefix>lib/</classpathPrefix>
                         </manifest>

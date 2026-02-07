@@ -1,10 +1,10 @@
 package com.oneself.service.impl;
 
 
-import com.oneself.client.UserClient;
-import com.oneself.model.bo.LoginUserBO;
-import com.oneself.model.dto.UserDTO;
-import com.oneself.resp.Resp;
+import com.oneself.system.client.UserClient;
+import com.oneself.common.feature.security.model.bo.LoginUserBO;
+import com.oneself.system.model.dto.UserDTO;
+import com.oneself.common.core.resp.Resp;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;

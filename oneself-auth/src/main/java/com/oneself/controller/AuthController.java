@@ -2,7 +2,7 @@ package com.oneself.controller;
 
 import com.oneself.model.dto.LoginDTO;
 import com.oneself.model.vo.CaptchaVO;
-import com.oneself.resp.Resp;
+import com.oneself.common.core.resp.Resp;
 import com.oneself.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

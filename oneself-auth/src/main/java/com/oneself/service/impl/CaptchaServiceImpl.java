@@ -1,10 +1,10 @@
 package com.oneself.service.impl;
 
-import com.oneself.exception.OneselfException;
-import com.oneself.model.enums.RedisKeyPrefixEnum;
+import com.oneself.common.core.exception.OneselfException;
+import com.oneself.common.infra.redis.model.enums.RedisKeyPrefixEnum;
 import com.oneself.model.vo.CaptchaVO;
 import com.oneself.service.CaptchaService;
-import com.oneself.utils.JwtUtils;
+import com.oneself.common.feature.security.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

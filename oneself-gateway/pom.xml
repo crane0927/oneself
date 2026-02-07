@@ -208,7 +208,7 @@
                     <archive>
                         <!-- 指定程序的入口 main 函数 -->
                         <manifest>
-                            <mainClass>com.oneself.GatewayApplication</mainClass>
+                            <mainClass>com.oneself.gateway.GatewayApplication</mainClass>
                             <addClasspath>true</addClasspath> <!-- 添加 classpath -->
                             <classpathPrefix>lib/</classpathPrefix>
                         </manifest>
